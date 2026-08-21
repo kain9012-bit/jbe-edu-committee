@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node / 빌드 산출물
+node_modules/
+dist/
+_site/
+
+# 비밀값
+.env
+.env.local
+
+# 받아쓰기용 원본 오디오.
+# 회의 하나가 3~5시간이라 수백 MB가 된다. 의사중계에서 언제든 다시 받을 수 있으므로
+# 저장소에 두지 않는다. 받아쓴 결과(data/asr/)만 커밋한다.
+data/audio/
+*.m4a
+*.mp3
+*.wav
+*.ts
+
+# 되돌리기용으로 옮겨 둔 파일
+_to_delete/

@@ -1,0 +1,9 @@
+# 수집 (어디서나)
+requests>=2.31
+
+# 받아쓰기 (속기록이 나오기 전 임시본을 만들 때만)
+faster-whisper>=1.0
+speechbrain>=1.0
+torch>=2.2
+scikit-learn>=1.4
+numpy>=1.26

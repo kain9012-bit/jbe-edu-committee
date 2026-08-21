@@ -1,0 +1,47 @@
+name: 회의록 수집
+
+on:
+  schedule:
+    # 도의회 속기록은 회의 후 몇 주 뒤에 한꺼번에 올라온다. 매일 볼 필요는 없지만
+    # 하루 한 번이면 발간 다음 날에는 화면에 반영된다. (UTC 21:00 = KST 06:00)
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    # 전자회의록·의사중계 모두 443 이라 클라우드 러너에서 잘 된다.
+    # 오디오 받기(7443)만 사용자 PC에서 해야 한다 — 여기서는 하지 않는다.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: 목록과 전문 수집
+        run: python collector/collect.py --with-stream
+
+      - name: 부서·의원·안건 집계
+        run: python collector/derive.py
+
+      - name: 바뀐 것이 있으면 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "바뀐 것이 없습니다."
+          else
+            git commit -m "회의록 자동 수집 $(date -u +%Y-%m-%d)"
+            git push
+          fi

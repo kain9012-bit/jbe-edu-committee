@@ -1,0 +1,249 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FileText, Paperclip, Users, Clock } from 'lucide-react';
+import type { IndexDoc, Navigate, RecordDoc } from '../types';
+import { Badge, EmptyState, SectionTitle, SourceLink } from './Ui';
+import { MeetingPicker } from './MeetingPicker';
+import { korDate, highlight } from '../lib/util';
+
+interface Props {
+  index: IndexDoc;
+  currentId: string;
+  setCurrentId: (id: string) => void;
+  record: RecordDoc | null;
+  loading: boolean;
+  /** 다른 탭에서 "이 발언을 회의록에서 보고 싶다" 며 넘어온 자리 */
+  jumpTo: number | null;
+  onJumped: () => void;
+  onNavigate: Navigate;
+}
+
+export const RecordTab: React.FC<Props> = ({
+  index, currentId, setCurrentId, record, loading, jumpTo, onJumped, onNavigate,
+}) => {
+  const entry = index.meetings.find((m) => m.id === currentId);
+  const [who, setWho] = useState('전체');
+  const [q, setQ] = useState('');
+  const boxRef = useRef<HTMLUListElement>(null);
+
+  // 회차를 바꾸면 필터를 되돌린다. 앞 회차의 부서가 남아 있으면 빈 목록이 뜬다.
+  useEffect(() => { setWho('전체'); setQ(''); }, [currentId]);
+
+  const speakers = useMemo(() => {
+    const seen = new Map<string, number>();
+    (record?.turns ?? []).forEach((t) => {
+      const key = t.dept ?? (t.role === '의원' ? `${t.name} 위원` : t.speaker);
+      seen.set(key, (seen.get(key) ?? 0) + 1);
+    });
+    return [...seen.entries()].sort((a, b) => b[1] - a[1]);
+  }, [record]);
+
+  const turns = useMemo(() => {
+    let list = record?.turns ?? [];
+    if (who !== '전체') {
+      list = list.filter(
+        (t) => (t.dept ?? (t.role === '의원' ? `${t.name} 위원` : t.speaker)) === who,
+      );
+    }
+    const needle = q.trim();
+    if (needle) list = list.filter((t) => t.lines.some((l) => l.includes(needle)));
+    return list;
+  }, [record, who, q]);
+
+  // 넘어온 발언 자리로 데려간다.
+  useEffect(() => {
+    if (jumpTo === null || !record) return;
+    const el = boxRef.current?.querySelector(`[data-turn="${jumpTo}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      (el as HTMLElement).classList.add('ring-2', 'ring-blue-500');
+      window.setTimeout(() => (el as HTMLElement).classList.remove('ring-2', 'ring-blue-500'), 2400);
+    }
+    onJumped();
+  }, [jumpTo, record, turns, onJumped]);
+
+  return (
+    <div className="space-y-6 pb-12">
+      <MeetingPicker index={index} currentId={currentId} setCurrentId={setCurrentId} />
+
+      {loading && <p role="status" className="text-sm text-slate-500">회의록을 불러오는 중입니다…</p>}
+
+      {!loading && !record && (
+        <EmptyState
+          icon={<Clock className="w-6 h-6" aria-hidden="true" />}
+          title="속기록이 아직 발간되지 않았습니다"
+          desc={
+            entry
+              ? `${korDate(entry.date)} 회의입니다. 도의회 속기록은 회의 후 보통 3~4주, 정례회·행정사무감사철에는 두 달까지 걸립니다. 그동안은 영상으로 확인해 주세요.`
+              : undefined
+          }
+        >
+          {entry?.vod?.[0] && (
+            <div className="flex flex-wrap justify-center gap-3 pt-1">
+              {entry.vod.map((v) => (
+                <SourceLink key={v.vodNo} href={v.playerUrl}>{v.label} 영상 보기</SourceLink>
+              ))}
+            </div>
+          )}
+        </EmptyState>
+      )}
+
+      {record && (
+        <>
+          {/* 회의 개요 */}
+          <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone={record.recordStatus === '확정' ? 'green' : 'amber'}>
+                {record.recordStatus === '확정' ? '확정 회의록' : '임시회의록 · 속기 미확정'}
+              </Badge>
+              <span className="text-sm text-slate-500">{korDate(record.date)}</span>
+              {record.publishedAt && (
+                <span className="text-sm text-slate-400">발간 {korDate(record.publishedAt)}</span>
+              )}
+            </div>
+            <h2 className="text-xl font-bold text-slate-900">{record.title}</h2>
+            <p className="text-sm text-slate-600">
+              {record.meta.count} · {record.meta.sort}
+              {record.meta.startTime && <> · {record.meta.startTime}</>}
+            </p>
+
+            {record.purpose.length > 0 && (
+              <div className="pt-1">
+                <p className="text-sm font-bold text-slate-700 mb-1">의사일정</p>
+                <ol className="space-y-1 text-sm text-slate-600 list-none">
+                  {record.purpose.map((p, i) => <li key={i}>{p}</li>)}
+                </ol>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1 text-sm">
+              {record.viewerUrl && (
+                <SourceLink href={record.viewerUrl}>도의회 회의록 원문</SourceLink>
+              )}
+              {record.hwpUrl && <SourceLink href={record.hwpUrl}>회의록 HWP 내려받기</SourceLink>}
+              {entry?.vod?.map((v) => (
+                <SourceLink key={v.vodNo} href={v.playerUrl}>{v.label} 영상</SourceLink>
+              ))}
+            </div>
+          </section>
+
+          {/* 출석 */}
+          {Object.keys(record.attend).length > 0 && (
+            <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-2">
+              <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <Users className="w-4 h-4" aria-hidden="true" />출석
+              </div>
+              <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                {Object.entries(record.attend).map(([k, v]) => (
+                  <div key={k}>
+                    <dt className="text-slate-500 text-xs font-bold">{k} ({v.length}명)</dt>
+                    <dd className="text-slate-700">{v.join(', ')}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+
+          {/* 첨부 */}
+          {record.attachments.length > 0 && (
+            <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-2">
+              <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <Paperclip className="w-4 h-4" aria-hidden="true" />부록 · 검토보고서
+              </div>
+              <ul className="space-y-1">
+                {record.attachments.map((a) => (
+                  <li key={a.url}>
+                    <SourceLink href={a.url}>{a.name}</SourceLink>
+                    <span className="text-xs text-slate-400 ml-1.5">
+                      {Math.round(a.kbyte)}KB
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* 발언 */}
+          <section className="space-y-3">
+            <SectionTitle count={turns.length} desc={`전체 ${record.turns.length}건`}>
+              발언 전문
+            </SectionTitle>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <select
+                value={who}
+                onChange={(e) => setWho(e.target.value)}
+                aria-label="발언자로 좁히기"
+                className="h-11 px-3 rounded-md border border-slate-300 bg-white font-medium
+                           outline-none focus:border-blue-600 sm:w-72"
+              >
+                <option value="전체">발언자 전체</option>
+                {speakers.map(([name, n]) => (
+                  <option key={name} value={name}>{name} ({n})</option>
+                ))}
+              </select>
+              <input
+                type="search"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="이 회의록 안에서 찾기"
+                aria-label="이 회의록 안에서 찾기"
+                className="flex-1 h-11 px-3 rounded-md border border-slate-300 bg-white
+                           outline-none focus:border-blue-600"
+              />
+            </div>
+
+            {turns.length === 0 ? (
+              <EmptyState
+                icon={<FileText className="w-6 h-6" aria-hidden="true" />}
+                title="해당하는 발언이 없습니다"
+                desc="발언자나 검색어를 바꿔 보세요."
+              />
+            ) : (
+              <ul ref={boxRef} className="space-y-2">
+                {turns.map((t) => (
+                  <li
+                    key={t.i}
+                    data-turn={t.i}
+                    className="bg-white rounded-lg border border-slate-200 p-4 scroll-mt-32 transition-shadow"
+                  >
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                      <span className="font-bold text-slate-900">{t.speaker}</span>
+                      {t.dept && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('dept', { focus: t.dept! })}
+                          className="text-xs font-bold text-blue-700 hover:underline"
+                        >
+                          {t.dept}
+                        </button>
+                      )}
+                      {t.role === '의원' && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('member', { focus: t.name })}
+                          className="text-xs font-bold text-blue-700 hover:underline"
+                        >
+                          의원별 보기
+                        </button>
+                      )}
+                      {t.agendaTitle && (
+                        <span className="text-xs text-slate-400 truncate max-w-full sm:max-w-md">
+                          {t.agendaTitle}
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-1.5 text-slate-700 leading-relaxed">
+                      {t.lines.map((l, i) => (
+                        <p key={i}>{q.trim() ? highlight(l, q) : l}</p>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </>
+      )}
+    </div>
+  );
+};
