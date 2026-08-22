@@ -39,32 +39,21 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
   );
 
   /*
-   * 부서 필터는 **국 단위**로 묶는다.
+   * 부서 필터에는 **국만** 세운다. 과는 넣지 않는다.
    *
-   * 과 단위로 늘어놓으면 `문예체건강과 (1)`, `미래교육과 (1)` 처럼 한 건짜리가
-   * 국들 사이에 끼어 스무 개가 넘는 목록이 된다. 위원회 질의는 대개 국장이
-   * 받으므로 과까지 내려가는 일 자체가 드물다. 그래서 국을 먼저 세우고,
-   * 그 아래 실제로 나온 과를 붙여 둔다.
+   * 위원회 질의는 대개 국장이 받는다. 과 단위로 늘어놓으면 `문예체건강과 (1)`,
+   * `미래교육과 (1)` 처럼 한 건짜리가 국들 사이에 끼어 스무 개가 넘는 목록이
+   * 되고, 고를 것이 없는 필터가 된다.
    */
   const groups = useMemo(() => {
-    const m = new Map<string, { total: number; depts: Map<string, number> }>();
+    const m = new Map<string, number>();
     all.forEach((a) => {
       const g = a.group ?? a.dept;
-      if (!g) return;
-      const slot = m.get(g) ?? { total: 0, depts: new Map<string, number>() };
-      slot.total += 1;
-      if (a.dept) slot.depts.set(a.dept, (slot.depts.get(a.dept) ?? 0) + 1);
-      m.set(g, slot);
+      if (g) m.set(g, (m.get(g) ?? 0) + 1);
     });
     return [...m.entries()]
-      .sort((x, y) => groupRank(x[0]) - groupRank(y[0]) || y[1].total - x[1].total)
-      .map(([name, v]) => ({
-        name,
-        total: v.total,
-        depts: [...v.depts.entries()]
-          .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0], 'ko'))
-          .map(([n, c]) => ({ name: n, count: c })),
-      }));
+      .sort((x, y) => groupRank(x[0]) - groupRank(y[0]) || y[1] - x[1])
+      .map(([name, total]) => ({ name, total }));
   }, [all]);
   const membersList = useMemo(
     () => [...new Set(all.map((a) => a.member).filter(Boolean) as string[])]
@@ -80,13 +69,9 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
   const shown = useMemo(() => {
     let list = all;
     if (type !== '전체') list = list.filter((a) => a.type === type);
-    // `국:행정국` 이면 그 국 전체, `과:행정과` 면 그 과만.
     if (dept.startsWith('국:')) {
       const g = dept.slice(2);
       list = list.filter((a) => (a.group ?? a.dept) === g);
-    } else if (dept.startsWith('과:')) {
-      const d = dept.slice(2);
-      list = list.filter((a) => a.dept === d);
     }
     if (member !== '전체') list = list.filter((a) => a.member === member);
     if (meetingId !== '전체') list = list.filter((a) => a.meeting === meetingId);
@@ -150,14 +135,7 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
           >
             <option value="전체">부서 전체 ({all.length})</option>
             {groups.map((g) => (
-              <optgroup key={g.name} label={g.name}>
-                <option value={`국:${g.name}`}>{g.name} 전체 ({g.total})</option>
-                {g.depts.length > 1 && g.depts.map((d) => (
-                  <option key={d.name} value={`과:${d.name}`}>
-                    &nbsp;&nbsp;{d.name} ({d.count})
-                  </option>
-                ))}
-              </optgroup>
+              <option key={g.name} value={`국:${g.name}`}>{g.name} ({g.total})</option>
             ))}
           </select>
 
