@@ -44,8 +44,9 @@
   "depts": [
     {
       "name": "부교육감",
-      "kind": "본청",
+      "kind": "기관장",
       "bureau": null,
+      "group": "교육감·부교육감 직속",
       "answerCount": 185,
       "mentionCount": 0,
       "meetings": [
@@ -101,6 +102,7 @@
       "name": "행정국",
       "kind": "본청",
       "bureau": null,
+      "group": "행정국",
       "answerCount": 139,
       "mentionCount": 0,
       "meetings": [
@@ -152,6 +154,7 @@
       "name": "정책국",
       "kind": "본청",
       "bureau": null,
+      "group": "정책국",
       "answerCount": 118,
       "mentionCount": 0,
       "meetings": [
@@ -199,6 +202,7 @@
       "name": "교육국",
       "kind": "본청",
       "bureau": null,
+      "group": "교육국",
       "answerCount": 73,
       "mentionCount": 0,
       "meetings": [
@@ -246,6 +250,7 @@
       "name": "과학교육원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 56,
       "mentionCount": 0,
       "meetings": [
@@ -277,6 +282,7 @@
       "name": "전주교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 41,
       "mentionCount": 0,
       "meetings": [
@@ -316,6 +322,7 @@
       "name": "교원인사과",
       "kind": "본청",
       "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 40,
       "mentionCount": 5,
       "meetings": [
@@ -350,7 +357,8 @@
     {
       "name": "전북교육인권센터",
       "kind": "본청",
-      "bureau": "교육국",
+      "bureau": null,
+      "group": "교육감·부교육감 직속",
       "answerCount": 37,
       "mentionCount": 3,
       "meetings": [
@@ -370,6 +378,7 @@
       "name": "교육연수원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 36,
       "mentionCount": 0,
       "meetings": [
@@ -413,6 +422,7 @@
       "name": "정읍교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 31,
       "mentionCount": 0,
       "meetings": [
@@ -435,7 +445,8 @@
     {
       "name": "감사관실",
       "kind": "본청",
-      "bureau": "행정국",
+      "bureau": null,
+      "group": "교육감·부교육감 직속",
       "answerCount": 23,
       "mentionCount": 0,
       "meetings": [
@@ -467,6 +478,7 @@
       "name": "전주학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 23,
       "mentionCount": 0,
       "meetings": [
@@ -494,6 +506,7 @@
       "name": "문예체건강과",
       "kind": "본청",
       "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 18,
       "mentionCount": 1,
       "meetings": [
@@ -513,6 +526,7 @@
       "name": "미래교육연구원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 17,
       "mentionCount": 0,
       "meetings": [
@@ -543,7 +557,8 @@
     {
       "name": "대변인실",
       "kind": "본청",
-      "bureau": "정책국",
+      "bureau": null,
+      "group": "교육감·부교육감 직속",
       "answerCount": 16,
       "mentionCount": 2,
       "meetings": [
@@ -571,6 +586,7 @@
       "name": "학생수련원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 15,
       "mentionCount": 0,
       "meetings": [
@@ -598,6 +614,7 @@
       "name": "미래교육과",
       "kind": "본청",
       "bureau": "정책국",
+      "group": "정책국",
       "answerCount": 14,
       "mentionCount": 3,
       "meetings": [
@@ -621,6 +638,7 @@
       "name": "행정과",
       "kind": "본청",
       "bureau": "행정국",
+      "group": "행정국",
       "answerCount": 14,
       "mentionCount": 2,
       "meetings": [
@@ -648,6 +666,7 @@
       "name": "익산학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 14,
       "mentionCount": 0,
       "meetings": [
@@ -671,6 +690,7 @@
       "name": "학교안전과",
       "kind": "본청",
       "bureau": "정책국",
+      "group": "정책국",
       "answerCount": 13,
       "mentionCount": 4,
       "meetings": [
@@ -694,6 +714,7 @@
       "name": "교직원수련원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
       "meetings": [
@@ -717,6 +738,7 @@
       "name": "남원학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
       "meetings": [
@@ -744,6 +766,7 @@
       "name": "유아교육진흥원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
       "meetings": [
@@ -767,6 +790,7 @@
       "name": "익산교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 9,
       "mentionCount": 0,
       "meetings": [
@@ -786,6 +810,7 @@
       "name": "중등교육과",
       "kind": "본청",
       "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 7,
       "mentionCount": 2,
       "meetings": [
@@ -809,6 +834,7 @@
       "name": "학생해양수련원",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 7,
       "mentionCount": 0,
       "meetings": [
@@ -832,6 +858,7 @@
       "name": "유초등특수교육과",
       "kind": "본청",
       "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 5,
       "mentionCount": 1,
       "meetings": [
@@ -851,6 +878,7 @@
       "name": "완주교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 5,
       "mentionCount": 0,
       "meetings": [
@@ -870,6 +898,7 @@
       "name": "군산학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 4,
       "mentionCount": 0,
       "meetings": [
@@ -889,6 +918,7 @@
       "name": "남원교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 4,
       "mentionCount": 0,
       "meetings": [
@@ -907,7 +937,8 @@
     {
       "name": "창의인재교육과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 3,
       "mentionCount": 4,
       "meetings": [
@@ -935,6 +966,7 @@
       "name": "민주시민교육과",
       "kind": "본청",
       "bureau": "교육국",
+      "group": "교육국",
       "answerCount": 3,
       "mentionCount": 3,
       "meetings": [
@@ -954,6 +986,7 @@
       "name": "무주교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 3,
       "mentionCount": 0,
       "meetings": [
@@ -973,6 +1006,7 @@
       "name": "고창교육지원청",
       "kind": "교육지원청",
       "bureau": null,
+      "group": "교육지원청",
       "answerCount": 2,
       "mentionCount": 0,
       "meetings": [
@@ -992,6 +1026,7 @@
       "name": "김제학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 2,
       "mentionCount": 0,
       "meetings": [
@@ -1010,7 +1045,8 @@
     {
       "name": "시설과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "행정국",
+      "group": "행정국",
       "answerCount": 1,
       "mentionCount": 3,
       "meetings": [
@@ -1034,6 +1070,7 @@
       "name": "부안학생교육문화관",
       "kind": "직속기관",
       "bureau": null,
+      "group": "직속기관",
       "answerCount": 1,
       "mentionCount": 0,
       "meetings": [
@@ -1052,7 +1089,8 @@
     {
       "name": "총무과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "행정국",
+      "group": "행정국",
       "answerCount": 0,
       "mentionCount": 23,
       "meetings": [
@@ -1078,7 +1116,8 @@
     {
       "name": "노사협력과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "행정국",
+      "group": "행정국",
       "answerCount": 0,
       "mentionCount": 3,
       "meetings": [
@@ -1096,7 +1135,8 @@
     {
       "name": "예산과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "정책국",
+      "group": "정책국",
       "answerCount": 0,
       "mentionCount": 3,
       "meetings": [
@@ -1114,7 +1154,8 @@
     {
       "name": "정책기획과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "정책국",
+      "group": "정책국",
       "answerCount": 0,
       "mentionCount": 3,
       "meetings": [
@@ -1128,7 +1169,8 @@
     {
       "name": "교육협력과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "정책국",
+      "group": "정책국",
       "answerCount": 0,
       "mentionCount": 2,
       "meetings": [
@@ -1146,7 +1188,8 @@
     {
       "name": "재무과",
       "kind": "본청",
-      "bureau": null,
+      "bureau": "행정국",
+      "group": "행정국",
       "answerCount": 0,
       "mentionCount": 1,
       "meetings": [

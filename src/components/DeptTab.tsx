@@ -4,7 +4,7 @@ import type { DerivedDoc, Dialog, IndexDoc, Navigate } from '../types';
 import { Badge, ChipRow, EmptyState, SectionTitle } from './Ui';
 import { DialogItem } from './Dialog';
 import { MeetingFilter } from './MeetingFilter';
-import { kindRank } from '../lib/util';
+import { groupRank, kindRank } from '../lib/util';
 import { deptStatsFor } from '../lib/stats';
 
 interface Props {
@@ -18,7 +18,10 @@ interface Props {
   onNavigate: Navigate;
 }
 
-const KINDS = ['전체', '본청', '직속기관', '교육지원청'];
+/*
+ * 예전에는 `본청 / 직속기관 / 교육지원청` 세 갈래였다. 그런데 본청만 스물 몇 곳이라
+ * 누르나 마나였다. 기구도대로 **국**으로 가른다 — 담당자가 찾는 단위가 국이다.
+ */
 
 /**
  * "우리 과에 무엇이 나왔나" 를 보는 화면.
@@ -28,7 +31,7 @@ const KINDS = ['전체', '본청', '직속기관', '교육지원청'];
  * 화면에서도 따로 보여준다. 섞으면 언급된 것을 답변한 것으로 오해한다.
  */
 export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, open, onNavigate }) => {
-  const [kind, setKind] = useState('전체');
+  const [group, setGroup] = useState('전체');
   const [q, setQ] = useState('');
   const [meetingId, setMeetingId] = useState('전체');
 
@@ -38,7 +41,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
 
   // 링크로 들어온 부서가 지금 필터에 가려져 있으면 필터를 푼다.
   useEffect(() => {
-    if (open) { setKind('전체'); setQ(''); }
+    if (open) { setGroup('전체'); setQ(''); }
   }, [open]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
@@ -65,7 +68,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
 
   const depts = useMemo(() => {
     let list = base;
-    if (kind !== '전체') list = list.filter((d) => d.kind === kind);
+    if (group !== '전체') list = list.filter((d) => (d.group ?? d.name) === group);
     const needle = q.trim();
     if (needle) list = list.filter((d) => d.name.includes(needle) || (d.bureau ?? '').includes(needle));
     return [...list].sort(
@@ -73,12 +76,20 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
         || b.answerCount - a.answerCount
         || b.mentionCount - a.mentionCount,
     );
-  }, [base, kind, q]);
+  }, [base, group, q]);
 
-  const counts = useMemo(() => {
-    const c: Record<string, number> = { 전체: base.length };
-    base.forEach((d) => { c[d.kind] = (c[d.kind] ?? 0) + 1; });
-    return c;
+  // 칩은 **자료에 실제로 있는 국만** 세운다. 0곳짜리 칩을 눌러 빈 화면을 보게 하지 않는다.
+  const groups = useMemo(() => {
+    const c = new Map<string, number>();
+    base.forEach((d) => {
+      const g = d.group ?? d.name;
+      c.set(g, (c.get(g) ?? 0) + 1);
+    });
+    return [{ value: '전체', label: '전체', count: base.length }].concat(
+      [...c.entries()]
+        .sort((x, y) => groupRank(x[0]) - groupRank(y[0]) || y[1] - x[1])
+        .map(([name, n]) => ({ value: name, label: name, count: n })),
+    );
   }, [base]);
 
   if (loading) return <p role="status" className="text-sm text-slate-500 py-2">불러오는 중입니다…</p>;
@@ -117,12 +128,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-        <ChipRow
-          label="기관 종류"
-          value={kind}
-          onChange={setKind}
-          options={KINDS.map((k) => ({ value: k, label: k, count: counts[k] ?? 0 }))}
-        />
+        <ChipRow label="소속" value={group} onChange={setGroup} options={groups} />
         <div className="relative sm:ml-auto sm:w-64">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
@@ -171,7 +177,9 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h4 className="text-lg font-bold text-slate-900">{d.name}</h4>
                     <Badge tone={d.kind === '본청' ? 'blue' : 'slate'}>{d.kind}</Badge>
-                    {d.bureau && <span className="text-xs text-slate-500">{d.bureau} 소속</span>}
+                    {(d.bureau || (d.group && d.group !== d.name)) && (
+                      <span className="text-xs text-slate-500">{d.bureau ?? d.group} 소속</span>
+                    )}
                   </div>
                   <p className="text-sm text-slate-600 flex flex-wrap gap-x-3 gap-y-1">
                     <span>

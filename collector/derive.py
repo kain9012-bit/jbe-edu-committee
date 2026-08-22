@@ -26,10 +26,17 @@
 둘을 **화면에서 섞지 않는다.** 섞으면 언급된 것을 답변한 것으로 오해한다.
 이렇게 하니 총무과(28회 언급, 답변 0건)처럼 아예 목록에 없던 과가 드러났다.
 
-## 국 소속은 추측하지 않고 회의록에서 읽는다
+## 국 소속은 조직도로 붙인다
 
-`전북특별자치도교육청 행정국과 감사관 소관 …보고 청취의 건` 이라는 안건 아래에서
-답한 과는 그 국 소속이다. 조직도를 사람이 적어 넣지 않아도 회의록이 알려 준다.
+처음에는 안건 제목(`행정국과 감사관 소관 …보고 청취의 건`)에서 국을 짐작했다.
+회의록만으로 조직도를 대신할 수 있다고 봤는데, 그러면 그 회차에 국 이름이
+안 나온 과는 국이 비고, 한 번 답한 과가 엉뚱한 국에 붙었다. 43곳 중 절반 넘게
+국이 비어 있었다. 지금은 `depts.BUREAU_OF` 에 기구도를 적어 두고 그걸 쓴다.
+목록에 없는 이름만 예전 방식으로 짐작한다.
+
+그리고 화면의 **필터는 과가 아니라 국 단위**다(`depts.group_of`). 위원회 질의는
+대개 국장이 받으므로 과까지 내려가는 일이 드물어서, 과 단위로 늘어놓으면
+`문예체건강과 (1)` 같은 한 건짜리가 국들 사이에 끼어 목록이 스무 개를 넘는다.
 
 ## 오간 말은 **주고받은 덩어리**로 묶는다
 
@@ -79,7 +86,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import DATA, INDEX, MEETINGS, RECORDS
-from depts import BUREAUS, DEPARTMENTS
+from depts import BUREAU_OF, BUREAUS, DEPARTMENTS, DIRECT, group_of
 
 # 화면에 미리보기로 띄울 길이. 전문은 회차 탭에서 본다.
 SNIP = 260
@@ -126,18 +133,30 @@ def load_records() -> list[dict]:
 
 
 def bureau_map(docs: list[dict]) -> dict[str, str]:
-    """어느 국 소관 안건 아래에서 답했는지로 과의 상위 국을 정한다."""
+    """과의 상위 국. **조직도가 먼저**, 회의록 추측은 조직도에 없는 이름만.
+
+    예전에는 안건 제목(`행정국과 감사관 소관 …`)만 보고 국을 짐작했다. 그러면
+    그 회차에 국 이름이 안 나온 과는 국이 비고, 한 번 답한 과가 엉뚱한 국에
+    붙기도 했다. 실제로 43곳 중 절반 넘게 국이 비어 있었다.
+    """
+    out: dict[str, str] = dict(BUREAU_OF)
+
     votes: dict[str, Counter] = defaultdict(Counter)
     for doc in docs:
         for t in doc["turns"]:
             d = t.get("dept")
-            if not d or d in BUREAUS:
+            if not d or d in BUREAUS or d in BUREAU_OF or d in DIRECT:
                 continue
+            if (t.get("deptKind") or "") in ("직속기관", "교육지원청"):
+                continue      # 국 소속이 아니다. 안건 제목에 국 이름이 나왔다고 붙이면 틀린다.
             title = t.get("agendaTitle") or ""
             for b in BUREAUS:
                 if b in title:
                     votes[d][b] += 1
-    return {d: c.most_common(1)[0][0] for d, c in votes.items() if c}
+    for d, c in votes.items():
+        if c:
+            out[d] = c.most_common(1)[0][0]
+    return out
 
 
 # 위원장의 진행 발언. 질의가 아니라 회의를 굴리는 말이다.
@@ -258,6 +277,8 @@ def build_asks(docs: list[dict]) -> list[dict]:
             continue
         summary = json.loads(path.read_text(encoding="utf-8"))
         turns = doc["turns"]
+        # 부서 이름만으로는 직속기관인지 과인지 모른다. 회의록의 발언자 태그에서 읽는다.
+        kind_of = {t["dept"]: t.get("deptKind") for t in turns if t.get("dept")}
         for a in summary.get("asks", []):
             n = a.get("turn")
             replies = []
@@ -278,7 +299,16 @@ def build_asks(docs: list[dict]) -> list[dict]:
                     })
                     if len(replies) >= 3:
                         break
-            out.append({**a, "meeting": doc["id"], "date": doc["date"], "replies": replies})
+            kind = kind_of.get(a.get("dept"))
+            out.append({
+                **a,
+                "meeting": doc["id"],
+                "date": doc["date"],
+                # 필터는 국 단위로 묶는다. 한 회차에 한 번 답한 과가 국들 사이에
+                # 그대로 끼어 있으면 고를 것이 스무 개가 넘는다.
+                "group": group_of(a.get("dept"), kind),
+                "replies": replies,
+            })
     return out
 
 
@@ -300,6 +330,8 @@ def main() -> int:
             "name": name,
             "kind": kind,
             "bureau": bureaus.get(name),
+            # 필터에서 묶어 볼 단위. 과 하나짜리 항목이 국들 사이에 끼지 않게 한다.
+            "group": group_of(name, kind),
             "answerCount": 0,
             "mentionCount": 0,
             "meetings": {},

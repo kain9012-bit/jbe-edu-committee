@@ -107,6 +107,8 @@ export interface AskReply {
 export interface Ask {
   type: '자료요구' | '지적사항' | '요청';
   dept?: string | null;
+  /** 그 부서가 속한 국. 필터는 과가 아니라 이 단위로 묶는다. */
+  group?: string | null;
   member?: string | null;
   /** 개조식 한 줄. 명사형으로 끝낸다. */
   title: string;
@@ -199,8 +201,10 @@ export interface Dialog {
 export interface DeptStat {
   name: string;
   kind: string;
-  /** 상위 국. 회의록의 안건 제목에서 읽어낸 값이라 없을 수 있다. */
+  /** 상위 국 (기구도 기준). 국·직속기관·교육지원청은 국이 없으므로 null. */
   bureau: string | null;
+  /** 필터에서 묶어 볼 단위 — 국, 또는 직속기관·교육지원청·직속 자리. */
+  group: string | null;
   /** 이 부서 사람이 직접 답한 발언 수 */
   answerCount: number;
   /** 이 부서 이름이 질의·답변 본문에 나온 질의응답 수 */

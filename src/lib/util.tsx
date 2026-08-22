@@ -121,16 +121,24 @@ export function sourceNote(m: IndexEntry): string {
   return '회의록이 아직 발간되지 않았습니다';
 }
 
-/**
- * 부서 종류별 정렬 순서 — 본청을 먼저, 그 다음 직속기관·교육지원청.
- *
- * 부교육감은 `본청` 이다. 예전에는 `기관장` 이라는 종류로 따로 뒀는데, 묶어 놓고 보니
- * 혼자 묶음 하나를 차지하고 본청과 직속기관 사이에 끼어 앉았다. 보는 사람에게
- * 부교육감은 본청이다. 종류는 `collector/depts.py` 에서 붙인다.
- */
+/** 부서 종류별 정렬 순서 — 본청을 먼저, 그 다음 직속기관·교육지원청 */
 const KIND_RANK: Record<string, number> = {
-  본청: 0, 직속기관: 1, 교육지원청: 2, 의회: 3, 기타: 4,
+  본청: 0, 기관장: 1, 직속기관: 2, 교육지원청: 3, 의회: 4, 기타: 5,
 };
 export function kindRank(kind: string): number {
   return KIND_RANK[kind] ?? 9;
+}
+
+/**
+ * 필터에 세울 묶음 순서 — 기구도 차례대로.
+ *
+ * 필터를 과 단위로 두면 `문예체건강과 (1)` 처럼 한 건짜리 항목이 국들 사이에
+ * 끼어 스무 개가 넘는 목록이 된다. 국 단위로 묶으면 고를 것이 예닐곱 개다.
+ */
+export const GROUP_ORDER = [
+  '교육감·부교육감 직속', '정책국', '교육국', '행정국', '직속기관', '교육지원청',
+];
+export function groupRank(g: string | null | undefined): number {
+  const i = GROUP_ORDER.indexOf(g ?? '');
+  return i < 0 ? GROUP_ORDER.length : i;
 }
