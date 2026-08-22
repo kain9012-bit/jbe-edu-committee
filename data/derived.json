@@ -44,7 +44,7 @@
   "depts": [
     {
       "name": "부교육감",
-      "kind": "기관장",
+      "kind": "본청",
       "bureau": null,
       "group": "교육감·부교육감 직속",
       "answerCount": 185,
