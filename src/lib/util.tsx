@@ -121,9 +121,15 @@ export function sourceNote(m: IndexEntry): string {
   return '회의록이 아직 발간되지 않았습니다';
 }
 
-/** 부서 종류별 정렬 순서 — 본청을 먼저, 그 다음 직속기관·교육지원청 */
+/**
+ * 부서 종류별 정렬 순서 — 본청을 먼저, 그 다음 직속기관·교육지원청.
+ *
+ * 부교육감은 `본청` 이다. 예전에는 `기관장` 이라는 종류로 따로 뒀는데, 묶어 놓고 보니
+ * 혼자 묶음 하나를 차지하고 본청과 직속기관 사이에 끼어 앉았다. 보는 사람에게
+ * 부교육감은 본청이다. 종류는 `collector/depts.py` 에서 붙인다.
+ */
 const KIND_RANK: Record<string, number> = {
-  본청: 0, 기관장: 1, 직속기관: 2, 교육지원청: 3, 의회: 4, 기타: 5,
+  본청: 0, 직속기관: 1, 교육지원청: 2, 의회: 3, 기타: 4,
 };
 export function kindRank(kind: string): number {
   return KIND_RANK[kind] ?? 9;

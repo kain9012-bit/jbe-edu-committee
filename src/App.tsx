@@ -90,10 +90,12 @@ export default function App() {
     return () => { alive = false; };
   }, [retryToken]);
 
-  // ── 집계(34KB). 홈·부서별·의원별·안건이 쓴다. 가벼워서 일찍 받아 둔다. ──
+  // ── 집계(34KB). 홈·부서별·의원별·안건·지적요구가 쓴다. 가벼워서 일찍 받아 둔다.
+  //    지적요구 탭은 목록에 쓰지 않고 **부서 고르개를 본청·직속기관·교육지원청으로
+  //    묶는 데**만 쓴다. 못 받아도 화면은 그대로 뜨고, 묶음만 풀린다. ──
   const derivedRequested = React.useRef(false);
   useEffect(() => {
-    if (!['home', 'dept', 'member', 'agenda'].includes(activeTab)) return;
+    if (!['home', 'dept', 'member', 'agenda', 'asks'].includes(activeTab)) return;
     if (derivedRequested.current) return;
     derivedRequested.current = true;
     (async () => {
@@ -370,6 +372,7 @@ export default function App() {
             {activeTab === 'asks' && (
               <AsksTab
                 index={index}
+                derived={derived}
                 asks={asks}
                 loading={detailLoading}
                 onNavigate={navigate}

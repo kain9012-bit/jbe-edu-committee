@@ -78,9 +78,15 @@ export const SourceLink: React.FC<{ href: string; children: React.ReactNode }> =
   </a>
 );
 
-/** 목록 위에 붙는 필터 칩 줄 */
+/**
+ * 목록 위에 붙는 필터 칩 줄.
+ *
+ * `disabled` 는 **다른 조건 때문에 지금은 0건인 칩**에 쓴다. 지우지 않고 흐리게
+ * 남기는 이유는, 사라지면 칩 줄의 길이가 매번 달라져 어디를 눌렀는지 놓치기
+ * 때문이다. 고른 칩은 0건이어도 계속 누를 수 있게 둔다 — 못 풀면 갇힌다.
+ */
 export const ChipRow: React.FC<{
-  options: { value: string; label: string; count?: number }[];
+  options: { value: string; label: string; count?: number; disabled?: boolean }[];
   value: string;
   onChange: (v: string) => void;
   label: string;
@@ -88,21 +94,27 @@ export const ChipRow: React.FC<{
   <div role="group" aria-label={label} className="flex flex-wrap gap-1.5">
     {options.map((o) => {
       const on = o.value === value;
+      const off = !!o.disabled && !on;
       return (
         <button
           key={o.value}
           type="button"
           aria-pressed={on}
+          disabled={off}
           onClick={() => onChange(o.value)}
           className={`px-3 py-1.5 rounded-full border text-sm font-bold transition-colors ${
             on
               ? 'bg-blue-600 border-blue-600 text-white'
-              : 'bg-white border-slate-200 text-slate-600 hover:border-blue-600 hover:text-blue-700'
+              : off
+                ? 'bg-white border-slate-100 text-slate-300 cursor-not-allowed'
+                : 'bg-white border-slate-200 text-slate-600 hover:border-blue-600 hover:text-blue-700'
           }`}
         >
           {o.label}
           {o.count !== undefined && (
-            <span className={`ml-1.5 tabular-nums ${on ? 'text-blue-100' : 'text-slate-400'}`}>
+            <span className={`ml-1.5 tabular-nums ${
+              on ? 'text-blue-100' : off ? 'text-slate-300' : 'text-slate-400'
+            }`}>
               {o.count}
             </span>
           )}
