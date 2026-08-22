@@ -78,8 +78,8 @@ export const SearchTab: React.FC<Props> = ({
           .filter((h) => looseTest(h.title, needle) || looseTest(h.body, needle))
           .map((h) => ({ id: m.id, kind: '주요 질의응답', text: `${h.title} — ${h.body}` })),
         ...(m.asks ?? [])
-          .filter((a) => looseTest(a.text, needle))
-          .map((a) => ({ id: m.id, kind: a.type, text: a.text })),
+          .filter((a) => looseTest(a.title, needle) || (a.body ?? []).some((b) => looseTest(b, needle)))
+          .map((a) => ({ id: m.id, kind: a.type, text: `${a.title} — ${(a.body ?? []).join(' · ')}` })),
       ],
     );
   }, [meetings, q]);

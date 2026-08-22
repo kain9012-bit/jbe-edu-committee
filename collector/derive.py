@@ -237,24 +237,31 @@ def main() -> int:
     topics = sorted((t for t in topics if t["count"] >= 5),
                     key=lambda t: -t["count"])[:10]
 
+    # 파일을 둘로 나눈다.
+    #   derived.json    — 목록과 숫자. 30KB 안쪽. 홈·안건 탭은 이것만 있으면 된다.
+    #   exchanges.json  — 오간 말 전문. 900KB. 부서별·의원별에서만 필요하다.
+    # 한 파일로 두었더니 안건 탭에 들어가기만 해도 쓰지 않는 900KB를 받았다.
     derived = {
         "topics": topics,
         "depts": flat(depts, "members",
                       lambda v: (-v["answerCount"], -v["mentionCount"], v["name"])),
         "members": flat(members, "depts", lambda v: -v["turnCount"]),
         "agendas": agendas,
-        "exchanges": all_ex,
+        "exchangeCount": len(all_ex),
     }
     path = DATA / "derived.json"
     path.write_text(json.dumps(derived, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    ex_path = DATA / "exchanges.json"
+    ex_path.write_text(json.dumps(all_ex, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     direct = sum(1 for e in all_ex if e["direct"])
     only_mention = sum(1 for d in derived["depts"] if d["answerCount"] == 0)
     kb = path.stat().st_size / 1024
+    ex_kb = ex_path.stat().st_size / 1024
     print(f"부서 {len(derived['depts'])}곳 (답변 없이 언급만 {only_mention}곳) · "
-          f"의원 {len(derived['members'])}명 · 안건 {len(agendas)}건")
+          f"의원 {len(derived['members'])}명 · 안건 {len(agendas)}건 → {path.name} ({kb:.0f}KB)")
     print(f"질의응답 {len(all_ex)}건 (짝이 확실한 것 {direct}건, "
-          f"{direct * 100 // max(1, len(all_ex))}%) → {path.name} ({kb:.0f}KB)")
+          f"{direct * 100 // max(1, len(all_ex))}%) → {ex_path.name} ({ex_kb:.0f}KB)")
     print("추천 검색어: " + ", ".join(f"{t['word']}({t['count']})" for t in topics))
     return 0
 

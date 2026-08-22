@@ -2,6 +2,7 @@ import React from 'react';
 import { FileText, Clock, ExternalLink } from 'lucide-react';
 import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, Quote, SectionTitle, SourceLink } from './Ui';
+import { AskItem } from './AskItem';
 import { MeetingPicker } from './MeetingPicker';
 import { korDate, sourceNote } from '../lib/util';
 
@@ -14,8 +15,6 @@ interface Props {
   loading: boolean;
   onNavigate: Navigate;
 }
-
-const ASK_TONE = { 자료요구: 'blue', 지적사항: 'red', 요청: 'amber' } as const;
 
 export const MeetingTab: React.FC<Props> = ({
   index, currentId, setCurrentId, meeting, record, loading, onNavigate,
@@ -147,24 +146,11 @@ export const MeetingTab: React.FC<Props> = ({
             <section className="space-y-3">
               <SectionTitle count={meeting.asks.length}
                 desc="집행부가 받아 가야 할 것">자료요구 · 지적사항</SectionTitle>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {meeting.asks.map((a, i) => (
-                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-4 space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge tone={ASK_TONE[a.type] ?? 'slate'}>{a.type}</Badge>
-                      {a.dept && (
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('dept', { focus: a.dept! })}
-                          className="text-sm font-bold text-blue-700 hover:underline"
-                        >
-                          {a.dept}
-                        </button>
-                      )}
-                      {a.member && <span className="text-sm text-slate-500">{a.member} 위원</span>}
-                    </div>
-                    <p className="text-slate-800 leading-relaxed">{a.text}</p>
-                    {a.quote && <Quote who={a.speaker}>{a.quote}</Quote>}
+                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-5">
+                    <AskItem ask={{ ...a, meeting: currentId }}
+                      meetingTitle="회의록에서 보기" onNavigate={onNavigate} />
                   </li>
                 ))}
               </ul>

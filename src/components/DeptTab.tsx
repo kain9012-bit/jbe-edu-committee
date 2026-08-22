@@ -1,13 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Building2, Search } from 'lucide-react';
-import type { DerivedDoc, IndexDoc, Navigate } from '../types';
+import type { DerivedDoc, Exchange, IndexDoc, Navigate } from '../types';
 import { Badge, ChipRow, EmptyState, SectionTitle } from './Ui';
 import { ExchangeItem } from './Exchange';
+import { MeetingFilter } from './MeetingFilter';
 import { kindRank } from '../lib/util';
+import { deptStatsFor } from '../lib/stats';
 
 interface Props {
   index: IndexDoc;
   derived: DerivedDoc;
+  /** 오간 말 전문. 따로 받아 온다(805KB). */
+  exchanges: Exchange[];
   loading: boolean;
   /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
   open: string | null;
@@ -23,9 +27,10 @@ const KINDS = ['전체', '본청', '직속기관', '교육지원청'];
  * 정작 담당 과는 비어 있다. **답변한 것**과 **이름이 언급된 것**을 따로 세고,
  * 화면에서도 따로 보여준다. 섞으면 언급된 것을 답변한 것으로 오해한다.
  */
-export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavigate }) => {
+export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, open, onNavigate }) => {
   const [kind, setKind] = useState('전체');
   const [q, setQ] = useState('');
+  const [meetingId, setMeetingId] = useState('전체');
 
   // 펼친 부서는 화면 안의 상태가 아니라 **주소**다. 그래야 그 화면을 링크로 준다.
   const toggle = (name: string) =>
@@ -38,8 +43,28 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
 
+  // 회차를 좁히면 목록·숫자·펼친 내용이 **한꺼번에** 그 회차 것만 남아야 한다.
+  // 목록만 걸러 놓고 카드 숫자는 전체 합계로 두면 어느 쪽을 믿을지 알 수 없다.
+  const ex = useMemo(
+    () => (meetingId === '전체'
+      ? exchanges
+      : exchanges.filter((e) => e.meeting === meetingId)),
+    [exchanges, meetingId],
+  );
+
+  const perMeeting = useMemo(() => {
+    const c = new Map<string, number>();
+    exchanges.forEach((e) => c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1));
+    return c;
+  }, [exchanges]);
+
+  const base = useMemo(
+    () => (meetingId === '전체' ? derived.depts : deptStatsFor(derived.depts, ex)),
+    [derived, ex, meetingId],
+  );
+
   const depts = useMemo(() => {
-    let list = derived.depts;
+    let list = base;
     if (kind !== '전체') list = list.filter((d) => d.kind === kind);
     const needle = q.trim();
     if (needle) list = list.filter((d) => d.name.includes(needle) || (d.bureau ?? '').includes(needle));
@@ -48,13 +73,13 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
         || b.answerCount - a.answerCount
         || b.mentionCount - a.mentionCount,
     );
-  }, [derived, kind, q]);
+  }, [base, kind, q]);
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { 전체: derived.depts.length };
-    derived.depts.forEach((d) => { c[d.kind] = (c[d.kind] ?? 0) + 1; });
+    const c: Record<string, number> = { 전체: base.length };
+    base.forEach((d) => { c[d.kind] = (c[d.kind] ?? 0) + 1; });
     return c;
-  }, [derived]);
+  }, [base]);
 
   if (loading) return <p role="status" className="text-sm text-slate-500 py-2">불러오는 중입니다…</p>;
 
@@ -70,7 +95,8 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
 
   return (
     <div className="space-y-5 pb-12">
-      <SectionTitle count={derived.depts.length} unit="곳" desc="답변이 많은 순">
+      <SectionTitle count={depts.length} unit="곳"
+        desc={meetingId === '전체' ? '답변이 많은 순' : '고른 회차 기준'}>
         부서별 질의응답
       </SectionTitle>
 
@@ -84,6 +110,10 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
           위원회에서는 국장이 과 대신 답하는 일이 많아, 답변한 사람만 따지면 담당 과가 비어
           보입니다. 그래서 두 갈래로 나눠 세되 섞지 않습니다.
         </p>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-start">
+        <MeetingFilter index={index} value={meetingId} onChange={setMeetingId} counts={perMeeting} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -111,22 +141,23 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
         <EmptyState
           icon={<Building2 className="w-6 h-6" aria-hidden="true" />}
           title="해당하는 부서가 없습니다"
+          desc={meetingId === '전체' ? undefined : '고른 회차에서 답변한 부서가 없습니다. 회차를 바꿔 보세요.'}
         />
       ) : (
         <ul className="space-y-3">
           {depts.map((d) => {
             const on = open === d.name;
-            const answered = on ? derived.exchanges.filter((e) => e.dept === d.name) : [];
+            const answered = on ? ex.filter((e) => e.dept === d.name) : [];
             const mentioned = on
-              ? derived.exchanges.filter((e) => e.dept !== d.name && e.mentions.includes(d.name))
+              ? ex.filter((e) => e.dept !== d.name && e.mentions.includes(d.name))
               : [];
             // 국을 열면 소속 과가 답한 것도 함께 본다. 국장이 대신 답한 건과
             // 과가 직접 답한 건이 갈려 있어서, 국 단위로 봐야 전체가 보인다.
-            const childNames = derived.depts
+            const childNames = base
               .filter((x) => x.bureau === d.name)
               .map((x) => x.name);
             const children = on && childNames.length
-              ? derived.exchanges.filter((e) => childNames.includes(e.dept))
+              ? ex.filter((e) => childNames.includes(e.dept))
               : [];
 
             return (

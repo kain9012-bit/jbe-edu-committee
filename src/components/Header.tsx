@@ -8,6 +8,7 @@ const TABS: { id: ActiveTab; label: string }[] = [
   { id: 'meeting', label: '회의 요약' },
   { id: 'dept', label: '부서별' },
   { id: 'member', label: '의원별' },
+  { id: 'asks', label: '지적·요구' },
   { id: 'agenda', label: '안건' },
   { id: 'record', label: '회의록 전문' },
   { id: 'search', label: '통합검색' },

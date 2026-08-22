@@ -22,7 +22,9 @@ export interface Route {
   turn?: number;
 }
 
-const TABS: ActiveTab[] = ['home', 'meeting', 'record', 'dept', 'member', 'agenda', 'search'];
+const TABS: ActiveTab[] = [
+  'home', 'meeting', 'record', 'dept', 'member', 'asks', 'agenda', 'search',
+];
 
 /** 탭마다 경로 두 번째 칸에 무엇이 오는가 */
 function segmentOf(r: Route): string {

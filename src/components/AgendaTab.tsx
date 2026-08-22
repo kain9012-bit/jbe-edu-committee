@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
-import { Gavel, ClipboardList } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Gavel } from 'lucide-react';
 import type { DerivedDoc, IndexDoc, MeetingDoc, Navigate } from '../types';
-import { Badge, ChipRow, EmptyState, Quote, SectionTitle } from './Ui';
+import { Badge, EmptyState, SectionTitle } from './Ui';
 import { korDate } from '../lib/util';
 
 interface Props {
@@ -31,13 +31,7 @@ function normalize(title: string): string {
     .trim();
 }
 
-const ASK_TONE = { 자료요구: 'blue', 지적사항: 'red', 요청: 'amber' } as const;
-
 export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, onNavigate }) => {
-  const [view, setView] = useState('안건');
-  const [askDept, setAskDept] = useState('전체');
-  const [askType, setAskType] = useState('전체');
-
   const groups = useMemo(() => {
     const map = new Map<string, { title: string; items: { meeting: string; date: string; raw: string }[] }>();
     derived.agendas.forEach((a) => {
@@ -53,23 +47,6 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
         || b.items[b.items.length - 1].date.localeCompare(a.items[a.items.length - 1].date));
   }, [derived]);
 
-  const asks = useMemo(
-    () => Object.values(meetings).flatMap((m) => (m.asks ?? []).map((a) => ({ ...a, meeting: m.id }))),
-    [meetings],
-  );
-
-  // 63건을 통째로 훑게 두면 부서 담당자는 자기 것을 못 찾는다.
-  const askDepts = useMemo(
-    () => [...new Set(asks.map((a) => a.dept).filter(Boolean) as string[])].sort((x, y) => x.localeCompare(y, 'ko')),
-    [asks],
-  );
-  const shownAsks = useMemo(() => {
-    let list = asks;
-    if (askType !== '전체') list = list.filter((a) => a.type === askType);
-    if (askDept !== '전체') list = list.filter((a) => a.dept === askDept);
-    return list;
-  }, [asks, askType, askDept]);
-
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
   const resultOf = (meetingId: string, title: string) => {
     const doc = meetings[meetingId];
@@ -81,19 +58,7 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
 
   return (
     <div className="space-y-5 pb-12">
-      <ChipRow
-        label="보기"
-        value={view}
-        onChange={setView}
-        options={[
-          { value: '안건', label: '안건·조례 이력', count: groups.length },
-          { value: '요구', label: '자료요구·지적사항', count: asks.length },
-        ]}
-      />
-
-      {view === '안건' && (
-        <>
-          <SectionTitle count={groups.length} desc="같은 안건이 여러 차수에 걸치면 하나로 묶습니다">
+      <SectionTitle count={groups.length} desc="같은 안건이 여러 차수에 걸치면 하나로 묶습니다">
             심사 안건
           </SectionTitle>
 
@@ -140,85 +105,6 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
               ))}
             </ul>
           )}
-        </>
-      )}
-
-      {view === '요구' && (
-        <>
-          <SectionTitle count={shownAsks.length}
-            desc={`전체 ${asks.length}건 · 회의록을 읽고 사람이 뽑은 항목입니다`}>
-            자료요구 · 지적사항
-          </SectionTitle>
-
-          {asks.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <ChipRow
-                label="종류"
-                value={askType}
-                onChange={setAskType}
-                options={['전체', '자료요구', '지적사항', '요청'].map((t) => ({
-                  value: t,
-                  label: t,
-                  count: t === '전체' ? asks.length : asks.filter((a) => a.type === t).length,
-                }))}
-              />
-              <select
-                value={askDept}
-                onChange={(e) => setAskDept(e.target.value)}
-                aria-label="부서로 좁히기"
-                className="sm:ml-auto h-11 px-3 rounded-md border border-slate-300 bg-white
-                           font-medium outline-none focus:border-blue-600"
-              >
-                <option value="전체">부서 전체</option>
-                {askDepts.map((d) => (
-                  <option key={d} value={d}>
-                    {d} ({asks.filter((a) => a.dept === d).length})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {shownAsks.length === 0 ? (
-            <EmptyState
-              icon={<ClipboardList className="w-6 h-6" aria-hidden="true" />}
-              title={asks.length === 0 ? '아직 정리된 항목이 없습니다' : '해당하는 항목이 없습니다'}
-              desc={asks.length === 0
-                ? '회의록 전문은 이미 있습니다. 회차 요약을 쓰면 자료요구와 지적사항이 여기 모입니다.'
-                : '종류나 부서를 바꿔 보세요.'}
-            />
-          ) : (
-            <ul className="space-y-3">
-              {shownAsks.map((a, i) => (
-                <li key={i} className="bg-white rounded-lg border border-slate-200 p-5 space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone={ASK_TONE[a.type] ?? 'slate'}>{a.type}</Badge>
-                    {a.dept && (
-                      <button
-                        type="button"
-                        onClick={() => onNavigate('dept', { focus: a.dept! })}
-                        className="text-sm font-bold text-blue-700 hover:underline"
-                      >
-                        {a.dept}
-                      </button>
-                    )}
-                    {a.member && <span className="text-sm text-slate-500">{a.member} 위원</span>}
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('record', { meetingId: a.meeting, turn: a.turn ?? undefined })}
-                      className="text-sm text-slate-500 hover:underline ml-auto"
-                    >
-                      {titleOf(a.meeting)}
-                    </button>
-                  </div>
-                  <p className="text-slate-800 leading-relaxed">{a.text}</p>
-                  {a.quote && <Quote who={a.speaker}>{a.quote}</Quote>}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
-export type ActiveTab = 'home' | 'meeting' | 'record' | 'dept' | 'member' | 'agenda' | 'search';
+export type ActiveTab =
+  | 'home' | 'meeting' | 'record' | 'dept' | 'member' | 'asks' | 'agenda' | 'search';
 
 /** 회의록이 어디서 왔는가. 화면에 반드시 밝힌다. */
 export type Source = 'record' | 'asr' | null;
@@ -107,12 +108,22 @@ export interface MeetingDoc {
   }[];
   /** 안건별 처리 결과 */
   agenda: { title: string; result?: string | null; note?: string | null }[];
-  /** 집행부가 받아 가야 할 것 — 자료요구·지적사항·요청 */
+  /**
+   * 집행부가 받아 가야 할 것 — 자료요구·지적사항·요청.
+   *
+   * 한 줄로만 적었더니 무슨 내용인지 알 수가 없었다. 제목과 본문을 나누고
+   * 둘 다 **개조식**으로 쓴다. `~지적이 있었다` 같은 서술은 쓰지 않는다.
+   *   title  "인수위 명의 공문 발송의 법적 근거 확인·설명 필요"
+   *   body   ["교육감 임기 시작 전 인수위 요청으로 공문 발송", "비용 발생 여부 불명", …]
+   */
   asks: {
     type: '자료요구' | '지적사항' | '요청';
     dept?: string | null;
     member?: string | null;
-    text: string;
+    /** 개조식 한 줄. 명사형으로 끝낸다. */
+    title: string;
+    /** 개조식 항목들. 무엇이 문제이고 무엇을 해야 하는지. */
+    body: string[];
     quote?: string | null;
     speaker?: string | null;
     turn?: number | null;
@@ -165,11 +176,12 @@ export interface DerivedDoc {
   depts: DeptStat[];
   members: MemberStat[];
   agendas: { meeting: string; date: string; title: string }[];
-  exchanges: Exchange[];
+  /** 오간 말은 exchanges.json 에 따로 있다. 여기는 개수만. */
+  exchangeCount: number;
 }
 
 export const emptyDerived: DerivedDoc = {
-  topics: [], depts: [], members: [], agendas: [], exchanges: [],
+  topics: [], depts: [], members: [], agendas: [], exchangeCount: 0,
 };
 
 /** 탭 이동. `focus` 는 부서명·의원명처럼 그 탭에서 바로 펼쳐 볼 대상. */

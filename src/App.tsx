@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import type {
-  ActiveTab, DerivedDoc, IndexDoc, MeetingDoc, Navigate, RecordDoc,
+  ActiveTab, DerivedDoc, Exchange, IndexDoc, MeetingDoc, Navigate, RecordDoc,
 } from './types';
 import { emptyDerived, emptyIndex } from './types';
 import { Header } from './components/Header';
@@ -11,6 +11,7 @@ import { RecordTab } from './components/RecordTab';
 import { DeptTab } from './components/DeptTab';
 import { MemberTab } from './components/MemberTab';
 import { AgendaTab } from './components/AgendaTab';
+import { AsksTab } from './components/AsksTab';
 import { SearchTab } from './components/SearchTab';
 import { fromHash, toHash } from './lib/route';
 
@@ -53,6 +54,7 @@ export default function App() {
   // 그럴듯한 표본을 채워두면 못 받았을 때 가짜가 진짜처럼 보인다.
   const [index, setIndex] = useState<IndexDoc>(emptyIndex);
   const [derived, setDerived] = useState<DerivedDoc>(emptyDerived);
+  const [exchanges, setExchanges] = useState<Exchange[]>([]);
   const [records, setRecords] = useState<Record<string, RecordDoc>>({});
   const [meetings, setMeetings] = useState<Record<string, MeetingDoc>>({});
 
@@ -87,31 +89,33 @@ export default function App() {
     return () => { alive = false; };
   }, [retryToken]);
 
-  // ── 부서·의원·안건 탭이 쓰는 집계. 그 탭에 들어갈 때만 받는다. ──
+  // ── 집계(34KB). 홈·부서별·의원별·안건이 쓴다. 가벼워서 일찍 받아 둔다. ──
   const derivedRequested = React.useRef(false);
   useEffect(() => {
-    if (!['dept', 'member', 'agenda'].includes(activeTab)) return;
+    if (!['home', 'dept', 'member', 'agenda'].includes(activeTab)) return;
     if (derivedRequested.current) return;
     derivedRequested.current = true;
-    setDetailLoading(true);
     (async () => {
       const d = await loadJson<DerivedDoc>('derived.json');
       if (d) setDerived(d);
       else derivedRequested.current = false;   // 한 번 끊겼다고 계속 빈 목록만 보이면 안 된다
-      setDetailLoading(false);
     })();
   }, [activeTab]);
 
-  // 홈 화면의 지표와 부서 바로가기도 집계를 쓴다. 가볍게 한 번만 받아 둔다.
+  // ── 오간 말 전문(805KB). 부서별·의원별에서만 필요하다. ──
+  const exchangesRequested = React.useRef(false);
   useEffect(() => {
-    if (activeTab !== 'home' || derivedRequested.current) return;
-    derivedRequested.current = true;
+    if (!['dept', 'member'].includes(activeTab)) return;
+    if (exchangesRequested.current) return;
+    exchangesRequested.current = true;
+    setDetailLoading(true);
     (async () => {
-      const d = await loadJson<DerivedDoc>('derived.json');
-      if (d) setDerived(d);
-      else derivedRequested.current = false;
+      const x = await loadJson<Exchange[]>('exchanges.json');
+      if (x) setExchanges(x);
+      else exchangesRequested.current = false;
+      setDetailLoading(false);
     })();
-  }, [activeTab, index]);
+  }, [activeTab]);
 
   // ── 회차 상세: 지금 보는 회차만 먼저 받는다 ──
   const ensureDetail = useCallback(async (id: string) => {
@@ -133,12 +137,46 @@ export default function App() {
     setDetailLoading(false);
   }, [index, records, meetings]);
 
-  useEffect(() => { void ensureDetail(currentId); }, [currentId, ensureDetail]);
+  // 회의록 전문은 회차당 수백 KB다. **그 화면을 볼 때만** 받는다.
+  // 예전에는 어느 탭에 있든 기본 회차의 전문(555KB)을 받고 있었다.
+  useEffect(() => {
+    if (activeTab !== 'meeting' && activeTab !== 'record') return;
+    void ensureDetail(currentId);
+  }, [activeTab, currentId, ensureDetail]);
 
-  // ── 통합검색·안건 탭은 전 회차가 필요하다. 그 탭에 들어갈 때만 받는다. ──
+  /*
+   * 전 회차가 필요한 탭이 둘로 갈린다.
+   *   요약(meetings/*.json)  — 지적·요구, 의원별, 안건. 회차당 몇 KB.
+   *   전문(records/*.json)   — 통합검색. 회차당 수백 KB, 전부 합쳐 2.4MB.
+   * 예전에는 안건 탭에 들어가도 전문을 통째로 받았다. 쓰지도 않는 2.4MB였다.
+   */
+  const summariesRequested = React.useRef(false);
+  useEffect(() => {
+    if (!['asks', 'member', 'agenda', 'search'].includes(activeTab)) return;
+    if (summariesRequested.current || index.meetings.length === 0) return;
+    summariesRequested.current = true;
+
+    setDetailLoading(true);
+    (async () => {
+      const results = await Promise.all(
+        index.meetings
+          .filter((e) => e.hasSummary)
+          .map(async (e) => ({ id: e.id, m: await loadJson<MeetingDoc>(`meetings/${e.id}.json`) })),
+      );
+      const okAny = results.some((x) => x.m);
+      setMeetings((prev) => {
+        const next = { ...prev };
+        results.forEach((x) => { if (x.m) next[x.id] = x.m; });
+        return next;
+      });
+      setDetailLoading(false);
+      if (!okAny && results.length) summariesRequested.current = false;
+    })();
+  }, [activeTab, index]);
+
   const bulkRequested = React.useRef(false);
   useEffect(() => {
-    if (activeTab !== 'search' && activeTab !== 'agenda') return;
+    if (activeTab !== 'search') return;
     if (bulkRequested.current || index.meetings.length === 0) return;
     bulkRequested.current = true;
 
@@ -148,18 +186,12 @@ export default function App() {
         index.meetings.map(async (e) => ({
           id: e.id,
           r: recordPath(e) ? await loadJson<RecordDoc>(recordPath(e)!) : null,
-          m: e.hasSummary ? await loadJson<MeetingDoc>(`meetings/${e.id}.json`) : null,
         })),
       );
-      const okAny = results.some((x) => x.r || x.m);
+      const okAny = results.some((x) => x.r);
       setRecords((prev) => {
         const next = { ...prev };
         results.forEach((x) => { if (x.r) next[x.id] = x.r; });
-        return next;
-      });
-      setMeetings((prev) => {
-        const next = { ...prev };
-        results.forEach((x) => { if (x.m) next[x.id] = x.m; });
         return next;
       });
       setDetailLoading(false);
@@ -241,6 +273,8 @@ export default function App() {
               type="button"
               onClick={() => {
                 bulkRequested.current = false;
+                summariesRequested.current = false;
+                exchangesRequested.current = false;
                 derivedRequested.current = false;
                 setRetryToken((n) => n + 1);
               }}
@@ -286,6 +320,7 @@ export default function App() {
               <DeptTab
                 index={index}
                 derived={derived}
+                exchanges={exchanges}
                 loading={detailLoading}
                 open={focus}
                 onNavigate={navigate}
@@ -296,8 +331,19 @@ export default function App() {
               <MemberTab
                 index={index}
                 derived={derived}
+                exchanges={exchanges}
+                meetings={meetings}
                 loading={detailLoading}
                 open={focus}
+                onNavigate={navigate}
+              />
+            )}
+
+            {activeTab === 'asks' && (
+              <AsksTab
+                index={index}
+                meetings={meetings}
+                loading={detailLoading}
                 onNavigate={navigate}
               />
             )}
