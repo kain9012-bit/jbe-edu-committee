@@ -31,18 +31,42 @@
 `전북특별자치도교육청 행정국과 감사관 소관 …보고 청취의 건` 이라는 안건 아래에서
 답한 과는 그 국 소속이다. 조직도를 사람이 적어 넣지 않아도 회의록이 알려 준다.
 
-## 질의–답변 짝짓기는 확실한 것만 나란히 둔다
+## 오간 말은 **주고받은 덩어리**로 묶는다
 
-위원회 회의록은 `의원 질의 → 집행부 답변` 이 번갈아 나오지만 늘 그렇지는 않다.
-국장이 답하다 과장이 이어받으면 그 과장 답변 앞의 의원 발언은 그 답변에 대한
-질의가 아니다. 실제로 이런 짝이 만들어졌다.
+처음에는 집행부 답변 하나마다 그 앞의 의원 발언을 붙여 한 건으로 만들었다.
+그랬더니 같은 주제로 열 번을 주고받은 대목이 열 개의 카드로 쪼개져 나왔다.
 
-    질의: 봉서중학교가 4100까지 다운이 됐는데 6000만 원을 계상하는 것이 많지 않냐
-    답변: 남원에 하나 있는데요. 지금 임시 모듈러는 생산을 안 하고 있습니다.
+    질의: 교육장 지역 공모제를 지금 하고 있죠?
+    답변: 예, 맞습니다.
+    ─────
+    질의: 지난 6월 추천 접수 결과가 어땠는지 설명해 보세요.
+    답변: 그 추천받은 인원 수인가요?
+    ─────
+    답변: 정확하게 기억하지는 못하고요…
 
-그래서 **질의 바로 다음 발언이 답변일 때만** `direct` 로 표시한다(전체의 69%).
-나머지는 화면에서 나란히 두지 않고 "앞선 발언"으로 낮춰 보여준다.
+이러면 **회의록 전문에 필터만 씌운 것과 다를 게 없다.** 게다가 답변이 앞의
+질의와 바로 안 이어질 때 "앞선 발언과 이어지지 않습니다" 같은 군더더기를
+붙여야 했는데, 그것도 쪼갰기 때문에 생긴 문제였다.
 
+그래서 **한 위원이 한 안건에서 주고받은 것을 통째로 한 덩어리**로 묶는다.
+위원회 회의는 위원장이 "○○ 위원님 질의해 주시기 바랍니다" 하고 넘기면
+그 위원이 여러 부서를 상대로 한 주제를 끝까지 파고드는 구조다. 그 단위가
+사람이 읽는 단위다.
+
+덩어리가 끊기는 자리는 셋이다.
+  - 다른 위원이 질의를 시작할 때
+  - 안건이 바뀔 때
+  - **같은 위원이 다른 부서로 화제를 돌릴 때**
+    ("143쪽 한번 보시죠, 교원인사과" → … → "161쪽이요, 문예체건강과 한번 보세요")
+    위원이 상대 부서 이름을 부르는 것이 가장 확실한 화제 전환 신호다. 이걸 안 잡으면
+    한 위원의 질의 시간 전체가 52건짜리 한 덩어리가 되어 서로 다른 주제가 섞인다.
+  - 위원장의 진행 발언(호명·상정·정회)은 덩어리에 넣지 않고 흘려보낸다
+
+짧은 되물음("예.", "1000여 명 이상으로 됐어요?")도 덩어리 안에 남긴다. 길이로 자르면
+답변만 있고 질문이 없는 자리가 생겨 읽는 사람이 앞뒤를 못 맞춘다.
+
+이렇게 하면 부서를 눌렀을 때, 그 부서가 답한 **대화 전체**가 앞뒤 맥락과 함께
+보인다. 국장이 답하다 과장이 이어받은 것도 한 덩어리 안에 그대로 남는다.
 """
 from __future__ import annotations
 
@@ -58,7 +82,7 @@ from config import DATA, INDEX, RECORDS
 from depts import BUREAUS, DEPARTMENTS
 
 # 화면에 미리보기로 띄울 길이. 전문은 회차 탭에서 본다.
-SNIP = 180
+SNIP = 260
 
 # 긴 이름부터 찾아야 `교육과` 가 `중등교육과` 를 가로채지 않는다.
 _MENTION = sorted(DEPARTMENTS, key=len, reverse=True)
@@ -116,49 +140,104 @@ def bureau_map(docs: list[dict]) -> dict[str, str]:
     return {d: c.most_common(1)[0][0] for d, c in votes.items() if c}
 
 
-def exchanges(doc: dict) -> list[dict]:
-    """집행부 답변마다 그 앞의 의원 발언을 붙인다.
+# 위원장의 진행 발언. 질의가 아니라 회의를 굴리는 말이다.
+# 이걸 질의로 세면 "전용태 위원이 모든 부서에 질의했다" 는 엉뚱한 통계가 나온다.
+_PROGRESS = re.compile(
+    r"질의해\s*주시기|답변해\s*주시기|보고해\s*주시기|설명해\s*주시기"
+    r"|수고하셨습니다|상정합니다|개의하겠습니다|산회를\s*선포|정회|의사일정"
+    r"|성원이\s*되었으므로|의석을\s*정리|검토보고|제안설명|선포합니다"
+)
 
-    바로 앞이 아니면 `direct: false` 로 표시한다. 화면은 그때 질의를 나란히
-    두지 않는다 — 틀린 짝을 맞는 짝처럼 보여주는 것이 가장 나쁘다.
+
+def is_progress(body: str) -> bool:
+    """회의 진행을 위한 말인가 (호명·상정·정회)."""
+    return bool(_PROGRESS.search(body)) and len(body) < 320
+
+
+def dialogs(doc: dict) -> list[dict]:
+    """한 위원이 한 안건에서 주고받은 것을 통째로 한 덩어리로 묶는다.
+
+    덩어리 하나가 화면의 카드 하나다. 답변마다 쪼개면 회의록 전문과 다를 게
+    없다 — 같은 주제로 열 번 주고받은 대목이 열 개 카드가 된다.
     """
-    turns = doc["turns"]
     out: list[dict] = []
-    last_member: dict | None = None
+    cur: dict | None = None
 
-    for t in turns:
-        if t["role"] == "의원":
-            # 진행 발언(개의·상정·산회)은 질의가 아니다. 길이로 거른다.
-            if len(" ".join(t["lines"])) > 30:
-                last_member = t
-            continue
-        if t["role"] != "집행부" or not t.get("dept"):
-            continue
+    # 이 회의에 실제로 나온 기관 이름. 위원이 부르는 상대를 알아내는 데 쓴다.
+    here = sorted(
+        {t["dept"] for t in doc["turns"] if t.get("dept")} | set(DEPARTMENTS),
+        key=len, reverse=True,
+    )
 
-        answer_full = " ".join(t["lines"])
-        question_full = " ".join(last_member["lines"]) if last_member else ""
-        direct = bool(last_member) and t["i"] == last_member["i"] + 1
+    def addressed(body: str) -> list[str]:
+        return [d for d in here if d in body]
 
-        # 언급 부서 — 짝이 확실할 때만 질의 쪽까지 본다.
-        # 짝이 불확실한데 질의 본문까지 훑으면 엉뚱한 과에 건이 붙는다.
-        mentions = mentioned_depts(answer_full, question_full if direct else "")
-        mentions = [m for m in mentions if m != t["dept"]]
+    def close():
+        nonlocal cur
+        if cur and cur["turns"]:
+            # 집행부가 한 마디도 안 한 덩어리(의원 소회·토론)는 질의응답이 아니다.
+            if any(t["role"] != "의원" for t in cur["turns"]):
+                out.append(cur)
+        cur = None
 
-        out.append({
+    def start(member: str | None, agenda: str):
+        nonlocal cur
+        close()
+        cur = {
             "meeting": doc["id"],
             "date": doc["date"],
-            "agenda": t.get("agendaTitle") or "",
-            "dept": t["dept"],
-            "deptKind": t.get("deptKind") or "기타",
-            "mentions": mentions,
-            "answerer": t["speaker"],
-            "answer": snip(answer_full),
-            "answerTurn": t["i"],
-            "member": last_member["name"] if last_member else None,
-            "question": snip(question_full) if last_member else None,
-            "questionTurn": last_member["i"] if last_member else None,
-            "direct": direct,
+            "agenda": agenda,
+            "member": member,
+            "depts": [],
+            "turns": [],
+        }
+
+    for t in doc["turns"]:
+        body = " ".join(t["lines"]).strip()
+        if not body:
+            continue
+        agenda = t.get("agendaTitle") or ""
+
+        if t["role"] == "의원":
+            if is_progress(body):
+                continue          # 호명·상정·정회는 흘려보낸다
+            same = cur is not None and cur["member"] == t["name"] and cur["agenda"] == agenda
+            if same:
+                # 같은 위원이 이어 말하더라도 **다른 부서를 부르면** 화제가 바뀐 것이다.
+                called = [d for d in addressed(body) if d not in cur["depts"]]
+                if called and cur["depts"]:
+                    start(t["name"], agenda)
+            else:
+                if len(body) <= 25:
+                    continue      # 짧은 맞장구로 새 덩어리를 열지는 않는다
+                start(t["name"], agenda)
+        elif t["role"] in ("집행부", "전문위원"):
+            if cur is None or cur["agenda"] != agenda:
+                # 의원 질의 없이 시작하는 대목 = 업무보고·제안설명
+                start(None, agenda)
+        else:
+            continue
+
+        cur["turns"].append({
+            "i": t["i"],
+            "role": t["role"],
+            "speaker": t["speaker"],
+            "dept": t.get("dept"),
+            "text": snip(body),
         })
+        if t.get("dept") and t["dept"] not in cur["depts"]:
+            cur["depts"].append(t["dept"])
+
+    close()
+
+    for d in out:
+        d["turnCount"] = len(d["turns"])
+        d["startTurn"] = d["turns"][0]["i"]
+        d["endTurn"] = d["turns"][-1]["i"]
+        # 언급 부서 — 오간 말 전체에서 이름이 나온 다른 과.
+        # 국장이 대신 답해도 담당 과가 잡히게 하는 장치다.
+        blob = " ".join(t["text"] for t in d["turns"])
+        d["mentions"] = [m for m in mentioned_depts(blob) if m not in d["depts"]]
     return out
 
 
@@ -187,7 +266,7 @@ def main() -> int:
         })
 
     for doc in docs:
-        ex = exchanges(doc)
+        ex = dialogs(doc)
         all_ex.extend(ex)
 
         for t in doc["turns"]:
@@ -211,11 +290,14 @@ def main() -> int:
                 d["mentionCount"] += 1
                 d["meetings"].setdefault(e["meeting"], 0)
 
-            if e["member"] and e["direct"]:
-                depts[e["dept"]]["members"][e["member"]] = \
-                    depts[e["dept"]]["members"].get(e["member"], 0) + 1
-                members[e["member"]]["depts"][e["dept"]] = \
-                    members[e["member"]]["depts"].get(e["dept"], 0) + 1
+            # 누가 누구에게 물었나 — 덩어리 단위로 센다.
+            # 답변 하나하나를 세면 말을 많이 받아낸 위원이 더 집요해 보인다.
+            if e["member"]:
+                for name in e["depts"]:
+                    depts[name]["members"][e["member"]] = \
+                        depts[name]["members"].get(e["member"], 0) + 1
+                    members[e["member"]]["depts"][name] = \
+                        members[e["member"]]["depts"].get(name, 0) + 1
 
         for a in doc.get("matters") or []:
             agendas.append({"meeting": doc["id"], "date": doc["date"], "title": a})
@@ -247,21 +329,22 @@ def main() -> int:
                       lambda v: (-v["answerCount"], -v["mentionCount"], v["name"])),
         "members": flat(members, "depts", lambda v: -v["turnCount"]),
         "agendas": agendas,
-        "exchangeCount": len(all_ex),
+        "dialogCount": len(all_ex),
     }
     path = DATA / "derived.json"
     path.write_text(json.dumps(derived, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    ex_path = DATA / "exchanges.json"
+    ex_path = DATA / "dialogs.json"
     ex_path.write_text(json.dumps(all_ex, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
-    direct = sum(1 for e in all_ex if e["direct"])
+    turns_in = sum(e["turnCount"] for e in all_ex)
     only_mention = sum(1 for d in derived["depts"] if d["answerCount"] == 0)
     kb = path.stat().st_size / 1024
     ex_kb = ex_path.stat().st_size / 1024
     print(f"부서 {len(derived['depts'])}곳 (답변 없이 언급만 {only_mention}곳) · "
           f"의원 {len(derived['members'])}명 · 안건 {len(agendas)}건 → {path.name} ({kb:.0f}KB)")
-    print(f"질의응답 {len(all_ex)}건 (짝이 확실한 것 {direct}건, "
-          f"{direct * 100 // max(1, len(all_ex))}%) → {ex_path.name} ({ex_kb:.0f}KB)")
+    print(f"주고받은 덩어리 {len(all_ex)}개 · 발언 {turns_in}건 "
+          f"(덩어리당 평균 {turns_in / max(1, len(all_ex)):.1f}건) "
+          f"→ {ex_path.name} ({ex_kb:.0f}KB)")
     print("추천 검색어: " + ", ".join(f"{t['word']}({t['count']})" for t in topics))
     return 0
 

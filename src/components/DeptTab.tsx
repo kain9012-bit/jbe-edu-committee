@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Building2, Search } from 'lucide-react';
-import type { DerivedDoc, Exchange, IndexDoc, Navigate } from '../types';
+import type { DerivedDoc, Dialog, IndexDoc, Navigate } from '../types';
 import { Badge, ChipRow, EmptyState, SectionTitle } from './Ui';
-import { ExchangeItem } from './Exchange';
+import { DialogItem } from './Dialog';
 import { MeetingFilter } from './MeetingFilter';
 import { kindRank } from '../lib/util';
 import { deptStatsFor } from '../lib/stats';
@@ -10,8 +10,8 @@ import { deptStatsFor } from '../lib/stats';
 interface Props {
   index: IndexDoc;
   derived: DerivedDoc;
-  /** 오간 말 전문. 따로 받아 온다(805KB). */
-  exchanges: Exchange[];
+  /** 주고받은 덩어리. 따로 받아 온다(694KB). */
+  dialogs: Dialog[];
   loading: boolean;
   /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
   open: string | null;
@@ -27,7 +27,7 @@ const KINDS = ['전체', '본청', '직속기관', '교육지원청'];
  * 정작 담당 과는 비어 있다. **답변한 것**과 **이름이 언급된 것**을 따로 세고,
  * 화면에서도 따로 보여준다. 섞으면 언급된 것을 답변한 것으로 오해한다.
  */
-export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, open, onNavigate }) => {
+export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, open, onNavigate }) => {
   const [kind, setKind] = useState('전체');
   const [q, setQ] = useState('');
   const [meetingId, setMeetingId] = useState('전체');
@@ -47,16 +47,16 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
   // 목록만 걸러 놓고 카드 숫자는 전체 합계로 두면 어느 쪽을 믿을지 알 수 없다.
   const ex = useMemo(
     () => (meetingId === '전체'
-      ? exchanges
-      : exchanges.filter((e) => e.meeting === meetingId)),
-    [exchanges, meetingId],
+      ? dialogs
+      : dialogs.filter((e) => e.meeting === meetingId)),
+    [dialogs, meetingId],
   );
 
   const perMeeting = useMemo(() => {
     const c = new Map<string, number>();
-    exchanges.forEach((e) => c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1));
+    dialogs.forEach((e) => c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1));
     return c;
-  }, [exchanges]);
+  }, [dialogs]);
 
   const base = useMemo(
     () => (meetingId === '전체' ? derived.depts : deptStatsFor(derived.depts, ex)),
@@ -147,9 +147,9 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
         <ul className="space-y-3">
           {depts.map((d) => {
             const on = open === d.name;
-            const answered = on ? ex.filter((e) => e.dept === d.name) : [];
+            const answered = on ? ex.filter((e) => e.depts.includes(d.name)) : [];
             const mentioned = on
-              ? ex.filter((e) => e.dept !== d.name && e.mentions.includes(d.name))
+              ? ex.filter((e) => !e.depts.includes(d.name) && e.mentions.includes(d.name))
               : [];
             // 국을 열면 소속 과가 답한 것도 함께 본다. 국장이 대신 답한 건과
             // 과가 직접 답한 건이 갈려 있어서, 국 단위로 봐야 전체가 보인다.
@@ -157,7 +157,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
               .filter((x) => x.bureau === d.name)
               .map((x) => x.name);
             const children = on && childNames.length
-              ? ex.filter((e) => childNames.includes(e.dept))
+              ? ex.filter((e) => e.depts.some((x) => childNames.includes(x)))
               : [];
 
             return (
@@ -205,8 +205,8 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
                         </h5>
                         <div className="divide-y divide-slate-100">
                           {answered.map((e, i) => (
-                            <ExchangeItem key={`a${i}`} ex={e} meetingTitle={titleOf(e.meeting)}
-                              onNavigate={onNavigate} />
+                            <DialogItem key={`a${i}`} dialog={e} meetingTitle={titleOf(e.meeting)}
+                              onNavigate={onNavigate} highlightDept={d.name} />
                           ))}
                         </div>
                       </section>
@@ -223,8 +223,8 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
                         </h5>
                         <div className="divide-y divide-slate-100">
                           {mentioned.map((e, i) => (
-                            <ExchangeItem key={`m${i}`} ex={e} meetingTitle={titleOf(e.meeting)}
-                              onNavigate={onNavigate} viewingDept={d.name} />
+                            <DialogItem key={`m${i}`} dialog={e} meetingTitle={titleOf(e.meeting)}
+                              onNavigate={onNavigate} highlightDept={d.name} />
                           ))}
                         </div>
                       </section>
@@ -241,7 +241,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, exchanges, loading, o
                         </h5>
                         <div className="divide-y divide-slate-100">
                           {children.map((e, i) => (
-                            <ExchangeItem key={`c${i}`} ex={e} meetingTitle={titleOf(e.meeting)}
+                            <DialogItem key={`c${i}`} dialog={e} meetingTitle={titleOf(e.meeting)}
                               onNavigate={onNavigate} />
                           ))}
                         </div>

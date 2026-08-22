@@ -106,8 +106,8 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
           },
           {
             icon: MessageSquareQuote, label: '질의응답',
-            value: `${derived.exchangeCount.toLocaleString()}건`,
-            sub: '집행부 답변마다 앞선 질의를 붙였습니다',
+            value: `${derived.dialogCount.toLocaleString()}건`,
+            sub: '한 위원이 한 부서와 주고받은 것을 하나로 묶었습니다',
           },
           {
             icon: Building2, label: '답변한 기관', value: `${derived.depts.length}곳`,

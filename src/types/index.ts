@@ -130,23 +130,34 @@ export interface MeetingDoc {
   }[];
 }
 
-export interface Exchange {
+export interface DialogTurn {
+  i: number;
+  role: '의원' | '집행부' | '전문위원' | '기타';
+  speaker: string;
+  dept: string | null;
+  text: string;
+}
+
+/**
+ * 한 위원이 한 안건에서 **한 부서를 상대로 주고받은 덩어리**.
+ *
+ * 예전에는 답변 하나마다 한 건으로 쪼갰다. 그랬더니 같은 주제로 열 번 주고받은
+ * 대목이 열 개 카드가 됐고, 회의록 전문에 필터만 씌운 것과 다를 게 없었다.
+ */
+export interface Dialog {
   meeting: string;
   date: string;
   agenda: string;
-  /** 답변한 사람의 소속 */
-  dept: string;
-  deptKind: string;
-  /** 질의·답변 본문에 이름이 나온 다른 부서 — 답변한 것과 구분해서 다룬다 */
-  mentions: string[];
-  answerer: string;
-  answer: string;
-  answerTurn: number;
+  /** 질의한 위원. 업무보고·제안설명처럼 질의 없이 시작한 대목은 null. */
   member: string | null;
-  question: string | null;
-  questionTurn: number | null;
-  /** 질의 바로 다음 발언이 이 답변인가. 아니면 짝을 나란히 두지 않는다. */
-  direct: boolean;
+  /** 이 덩어리에서 답한 기관들 */
+  depts: string[];
+  /** 오간 말에 이름이 나온 다른 부서 */
+  mentions: string[];
+  turns: DialogTurn[];
+  turnCount: number;
+  startTurn: number;
+  endTurn: number;
 }
 
 export interface DeptStat {
@@ -176,12 +187,12 @@ export interface DerivedDoc {
   depts: DeptStat[];
   members: MemberStat[];
   agendas: { meeting: string; date: string; title: string }[];
-  /** 오간 말은 exchanges.json 에 따로 있다. 여기는 개수만. */
-  exchangeCount: number;
+  /** 오간 말은 dialogs.json 에 따로 있다. 여기는 개수만. */
+  dialogCount: number;
 }
 
 export const emptyDerived: DerivedDoc = {
-  topics: [], depts: [], members: [], agendas: [], exchangeCount: 0,
+  topics: [], depts: [], members: [], agendas: [], dialogCount: 0,
 };
 
 /** 탭 이동. `focus` 는 부서명·의원명처럼 그 탭에서 바로 펼쳐 볼 대상. */

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import type {
-  ActiveTab, DerivedDoc, Exchange, IndexDoc, MeetingDoc, Navigate, RecordDoc,
+  ActiveTab, DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate, RecordDoc,
 } from './types';
 import { emptyDerived, emptyIndex } from './types';
 import { Header } from './components/Header';
@@ -54,7 +54,7 @@ export default function App() {
   // 그럴듯한 표본을 채워두면 못 받았을 때 가짜가 진짜처럼 보인다.
   const [index, setIndex] = useState<IndexDoc>(emptyIndex);
   const [derived, setDerived] = useState<DerivedDoc>(emptyDerived);
-  const [exchanges, setExchanges] = useState<Exchange[]>([]);
+  const [dialogs, setDialogs] = useState<Dialog[]>([]);
   const [records, setRecords] = useState<Record<string, RecordDoc>>({});
   const [meetings, setMeetings] = useState<Record<string, MeetingDoc>>({});
 
@@ -102,17 +102,17 @@ export default function App() {
     })();
   }, [activeTab]);
 
-  // ── 오간 말 전문(805KB). 부서별·의원별에서만 필요하다. ──
-  const exchangesRequested = React.useRef(false);
+  // ── 주고받은 덩어리(694KB). 부서별·의원별에서만 필요하다. ──
+  const dialogsRequested = React.useRef(false);
   useEffect(() => {
     if (!['dept', 'member'].includes(activeTab)) return;
-    if (exchangesRequested.current) return;
-    exchangesRequested.current = true;
+    if (dialogsRequested.current) return;
+    dialogsRequested.current = true;
     setDetailLoading(true);
     (async () => {
-      const x = await loadJson<Exchange[]>('exchanges.json');
-      if (x) setExchanges(x);
-      else exchangesRequested.current = false;
+      const x = await loadJson<Dialog[]>('dialogs.json');
+      if (x) setDialogs(x);
+      else dialogsRequested.current = false;
       setDetailLoading(false);
     })();
   }, [activeTab]);
@@ -274,7 +274,7 @@ export default function App() {
               onClick={() => {
                 bulkRequested.current = false;
                 summariesRequested.current = false;
-                exchangesRequested.current = false;
+                dialogsRequested.current = false;
                 derivedRequested.current = false;
                 setRetryToken((n) => n + 1);
               }}
@@ -320,7 +320,7 @@ export default function App() {
               <DeptTab
                 index={index}
                 derived={derived}
-                exchanges={exchanges}
+                dialogs={dialogs}
                 loading={detailLoading}
                 open={focus}
                 onNavigate={navigate}
@@ -331,7 +331,7 @@ export default function App() {
               <MemberTab
                 index={index}
                 derived={derived}
-                exchanges={exchanges}
+                dialogs={dialogs}
                 meetings={meetings}
                 loading={detailLoading}
                 open={focus}

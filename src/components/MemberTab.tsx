@@ -1,17 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import { UserRound } from 'lucide-react';
-import type { DerivedDoc, Exchange, IndexDoc, MeetingDoc, Navigate } from '../types';
+import type { DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate } from '../types';
 import { EmptyState, SectionTitle } from './Ui';
 import { AskItem } from './AskItem';
-import { ExchangeItem } from './Exchange';
+import { DialogItem } from './Dialog';
 import { MeetingFilter } from './MeetingFilter';
 import { memberStatsFor } from '../lib/stats';
 
 interface Props {
   index: IndexDoc;
   derived: DerivedDoc;
-  /** 오간 말 전문. 따로 받아 온다(805KB). */
-  exchanges: Exchange[];
+  /** 주고받은 덩어리. 따로 받아 온다(694KB). */
+  dialogs: Dialog[];
   /** 요약(사람이 쓴 것). 그 위원이 요구·지적한 것을 여기서 가져온다. */
   meetings: Record<string, MeetingDoc>;
   loading: boolean;
@@ -27,7 +27,7 @@ interface Props {
  * 부서 담당자에게 가장 실용적인 정보는 "이 위원이 우리 과에 무엇을 요구했나" 다.
  */
 export const MemberTab: React.FC<Props> = ({
-  index, derived, exchanges, meetings, loading, open, onNavigate,
+  index, derived, dialogs, meetings, loading, open, onNavigate,
 }) => {
   const [meetingId, setMeetingId] = useState('전체');
   const narrowed = meetingId !== '전체';
@@ -39,17 +39,17 @@ export const MemberTab: React.FC<Props> = ({
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
 
   const ex = useMemo(
-    () => (narrowed ? exchanges.filter((e) => e.meeting === meetingId) : exchanges),
-    [exchanges, meetingId, narrowed],
+    () => (narrowed ? dialogs.filter((e) => e.meeting === meetingId) : dialogs),
+    [dialogs, meetingId, narrowed],
   );
 
   const perMeeting = useMemo(() => {
     const c = new Map<string, number>();
-    exchanges.forEach((e) => {
+    dialogs.forEach((e) => {
       if (e.member) c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1);
     });
     return c;
-  }, [exchanges]);
+  }, [dialogs]);
 
   const members = useMemo(
     () => (narrowed ? memberStatsFor(derived.members, ex) : derived.members),
@@ -86,8 +86,8 @@ export const MemberTab: React.FC<Props> = ({
       <MeetingFilter index={index} value={meetingId} onChange={setMeetingId} counts={perMeeting} />
 
       <p className="text-sm text-slate-600">
-        아래 부서 목록은 <strong className="font-bold text-slate-900">질의 바로 다음에 그 부서가
-        답한 건</strong>만 셉니다. 답변이 여러 사람을 거친 경우는 세지 않습니다.
+        한 위원이 한 부서를 상대로 주고받은 것을 <strong className="font-bold text-slate-900">하나로
+        묶어</strong> 셉니다. 아래 숫자는 그 묶음의 개수입니다.
       </p>
 
       {members.length === 0 ? (
@@ -161,8 +161,8 @@ export const MemberTab: React.FC<Props> = ({
                         </p>
                       )}
                       {mine.map((e, i) => (
-                        <ExchangeItem key={i} ex={e} meetingTitle={titleOf(e.meeting)}
-                          onNavigate={onNavigate} />
+                        <DialogItem key={i} dialog={e} meetingTitle={titleOf(e.meeting)}
+                          onNavigate={onNavigate} hideMember />
                       ))}
                     </div>
                   </div>
