@@ -72,6 +72,13 @@ export const AskItem: React.FC<{
     </div>
 
     {/* 오간 말 — 접어 둔다. 목록에서는 제목과 본문만 훑는다. */}
-    <AskDetail quote={ask.quote} speaker={ask.speaker} replies={ask.replies} />
+    <AskDetail
+      quote={ask.quote}
+      speaker={ask.speaker}
+      replies={ask.replies}
+      onOpenRecord={ask.turn !== null && ask.turn !== undefined
+        ? () => onNavigate('record', { meetingId: ask.meeting, turn: ask.turn! })
+        : null}
+    />
   </article>
 );

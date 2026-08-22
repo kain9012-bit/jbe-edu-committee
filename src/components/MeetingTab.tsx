@@ -199,7 +199,14 @@ export const MeetingTab: React.FC<Props> = ({
                       </ul>
                     </div>
                     {/* 오간 말은 접어 둔다. 여기서는 받아 갈 것만 훑는다. */}
-                    <AskDetail quote={a.quote} speaker={a.speaker} replies={repliesOf(a.title)} />
+                    <AskDetail
+                      quote={a.quote}
+                      speaker={a.speaker}
+                      replies={repliesOf(a.title)}
+                      onOpenRecord={a.turn !== null && a.turn !== undefined
+                        ? () => onNavigate('record', { meetingId: currentId, turn: a.turn! })
+                        : null}
+                    />
                   </li>
                 ))}
               </ul>
