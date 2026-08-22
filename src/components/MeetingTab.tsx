@@ -3,7 +3,7 @@ import { FileText, Clock, ExternalLink } from 'lucide-react';
 import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, Quote, SectionTitle, SourceLink } from './Ui';
 import { MeetingPicker } from './MeetingPicker';
-import { daysBetween, korDate, sourceNote, IMSI_NOTE } from '../lib/util';
+import { korDate, sourceNote } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -21,7 +21,6 @@ export const MeetingTab: React.FC<Props> = ({
   index, currentId, setCurrentId, meeting, record, loading, onNavigate,
 }) => {
   const entry = index.meetings.find((m) => m.id === currentId);
-  const lag = entry?.publishedAt ? daysBetween(entry.date, entry.publishedAt) : null;
 
   return (
     <div className="space-y-6 pb-12">
@@ -31,20 +30,10 @@ export const MeetingTab: React.FC<Props> = ({
         <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             {entry.kind === 'K' && <Badge tone="red">행정사무감사</Badge>}
-            {entry.recordStatus === '임시' && <Badge tone="amber">속기 미확정</Badge>}
-            {entry.recordStatus === '확정' && <Badge tone="green">확정 회의록</Badge>}
             <span className="text-sm text-slate-500">{korDate(entry.date)}</span>
           </div>
           <h2 className="text-xl font-bold text-slate-900">{entry.title}</h2>
-          <p className="text-sm text-slate-600">
-            {sourceNote(entry)}
-            {lag !== null && <> · 회의 후 {lag}일 만에 발간</>}
-          </p>
-          {entry.recordStatus === '임시' && (
-            <p className="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-md p-3">
-              {IMSI_NOTE}
-            </p>
-          )}
+          <p className="text-sm text-slate-600">{sourceNote(entry)}</p>
           <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
             {entry.viewerUrl && <SourceLink href={entry.viewerUrl}>도의회 회의록 원문</SourceLink>}
             {entry.vod.map((v) => (
@@ -73,10 +62,10 @@ export const MeetingTab: React.FC<Props> = ({
             icon={entry?.hasRecord
               ? <FileText className="w-6 h-6" aria-hidden="true" />
               : <Clock className="w-6 h-6" aria-hidden="true" />}
-            title={entry?.hasRecord ? '아직 요약을 쓰지 않았습니다' : '속기록이 아직 발간되지 않았습니다'}
+            title={entry?.hasRecord ? '아직 요약을 쓰지 않았습니다' : '회의록이 아직 올라오지 않았습니다'}
             desc={entry?.hasRecord
               ? '회의록 전문과 부서별·의원별 정리는 이미 볼 수 있습니다. 요약은 사람이 읽고 씁니다.'
-              : '도의회 속기록은 회의 후 보통 3~4주, 정례회·행정사무감사철에는 두 달까지 걸립니다.'}
+              : '도의회 회의록은 회의 후 보통 3~4주, 정례회·행정사무감사철에는 두 달까지 걸립니다.'}
           />
 
           {record && record.matters.length > 0 && (

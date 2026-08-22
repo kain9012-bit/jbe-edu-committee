@@ -101,7 +101,7 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
             <EmptyState
               icon={<Gavel className="w-6 h-6" aria-hidden="true" />}
               title="아직 정리된 안건이 없습니다"
-              desc="속기록이 발간되면 심사 안건이 자동으로 채워집니다."
+              desc="회의록이 올라오면 심사 안건이 자동으로 채워집니다."
             />
           ) : (
             <ul className="space-y-3">

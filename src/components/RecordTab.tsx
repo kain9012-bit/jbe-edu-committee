@@ -3,7 +3,7 @@ import { FileText, Paperclip, Users, Clock, ListTree } from 'lucide-react';
 import type { IndexDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, SectionTitle, SourceLink } from './Ui';
 import { MeetingPicker } from './MeetingPicker';
-import { korDate, highlight, looseTest, IMSI_NOTE } from '../lib/util';
+import { korDate, highlight, looseTest, QUOTE_CAUTION } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -88,10 +88,10 @@ export const RecordTab: React.FC<Props> = ({
       {!loading && !record && (
         <EmptyState
           icon={<Clock className="w-6 h-6" aria-hidden="true" />}
-          title="속기록이 아직 발간되지 않았습니다"
+          title="회의록이 아직 올라오지 않았습니다"
           desc={
             entry
-              ? `${korDate(entry.date)} 회의입니다. 도의회 속기록은 회의 후 보통 3~4주, 정례회·행정사무감사철에는 두 달까지 걸립니다. 그동안은 영상으로 확인해 주세요.`
+              ? `${korDate(entry.date)} 회의입니다. 도의회 회의록은 회의 후 보통 3~4주, 정례회·행정사무감사철에는 두 달까지 걸립니다. 그동안은 영상으로 확인해 주세요.`
               : undefined
           }
         >
@@ -110,19 +110,12 @@ export const RecordTab: React.FC<Props> = ({
           {/* 회의 개요 */}
           <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge tone={record.recordStatus === '확정' ? 'green' : 'amber'}>
-                {record.recordStatus === '확정' ? '확정 회의록' : '임시회의록 · 속기 미확정'}
-              </Badge>
+              <Badge tone="green">도의회 공식 회의록</Badge>
               <span className="text-sm text-slate-500">{korDate(record.date)}</span>
               {record.publishedAt && (
                 <span className="text-sm text-slate-400">발간 {korDate(record.publishedAt)}</span>
               )}
             </div>
-            {record.recordStatus === '임시' && (
-              <p className="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-md p-3">
-                {IMSI_NOTE}
-              </p>
-            )}
             <h2 className="text-xl font-bold text-slate-900">{record.title}</h2>
             <p className="text-sm text-slate-600">
               {record.meta.count} · {record.meta.sort}
@@ -147,6 +140,12 @@ export const RecordTab: React.FC<Props> = ({
                 <SourceLink key={v.vodNo} href={v.playerUrl}>{v.label} 영상</SourceLink>
               ))}
             </div>
+
+            {/* 확정 전이라는 사실은 **인용하는 사람에게만** 쓸모가 있다.
+                목록이나 요약에서는 아무 조치도 못 하므로 적지 않는다. */}
+            {record.recordStatus === '임시' && (
+              <p className="text-xs text-slate-500 pt-1">{QUOTE_CAUTION}</p>
+            )}
           </section>
 
           {/* 출석 */}

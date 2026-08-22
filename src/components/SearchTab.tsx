@@ -172,7 +172,7 @@ export const SearchTab: React.FC<Props> = ({
             <EmptyState
               icon={<FileSearch className="w-6 h-6" aria-hidden="true" />}
               title="찾는 말이 없습니다"
-              desc="회의록이 확보된 회차 안에서만 찾습니다. 속기록이 아직 안 나온 회의는 검색되지 않습니다."
+              desc="회의록이 확보된 회차 안에서만 찾습니다. 회의록이 아직 안 나온 회의는 검색되지 않습니다."
             />
           ) : (
             <ul className="space-y-2">

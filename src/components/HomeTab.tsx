@@ -4,7 +4,7 @@ import {
 } from 'lucide-react';
 import type { DerivedDoc, IndexDoc, Navigate } from '../types';
 import { Badge, SectionTitle } from './Ui';
-import { daysBetween, korDate, stageOf, STAGE_LABEL, STAGE_TONE } from '../lib/util';
+import { korDate, stageOf, STAGE_LABEL, STAGE_TONE } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -102,7 +102,7 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
         {[
           {
             icon: FileText, label: '회의', value: `${meetings.length}건`,
-            sub: `속기록 확보 ${withRecord.length}건${waiting.length ? ` · 대기 ${waiting.length}건` : ''}`,
+            sub: `회의록 있음 ${withRecord.length}건${waiting.length ? ` · 대기 ${waiting.length}건` : ''}`,
           },
           {
             icon: MessageSquareQuote, label: '질의응답',
@@ -160,7 +160,6 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
         <ul className="space-y-3">
           {meetings.map((m) => {
             const st = stageOf(m);
-            const lag = m.publishedAt ? daysBetween(m.date, m.publishedAt) : null;
             return (
               <li key={m.id}>
                 <button
@@ -174,7 +173,6 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
                   <div className="flex flex-wrap items-center gap-2 mb-1.5">
                     <Badge tone={STAGE_TONE[st]}>{STAGE_LABEL[st]}</Badge>
                     {m.kind === 'K' && <Badge tone="red">행정사무감사</Badge>}
-                    {m.recordStatus === '임시' && <Badge tone="amber">속기 미확정</Badge>}
                     <span className="text-sm text-slate-500">{korDate(m.date)}</span>
                   </div>
                   <p className="font-bold text-slate-900 text-lg">{m.title}</p>
@@ -184,14 +182,11 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
                       {' '}안건 {m.agendaCount}건 ·
                       {' '}위원 {m.members.length}명
                       {m.depts.length > 0 && <> · 답변 기관 {m.depts.length}곳</>}
-                      {lag !== null && (
-                        <span className="text-slate-400"> · 회의 후 {lag}일 만에 발간</span>
-                      )}
                     </p>
                   ) : (
                     <p className="text-sm text-slate-500 mt-1 flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      속기록이 아직 발간되지 않았습니다. 영상은 아래에서 볼 수 있습니다.
+                      회의록이 아직 올라오지 않았습니다. 영상은 아래에서 볼 수 있습니다.
                     </p>
                   )}
                   {m.depts.length > 0 && (

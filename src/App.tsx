@@ -342,7 +342,7 @@ export default function App() {
             <div className="text-sm text-slate-300 md:text-right space-y-1">
               <p>회의록 출처: 전북특별자치도의회 전자회의록</p>
               <p>영상 출처: 전북특별자치도의회 인터넷 의사중계</p>
-              <p>속기 미확정본은 확정 회의록으로 교체되면 내용이 바뀔 수 있습니다.</p>
+              <p>회의록이 확정본으로 갱신되면 이 화면도 자동으로 따라갑니다.</p>
             </div>
           </div>
         </div>

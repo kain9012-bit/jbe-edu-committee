@@ -33,7 +33,7 @@ export const MemberTab: React.FC<Props> = ({ index, derived, loading, open, onNa
       <EmptyState
         icon={<UserRound className="w-6 h-6" aria-hidden="true" />}
         title="아직 정리된 회의록이 없습니다"
-        desc="속기록이 발간되면 위원별 발언이 자동으로 채워집니다."
+        desc="회의록이 올라오면 위원별 발언이 자동으로 채워집니다."
       />
     );
   }

@@ -63,7 +63,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, loading, open, onNavi
       <EmptyState
         icon={<Building2 className="w-6 h-6" aria-hidden="true" />}
         title="아직 정리된 회의록이 없습니다"
-        desc="속기록이 발간되면 부서별 질의응답이 자동으로 채워집니다."
+        desc="회의록이 올라오면 부서별 질의응답이 자동으로 채워집니다."
       />
     );
   }
