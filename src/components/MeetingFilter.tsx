@@ -15,9 +15,15 @@ export const MeetingFilter: React.FC<{
   onChange: (v: string) => void;
   /** 회차별 건수. 0건인 회차는 고를 수 있게 두되 숫자로 알려 준다. */
   counts?: Map<string, number>;
+  /** 다른 필터에 걸려 0건이 된 회차는 아예 감춘다. 눌러도 빈 화면인 항목을 남기지 않는다. */
+  hideEmpty?: boolean;
   label?: string;
-}> = ({ index, value, onChange, counts, label = '회차로 좁히기' }) => {
+}> = ({ index, value, onChange, counts, hideEmpty, label = '회차로 좁히기' }) => {
   const total = counts ? [...counts.values()].reduce((a, b) => a + b, 0) : null;
+  const meetings = hideEmpty && counts
+    // 지금 고른 회차는 0건이어도 남긴다. 고르개에서 값이 사라지면 무엇을 보고 있는지 알 수 없다.
+    ? index.meetings.filter((m) => (counts.get(m.id) ?? 0) > 0 || m.id === value)
+    : index.meetings;
   return (
     <select
       value={value}
@@ -29,7 +35,7 @@ export const MeetingFilter: React.FC<{
       <option value="전체">
         회차 전체{total !== null ? ` (${total})` : ''}
       </option>
-      {index.meetings.map((m) => (
+      {meetings.map((m) => (
         <option key={m.id} value={m.id}>
           {korDate(m.date)} · {m.title}
           {counts ? ` (${counts.get(m.id) ?? 0})` : ''}

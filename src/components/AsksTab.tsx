@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ClipboardList, Search } from 'lucide-react';
 import type { Ask, IndexDoc, Navigate } from '../types';
 import { ChipRow, EmptyState, SectionTitle } from './Ui';
@@ -39,6 +39,43 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
   );
 
   /*
+   * 네 필터는 **서로 좁힌다.**
+   *
+   * 회차를 골랐는데 부서 목록에 그 회차에 나오지도 않은 국이 그대로 남아 있고,
+   * 숫자도 전 회차 합계면, 눌러 봐야 빈 화면이 나온다. 고를 수 있는 것만
+   * 보여야 필터가 필터 구실을 한다.
+   *
+   * 그래서 각 고르개의 항목은 **자기를 뺀 나머지 조건**으로 거른 목록에서 센다.
+   * 자기 조건까지 걸면 지금 고른 값 하나만 남아 다른 값으로 못 옮긴다.
+   */
+  const match = useMemo(() => {
+    const needle = q.trim();
+    return {
+      type: (a: Ask) => type === '전체' || a.type === type,
+      dept: (a: Ask) => !dept.startsWith('국:') || (a.group ?? a.dept) === dept.slice(2),
+      member: (a: Ask) => member === '전체' || a.member === member,
+      meeting: (a: Ask) => meetingId === '전체' || a.meeting === meetingId,
+      q: (a: Ask) => !needle
+        || looseTest(a.title, needle)
+        || (a.body ?? []).some((b) => looseTest(b, needle))
+        || looseTest(a.quote ?? '', needle)
+        || (a.replies ?? []).some((r) => looseTest(r.text, needle)),
+    };
+  }, [type, dept, member, meetingId, q]);
+
+  /** 자기 자신만 빼고 나머지 조건을 모두 적용한 목록 */
+  const except = (key: keyof typeof match) =>
+    all.filter((a) => (Object.keys(match) as (keyof typeof match)[])
+      .every((k) => k === key || match[k](a)));
+
+  const shown = useMemo(
+    () => all.filter((a) => Object.values(match).every((f) => f(a))),
+    [all, match],
+  );
+
+  const forType = useMemo(() => except('type'), [all, match]);
+
+  /*
    * 부서 필터에는 **국만** 세운다. 과는 넣지 않는다.
    *
    * 위원회 질의는 대개 국장이 받는다. 과 단위로 늘어놓으면 `문예체건강과 (1)`,
@@ -47,44 +84,42 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
    */
   const groups = useMemo(() => {
     const m = new Map<string, number>();
-    all.forEach((a) => {
+    except('dept').forEach((a) => {
       const g = a.group ?? a.dept;
       if (g) m.set(g, (m.get(g) ?? 0) + 1);
     });
     return [...m.entries()]
       .sort((x, y) => groupRank(x[0]) - groupRank(y[0]) || y[1] - x[1])
       .map(([name, total]) => ({ name, total }));
-  }, [all]);
-  const membersList = useMemo(
-    () => [...new Set(all.map((a) => a.member).filter(Boolean) as string[])]
-      .sort((x, y) => x.localeCompare(y, 'ko')),
-    [all],
-  );
+  }, [all, match]);
+
+  const membersList = useMemo(() => {
+    const m = new Map<string, number>();
+    except('member').forEach((a) => {
+      if (a.member) m.set(a.member, (m.get(a.member) ?? 0) + 1);
+    });
+    return [...m.entries()].sort((x, y) => x[0].localeCompare(y[0], 'ko'));
+  }, [all, match]);
+
   const perMeeting = useMemo(() => {
     const c = new Map<string, number>();
-    all.forEach((a) => c.set(a.meeting, (c.get(a.meeting) ?? 0) + 1));
+    except('meeting').forEach((a) => c.set(a.meeting, (c.get(a.meeting) ?? 0) + 1));
     return c;
-  }, [all]);
+  }, [all, match]);
 
-  const shown = useMemo(() => {
-    let list = all;
-    if (type !== '전체') list = list.filter((a) => a.type === type);
-    if (dept.startsWith('국:')) {
-      const g = dept.slice(2);
-      list = list.filter((a) => (a.group ?? a.dept) === g);
-    }
-    if (member !== '전체') list = list.filter((a) => a.member === member);
-    if (meetingId !== '전체') list = list.filter((a) => a.meeting === meetingId);
-    const needle = q.trim();
-    if (needle) {
-      list = list.filter((a) =>
-        looseTest(a.title, needle)
-        || (a.body ?? []).some((b) => looseTest(b, needle))
-        || looseTest(a.quote ?? '', needle)
-        || (a.replies ?? []).some((r) => looseTest(r.text, needle)));
-    }
-    return list;
-  }, [all, type, dept, member, meetingId, q]);
+  /*
+   * 다른 필터를 바꾸다 지금 고른 값이 사라질 수 있다. 그대로 두면 "0건" 화면에
+   * 갇혀 무엇 때문에 빈지 알 수 없다. 사라진 값은 전체로 되돌린다.
+   */
+  useEffect(() => {
+    if (dept !== '전체' && !groups.some((g) => `국:${g.name}` === dept)) setDept('전체');
+  }, [groups, dept]);
+  useEffect(() => {
+    if (member !== '전체' && !membersList.some(([n]) => n === member)) setMember('전체');
+  }, [membersList, member]);
+  useEffect(() => {
+    if (meetingId !== '전체' && !perMeeting.get(meetingId)) setMeetingId('전체');
+  }, [perMeeting, meetingId]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
 
@@ -119,12 +154,13 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
           options={TYPES.map((t) => ({
             value: t,
             label: t,
-            count: t === '전체' ? all.length : all.filter((a) => a.type === t).length,
+            count: t === '전체' ? forType.length : forType.filter((a) => a.type === t).length,
           }))}
         />
 
         <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-          <MeetingFilter index={index} value={meetingId} onChange={setMeetingId} counts={perMeeting} />
+          <MeetingFilter index={index} value={meetingId} onChange={setMeetingId}
+            counts={perMeeting} hideEmpty />
 
           <select
             value={dept}
@@ -133,7 +169,9 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
             className="h-11 px-3 rounded-md border border-slate-300 bg-white font-medium
                        outline-none focus:border-blue-600"
           >
-            <option value="전체">부서 전체 ({all.length})</option>
+            <option value="전체">
+              부서 전체 ({groups.reduce((n, g) => n + g.total, 0)})
+            </option>
             {groups.map((g) => (
               <option key={g.name} value={`국:${g.name}`}>{g.name} ({g.total})</option>
             ))}
@@ -146,9 +184,11 @@ export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) =
             className="h-11 px-3 rounded-md border border-slate-300 bg-white font-medium
                        outline-none focus:border-blue-600"
           >
-            <option value="전체">위원 전체</option>
-            {membersList.map((m) => (
-              <option key={m} value={m}>{m} ({all.filter((a) => a.member === m).length})</option>
+            <option value="전체">
+              위원 전체 ({membersList.reduce((n, [, c]) => n + c, 0)})
+            </option>
+            {membersList.map(([name, count]) => (
+              <option key={name} value={name}>{name} ({count})</option>
             ))}
           </select>
 

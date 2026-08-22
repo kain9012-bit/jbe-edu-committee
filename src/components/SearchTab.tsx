@@ -59,19 +59,26 @@ export const SearchTab: React.FC<Props> = ({
     return out.sort((a, b) => b.date.localeCompare(a.date) || a.turn - b.turn);
   }, [records, q]);
 
-  const filtered = useMemo(() => {
-    let list = hits;
-    if (role !== '전체') list = list.filter((h) => h.role === role);
-    if (meetingFilter !== '전체') list = list.filter((h) => h.meeting === meetingFilter);
-    return list;
-  }, [hits, role, meetingFilter]);
+  const byRole = (h: Hit) => role === '전체' || h.role === role;
+  const byMeeting = (h: Hit) => meetingFilter === '전체' || h.meeting === meetingFilter;
+
+  const filtered = useMemo(
+    () => hits.filter((h) => byRole(h) && byMeeting(h)),
+    [hits, role, meetingFilter],
+  );
+  // 칩과 고르개의 숫자는 **서로를 반영한다.** 회차를 좁혔는데 발언자 숫자가
+  // 전 회차 합계로 남아 있으면 어느 쪽을 믿을지 알 수 없다.
+  const forRole = useMemo(() => hits.filter(byMeeting), [hits, meetingFilter]);
+  const forMeeting = useMemo(() => hits.filter(byRole), [hits, role]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
 
   const summaryHits = useMemo(() => {
     const needle = q.trim();
     if (needle.length < 2) return [];
-    return Object.values(meetings).flatMap((m) =>
+    return Object.values(meetings)
+      .filter((m) => meetingFilter === '전체' || m.id === meetingFilter)
+      .flatMap((m) =>
       [
         ...(looseTest(m.summary ?? '', needle) ? [{ id: m.id, kind: '요약', text: m.summary }] : []),
         ...(m.highlights ?? [])
@@ -82,13 +89,20 @@ export const SearchTab: React.FC<Props> = ({
           .map((a) => ({ id: m.id, kind: a.type, text: `${a.title} — ${(a.body ?? []).join(' · ')}` })),
       ],
     );
-  }, [meetings, q]);
+  }, [meetings, q, meetingFilter]);
 
   const perMeeting = useMemo(() => {
     const c = new Map<string, number>();
-    hits.forEach((h) => c.set(h.meeting, (c.get(h.meeting) ?? 0) + 1));
+    forMeeting.forEach((h) => c.set(h.meeting, (c.get(h.meeting) ?? 0) + 1));
     return c;
-  }, [hits]);
+  }, [forMeeting]);
+
+  // 발언자를 좁히다 고른 회차가 사라지면 회차를 되돌린다. 안 그러면 빈 화면에 갇힌다.
+  useEffect(() => {
+    if (meetingFilter !== '전체' && hits.length && !perMeeting.get(meetingFilter)) {
+      setMeetingFilter('전체');
+    }
+  }, [perMeeting, meetingFilter, hits]);
 
   return (
     <div className="space-y-5 pb-12">
@@ -118,6 +132,32 @@ export const SearchTab: React.FC<Props> = ({
 
       {!loading && q.trim().length >= 2 && (
         <>
+          {/* 필터는 결과 **위**에 둔다. 요약 결과를 다 지나쳐야 필터가 나오면
+              결과가 길어질수록 있는 줄도 모른다. */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <ChipRow label="발언자" value={role} onChange={setRole}
+              options={ROLES.map((r) => ({
+                value: r, label: r,
+                count: r === '전체' ? forRole.length : forRole.filter((h) => h.role === r).length,
+              }))} />
+            <select
+              value={meetingFilter}
+              onChange={(e) => setMeetingFilter(e.target.value)}
+              aria-label="회차로 좁히기"
+              className="sm:ml-auto h-11 px-3 rounded-md border border-slate-300 bg-white
+                         font-medium outline-none focus:border-blue-600"
+            >
+              <option value="전체">회차 전체 ({forMeeting.length})</option>
+              {index.meetings
+                .filter((m) => perMeeting.has(m.id) || m.id === meetingFilter)
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.title} ({perMeeting.get(m.id) ?? 0})
+                  </option>
+                ))}
+            </select>
+          </div>
+
           {summaryHits.length > 0 && (
             <section className="space-y-2">
               <SectionTitle count={summaryHits.length}>요약에서</SectionTitle>
@@ -141,30 +181,6 @@ export const SearchTab: React.FC<Props> = ({
               </ul>
             </section>
           )}
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-            <ChipRow label="발언자" value={role} onChange={setRole}
-              options={ROLES.map((r) => ({
-                value: r, label: r,
-                count: r === '전체' ? hits.length : hits.filter((h) => h.role === r).length,
-              }))} />
-            <select
-              value={meetingFilter}
-              onChange={(e) => setMeetingFilter(e.target.value)}
-              aria-label="회차로 좁히기"
-              className="sm:ml-auto h-11 px-3 rounded-md border border-slate-300 bg-white
-                         font-medium outline-none focus:border-blue-600"
-            >
-              <option value="전체">회차 전체 ({hits.length})</option>
-              {index.meetings
-                .filter((m) => perMeeting.has(m.id))
-                .map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.title} ({perMeeting.get(m.id)})
-                  </option>
-                ))}
-            </select>
-          </div>
 
           <SectionTitle count={filtered.length} desc="회의록 전문에서">발언</SectionTitle>
 
