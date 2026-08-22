@@ -313,6 +313,41 @@
       ]
     },
     {
+      "name": "교원인사과",
+      "kind": "본청",
+      "bureau": "교육국",
+      "answerCount": 40,
+      "mentionCount": 5,
+      "meetings": [
+        {
+          "id": "430-2",
+          "count": 33
+        },
+        {
+          "id": "430-4",
+          "count": 7
+        }
+      ],
+      "members": [
+        {
+          "name": "한정수",
+          "count": 2
+        },
+        {
+          "name": "전용태",
+          "count": 2
+        },
+        {
+          "name": "최종오",
+          "count": 1
+        },
+        {
+          "name": "이병도",
+          "count": 1
+        }
+      ]
+    },
+    {
       "name": "전북교육인권센터",
       "kind": "본청",
       "bureau": "교육국",
@@ -370,41 +405,6 @@
         },
         {
           "name": "김남규",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "name": "교원인사과",
-      "kind": "본청",
-      "bureau": "교육국",
-      "answerCount": 33,
-      "mentionCount": 5,
-      "meetings": [
-        {
-          "id": "430-2",
-          "count": 33
-        },
-        {
-          "id": "430-4",
-          "count": 0
-        }
-      ],
-      "members": [
-        {
-          "name": "한정수",
-          "count": 2
-        },
-        {
-          "name": "전용태",
-          "count": 2
-        },
-        {
-          "name": "최종오",
-          "count": 1
-        },
-        {
-          "name": "이병도",
           "count": 1
         }
       ]

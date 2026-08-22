@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T14:37:17+00:00",
+  "updatedAt": "2026-08-22T06:29:52+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -75,6 +75,7 @@
       ],
       "depts": [
         "행정국",
+        "교원인사과",
         "전주교육지원청",
         "익산교육지원청",
         "남원교육지원청",
@@ -115,8 +116,8 @@
       "recordStatus": "임시",
       "publishedAt": "2026-08-14",
       "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8624",
-      "turnCount": 449,
-      "sentenceCount": 664,
+      "turnCount": 448,
+      "sentenceCount": 665,
       "members": [
         "전용태",
         "최종오",

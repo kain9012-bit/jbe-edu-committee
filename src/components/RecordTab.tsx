@@ -29,13 +29,34 @@ export const RecordTab: React.FC<Props> = ({
   // 회차를 바꾸면 필터를 되돌린다. 앞 회차의 부서가 남아 있으면 빈 목록이 뜬다.
   useEffect(() => { setWho('전체'); setAgenda('전체'); setQ(''); }, [currentId]);
 
-  const speakers = useMemo(() => {
-    const seen = new Map<string, number>();
+  /**
+   * 발언자 목록.
+   *
+   * 도의원과 도교육청 기관을 한 목록에 섞어 두면, 고르는 사람이 `장연국 위원` 과
+   * `과학교육원` 사이에서 무엇을 고르는 것인지 매번 다시 판단해야 한다.
+   * 성격이 다른 것을 나란히 두지 않는다 — 묶어서 보여준다.
+   */
+  const groups = useMemo(() => {
+    const bag = new Map<string, Map<string, number>>();
+    const put = (group: string, key: string) => {
+      const m = bag.get(group) ?? bag.set(group, new Map()).get(group)!;
+      m.set(key, (m.get(key) ?? 0) + 1);
+    };
     (record?.turns ?? []).forEach((t) => {
-      const key = t.dept ?? (t.role === '의원' ? `${t.name} 위원` : t.speaker);
-      seen.set(key, (seen.get(key) ?? 0) + 1);
+      if (t.role === '의원') put('도의원', `${t.name} 위원`);
+      else if (t.dept && (t.deptKind === '본청' || t.deptKind === '기관장')) put('도교육청 본청', t.dept);
+      else if (t.dept && t.deptKind === '직속기관') put('직속기관', t.dept);
+      else if (t.dept && t.deptKind === '교육지원청') put('교육지원청', t.dept);
+      else put('그 밖', t.dept ?? t.speaker);
     });
-    return [...seen.entries()].sort((a, b) => b[1] - a[1]);
+    // 이 회의에 없는 묶음은 아예 내보내지 않는다. 직속기관 보고 회의에
+    // 빈 `교육지원청` 칸이 뜨면 고를 게 있는 줄 안다.
+    return ['도의원', '도교육청 본청', '직속기관', '교육지원청', '그 밖']
+      .map((g) => ({
+        label: g,
+        items: [...(bag.get(g) ?? new Map()).entries()].sort((a, b) => b[1] - a[1]),
+      }))
+      .filter((g) => g.items.length > 0);
   }, [record]);
 
   /**
@@ -242,8 +263,12 @@ export const RecordTab: React.FC<Props> = ({
                            outline-none focus:border-blue-600 sm:w-72"
               >
                 <option value="전체">발언자 전체</option>
-                {speakers.map(([name, n]) => (
-                  <option key={name} value={name}>{name} ({n})</option>
+                {groups.map((g) => (
+                  <optgroup key={g.label} label={g.label}>
+                    {g.items.map(([name, n]) => (
+                      <option key={name} value={name}>{name} ({n})</option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
               <input

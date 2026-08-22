@@ -128,10 +128,23 @@ def parse(root: ET.Element) -> dict:
                     agendas.append({"idx": a_idx, "title": a_title})
             elif el.tag == "name":
                 raw = _text(el)
+                if is_stage_direction(raw):
+                    # 지문은 앞 발언에 이어 붙인다. 버리면 말이 사라진다.
+                    if cur is not None:
+                        cur["lines"].append(re.sub(r"^[○↘\s]+", "", raw).strip())
+                    continue
                 sprofile = el.get("sprofile") or "0"
                 is_member = sprofile not in ("0", "", None)
                 title, name = split_speaker(raw, is_member)
-                dept, kind = (None, "의회") if is_member else affiliation(title)
+                # 소속은 떼어낸 직함에서 먼저 찾는다. `교육연수원장` 처럼 **끝나는 말**로
+                # 기관을 알아내는 규칙이 있어서, 이름이 붙어 있으면 그 규칙이 깨진다.
+                # 직함을 못 떼어낸 자리(`교원인사과유·초등인사담당`)에서만 전체를 본다.
+                if is_member:
+                    dept, kind = None, "의회"
+                else:
+                    dept, kind = affiliation(title)
+                    if dept is None:
+                        dept, kind = affiliation(raw)
                 cur = {
                     "i": len(turns),
                     "agenda": a_idx,
@@ -172,6 +185,16 @@ def parse(root: ET.Element) -> dict:
         "turns": turns,
         "attend": attend,
     }
+
+
+# 회의록에는 발언자가 아니라 **지문**이 <name> 으로 들어오는 자리가 있다.
+#   (집행부석에서 “생존수영…”)
+# 이걸 새 발언으로 세면 있지도 않은 발언자가 목록에 생긴다.
+_STAGE = re.compile(r"[“”()（）]|집행부석에서|방청석에서|장내|하는 위원 있음")
+
+
+def is_stage_direction(raw: str) -> bool:
+    return bool(_STAGE.search(raw))
 
 
 _DATE = re.compile(r"(\d{4})[.\-년\s]*(\d{1,2})[.\-월\s]*(\d{1,2})")
