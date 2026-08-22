@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { ClipboardList, Search } from 'lucide-react';
-import type { IndexDoc, MeetingDoc, Navigate } from '../types';
+import type { Ask, IndexDoc, Navigate } from '../types';
 import { ChipRow, EmptyState, SectionTitle } from './Ui';
 import { AskItem } from './AskItem';
 import { MeetingFilter } from './MeetingFilter';
-import { korDate, looseTest } from '../lib/util';
+import { looseTest } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
-  meetings: Record<string, MeetingDoc>;
+  asks: Ask[];
   loading: boolean;
   onNavigate: Navigate;
 }
@@ -26,7 +26,7 @@ const TYPES = ['전체', '자료요구', '지적사항', '요청'] as const;
  * "검토해 보겠습니다" 같은 집행부의 답변과 위원의 요구를 글자로는 못 가른다.
  * 그래서 요약을 쓴 회차에서만 나온다.
  */
-export const AsksTab: React.FC<Props> = ({ index, meetings, loading, onNavigate }) => {
+export const AsksTab: React.FC<Props> = ({ index, asks, loading, onNavigate }) => {
   const [type, setType] = useState<string>('전체');
   const [dept, setDept] = useState('전체');
   const [member, setMember] = useState('전체');
@@ -34,14 +34,8 @@ export const AsksTab: React.FC<Props> = ({ index, meetings, loading, onNavigate 
   const [q, setQ] = useState('');
 
   const all = useMemo(
-    () => Object.values(meetings)
-      .flatMap((m) => (m.asks ?? []).map((a) => ({ ...a, meeting: m.id })))
-      .sort((a, b) => {
-        const da = index.meetings.find((m) => m.id === a.meeting)?.date ?? '';
-        const db = index.meetings.find((m) => m.id === b.meeting)?.date ?? '';
-        return db.localeCompare(da);
-      }),
-    [meetings, index],
+    () => [...asks].sort((a, b) => b.date.localeCompare(a.date)),
+    [asks],
   );
 
   const depts = useMemo(
@@ -71,13 +65,13 @@ export const AsksTab: React.FC<Props> = ({ index, meetings, loading, onNavigate 
       list = list.filter((a) =>
         looseTest(a.title, needle)
         || (a.body ?? []).some((b) => looseTest(b, needle))
-        || looseTest(a.quote ?? '', needle));
+        || looseTest(a.quote ?? '', needle)
+        || (a.replies ?? []).some((r) => looseTest(r.text, needle)));
     }
     return list;
   }, [all, type, dept, member, meetingId, q]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
-  const dateOf = (id: string) => index.meetings.find((m) => m.id === id)?.date ?? '';
 
   if (loading) return <p role="status" className="text-sm text-slate-500 py-2">불러오는 중입니다…</p>;
 
@@ -168,12 +162,7 @@ export const AsksTab: React.FC<Props> = ({ index, meetings, loading, onNavigate 
         <ul className="space-y-3">
           {shown.map((a, i) => (
             <li key={i} className="bg-white rounded-lg border border-slate-200 p-5">
-              <AskItem
-                ask={a}
-                meetingTitle={titleOf(a.meeting)}
-                date={korDate(dateOf(a.meeting))}
-                onNavigate={onNavigate}
-              />
+              <AskItem ask={a} meetingTitle={titleOf(a.meeting)} onNavigate={onNavigate} />
             </li>
           ))}
         </ul>

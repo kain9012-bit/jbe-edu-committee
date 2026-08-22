@@ -2,7 +2,6 @@ import React from 'react';
 import { FileText, Clock, ExternalLink } from 'lucide-react';
 import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, Quote, SectionTitle, SourceLink } from './Ui';
-import { AskItem } from './AskItem';
 import { MeetingPicker } from './MeetingPicker';
 import { korDate, sourceNote } from '../lib/util';
 
@@ -146,11 +145,32 @@ export const MeetingTab: React.FC<Props> = ({
             <section className="space-y-3">
               <SectionTitle count={meeting.asks.length}
                 desc="집행부가 받아 가야 할 것">자료요구 · 지적사항</SectionTitle>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {meeting.asks.map((a, i) => (
-                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-5">
-                    <AskItem ask={{ ...a, meeting: currentId }}
-                      meetingTitle="회의록에서 보기" onNavigate={onNavigate} />
+                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-4 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge tone={a.type === '지적사항' ? 'red' : a.type === '자료요구' ? 'blue' : 'amber'}>
+                        {a.type}
+                      </Badge>
+                      {a.dept && <span className="text-sm font-bold text-blue-700">{a.dept}</span>}
+                      {a.member && <span className="text-sm text-slate-500">{a.member} 위원</span>}
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('asks')}
+                        className="text-xs font-bold text-slate-500 hover:text-blue-700 hover:underline ml-auto"
+                      >
+                        답변까지 보기
+                      </button>
+                    </div>
+                    <p className="font-bold text-slate-900 leading-snug">{a.title}</p>
+                    <ul className="space-y-1">
+                      {(a.body ?? []).map((line, k) => (
+                        <li key={k} className="flex gap-2 text-slate-700 leading-relaxed">
+                          <span aria-hidden="true" className="text-slate-300 shrink-0">·</span>
+                          <span>{line}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </li>
                 ))}
               </ul>

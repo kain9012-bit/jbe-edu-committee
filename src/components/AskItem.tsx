@@ -1,27 +1,30 @@
 import React from 'react';
-import type { MeetingDoc, Navigate } from '../types';
-import { Badge, Quote } from './Ui';
-
-type Ask = MeetingDoc['asks'][number] & { meeting: string };
+import { CircleSlash } from 'lucide-react';
+import type { Ask, Navigate } from '../types';
+import { Badge } from './Ui';
+import { korDate } from '../lib/util';
 
 const TONE = { 자료요구: 'blue', 지적사항: 'red', 요청: 'amber' } as const;
 
 /**
- * 자료요구·지적사항 한 건.
+ * 지적·자료요구 한 건.
  *
- * 예전에는 한 줄짜리 서술문 하나였다("…자료를 제출하라는 요구가 있었다").
- * 그러면 목록을 훑어도 무슨 내용인지 알 수가 없어서, 결국 회의록을 다시 열어야 했다.
- * **개조식 제목 + 개조식 본문**으로 바꿔 목록에서 바로 판단할 수 있게 한다.
+ * 세 덩어리로 읽는다.
+ *   1) 개조식 제목 — 목록에서 이것만 보고 판단할 수 있어야 한다.
+ *   2) 개조식 본문 — 무엇이 문제이고 무엇을 해야 하는지.
+ *   3) **위원이 한 말과 집행부가 한 답** — 요구만 싣고 답을 빼면
+ *      받아 갈 사람이 "그래서 뭐라고 했는데?" 를 알 수 없다.
+ *
+ * 답변이 없는 자리도 있다(마무리 당부, 처리의견 개진). 그때는 없다고 밝힌다.
  */
 export const AskItem: React.FC<{
   ask: Ask;
   meetingTitle: string;
-  date?: string;
   onNavigate: Navigate;
   /** 의원별 화면처럼 이미 그 위원 것만 보고 있을 때는 이름을 또 적지 않는다. */
   hideMember?: boolean;
-}> = ({ ask, meetingTitle, date, onNavigate, hideMember }) => (
-  <article className="space-y-2">
+}> = ({ ask, meetingTitle, onNavigate, hideMember }) => (
+  <article className="space-y-3">
     <div className="flex flex-wrap items-center gap-2">
       <Badge tone={TONE[ask.type] ?? 'slate'}>{ask.type}</Badge>
       {ask.dept && (
@@ -43,7 +46,7 @@ export const AskItem: React.FC<{
         </button>
       )}
       <span className="text-xs text-slate-400 ml-auto flex items-center gap-2">
-        {date}
+        {korDate(ask.date)}
         <button
           type="button"
           onClick={() => onNavigate('record', { meetingId: ask.meeting, turn: ask.turn ?? undefined })}
@@ -54,19 +57,47 @@ export const AskItem: React.FC<{
       </span>
     </div>
 
-    <h4 className="font-bold text-slate-900 leading-snug">{ask.title}</h4>
+    <div className="space-y-1.5">
+      <h4 className="font-bold text-slate-900 leading-snug">{ask.title}</h4>
+      {ask.body?.length > 0 && (
+        <ul className="space-y-1">
+          {ask.body.map((line, i) => (
+            <li key={i} className="flex gap-2 text-slate-700 leading-relaxed">
+              <span aria-hidden="true" className="text-slate-300 select-none shrink-0">·</span>
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
 
-    {ask.body?.length > 0 && (
-      <ul className="space-y-1">
-        {ask.body.map((line, i) => (
-          <li key={i} className="flex gap-2 text-slate-700 leading-relaxed">
-            <span aria-hidden="true" className="text-slate-300 select-none shrink-0">·</span>
-            <span>{line}</span>
-          </li>
-        ))}
-      </ul>
-    )}
+    {/* 오간 말 — 요구와 답을 나란히 둔다 */}
+    <div className="rounded-md border border-slate-200 bg-slate-50/70 divide-y divide-slate-200">
+      {ask.quote && (
+        <div className="p-3.5">
+          <p className="text-xs font-bold text-slate-500 mb-0.5">
+            위원 발언{ask.speaker ? ` · ${ask.speaker}` : ''}
+          </p>
+          <p className="text-slate-700 leading-relaxed">“{ask.quote}”</p>
+        </div>
+      )}
 
-    {ask.quote && <Quote who={ask.speaker}>{ask.quote}</Quote>}
+      {ask.replies?.length > 0 ? (
+        ask.replies.map((r) => (
+          <div key={r.i} className="p-3.5 bg-white">
+            <p className="text-xs font-bold text-slate-500 mb-0.5">집행부 답변 · {r.speaker}</p>
+            <p className="text-slate-700 leading-relaxed">{r.text}</p>
+          </div>
+        ))
+      ) : (
+        <div className="p-3.5 bg-white flex items-start gap-2 text-sm text-slate-500">
+          <CircleSlash className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+          <p>
+            이 자리에서 집행부 답변은 없었습니다. 마무리 당부이거나 처리의견을 밝히는
+            대목입니다.
+          </p>
+        </div>
+      )}
+    </div>
   </article>
 );

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { UserRound } from 'lucide-react';
-import type { DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate } from '../types';
+import type { Ask, DerivedDoc, Dialog, IndexDoc, Navigate } from '../types';
 import { EmptyState, SectionTitle } from './Ui';
 import { AskItem } from './AskItem';
 import { DialogItem } from './Dialog';
@@ -12,8 +12,8 @@ interface Props {
   derived: DerivedDoc;
   /** 주고받은 덩어리. 따로 받아 온다(694KB). */
   dialogs: Dialog[];
-  /** 요약(사람이 쓴 것). 그 위원이 요구·지적한 것을 여기서 가져온다. */
-  meetings: Record<string, MeetingDoc>;
+  /** 지적·자료요구. 그 위원이 요구한 것을 골라 보여준다. */
+  asks: Ask[];
   loading: boolean;
   /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
   open: string | null;
@@ -27,7 +27,7 @@ interface Props {
  * 부서 담당자에게 가장 실용적인 정보는 "이 위원이 우리 과에 무엇을 요구했나" 다.
  */
 export const MemberTab: React.FC<Props> = ({
-  index, derived, dialogs, meetings, loading, open, onNavigate,
+  index, derived, dialogs, asks, loading, open, onNavigate,
 }) => {
   const [meetingId, setMeetingId] = useState('전체');
   const narrowed = meetingId !== '전체';
@@ -58,11 +58,7 @@ export const MemberTab: React.FC<Props> = ({
 
   /** 그 위원이 요구·지적한 것. 요약을 쓴 회차에서만 나온다. */
   const asksOf = (name: string) =>
-    Object.values(meetings)
-      .filter((m) => !narrowed || m.id === meetingId)
-      .flatMap((m) => (m.asks ?? [])
-        .filter((a) => a.member === name)
-        .map((a) => ({ ...a, meeting: m.id })));
+    asks.filter((a) => a.member === name && (!narrowed || a.meeting === meetingId));
 
   if (loading) return <p role="status" className="text-sm text-slate-500 py-2">불러오는 중입니다…</p>;
 
@@ -101,7 +97,7 @@ export const MemberTab: React.FC<Props> = ({
           {members.map((m) => {
             const on = open === m.name;
             const mine = on ? ex.filter((e) => e.member === m.name) : [];
-            const asks = on ? asksOf(m.name) : [];
+            const mineAsks = on ? asksOf(m.name) : [];
             return (
               <li key={m.name} className="bg-white rounded-lg border border-slate-200 overflow-hidden">
                 <button
@@ -137,14 +133,14 @@ export const MemberTab: React.FC<Props> = ({
 
                 {on && (
                   <div className="border-t border-slate-200">
-                    {asks.length > 0 && (
+                    {mineAsks.length > 0 && (
                       <section className="bg-amber-50/40 border-b border-slate-200">
                         <h5 className="px-5 pt-4 pb-1 text-sm font-bold text-slate-900">
                           이 위원이 요구·지적한 것{' '}
-                          <span className="text-blue-700 tabular-nums">{asks.length}건</span>
+                          <span className="text-blue-700 tabular-nums">{mineAsks.length}건</span>
                         </h5>
                         <ul className="px-5 pb-4 pt-2 space-y-4">
-                          {asks.map((a, k) => (
+                          {mineAsks.map((a, k) => (
                             <li key={k}>
                               <AskItem ask={a} meetingTitle={titleOf(a.meeting)}
                                 onNavigate={onNavigate} hideMember />

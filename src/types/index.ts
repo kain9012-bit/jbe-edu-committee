@@ -92,6 +92,27 @@ export interface RecordDoc {
   attachments: { name: string; kbyte: number; url: string }[];
 }
 
+/**
+ * 지적·자료요구 한 건. `data/asks.json` 에서 온다.
+ * 사람이 쓴 요약(meetings/*.json)의 asks 에 **집행부 답변을 붙여** 만든다.
+ */
+export interface Ask {
+  type: '자료요구' | '지적사항' | '요청';
+  dept?: string | null;
+  member?: string | null;
+  /** 개조식 한 줄. 명사형으로 끝낸다. */
+  title: string;
+  /** 개조식 항목들 */
+  body: string[];
+  quote?: string | null;
+  speaker?: string | null;
+  turn?: number | null;
+  meeting: string;
+  date: string;
+  /** 그 발언 바로 뒤에 이어진 집행부 답변. 없을 수 있다. */
+  replies: { i: number; speaker: string; dept: string | null; text: string }[];
+}
+
 /** 사람이 쓴 요약. 없을 수 있다. */
 export interface MeetingDoc {
   id: string;

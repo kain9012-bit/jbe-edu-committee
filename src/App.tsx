@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import type {
-  ActiveTab, DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate, RecordDoc,
+  ActiveTab, Ask, DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate, RecordDoc,
 } from './types';
 import { emptyDerived, emptyIndex } from './types';
 import { Header } from './components/Header';
@@ -55,6 +55,7 @@ export default function App() {
   const [index, setIndex] = useState<IndexDoc>(emptyIndex);
   const [derived, setDerived] = useState<DerivedDoc>(emptyDerived);
   const [dialogs, setDialogs] = useState<Dialog[]>([]);
+  const [asks, setAsks] = useState<Ask[]>([]);
   const [records, setRecords] = useState<Record<string, RecordDoc>>({});
   const [meetings, setMeetings] = useState<Record<string, MeetingDoc>>({});
 
@@ -144,15 +145,28 @@ export default function App() {
     void ensureDetail(currentId);
   }, [activeTab, currentId, ensureDetail]);
 
+  // ── 지적·요구(61KB). 요약의 asks 에 집행부 답변을 붙여 둔 파일이다. ──
+  const asksRequested = React.useRef(false);
+  useEffect(() => {
+    if (!['asks', 'member'].includes(activeTab)) return;
+    if (asksRequested.current) return;
+    asksRequested.current = true;
+    (async () => {
+      const a = await loadJson<Ask[]>('asks.json');
+      if (a) setAsks(a);
+      else asksRequested.current = false;
+    })();
+  }, [activeTab]);
+
   /*
    * 전 회차가 필요한 탭이 둘로 갈린다.
-   *   요약(meetings/*.json)  — 지적·요구, 의원별, 안건. 회차당 몇 KB.
+   *   요약(meetings/*.json)  — 회의 요약, 안건 처리결과, 통합검색. 회차당 몇 KB.
    *   전문(records/*.json)   — 통합검색. 회차당 수백 KB, 전부 합쳐 2.4MB.
    * 예전에는 안건 탭에 들어가도 전문을 통째로 받았다. 쓰지도 않는 2.4MB였다.
    */
   const summariesRequested = React.useRef(false);
   useEffect(() => {
-    if (!['asks', 'member', 'agenda', 'search'].includes(activeTab)) return;
+    if (!['agenda', 'search'].includes(activeTab)) return;
     if (summariesRequested.current || index.meetings.length === 0) return;
     summariesRequested.current = true;
 
@@ -274,6 +288,7 @@ export default function App() {
               onClick={() => {
                 bulkRequested.current = false;
                 summariesRequested.current = false;
+                asksRequested.current = false;
                 dialogsRequested.current = false;
                 derivedRequested.current = false;
                 setRetryToken((n) => n + 1);
@@ -332,7 +347,7 @@ export default function App() {
                 index={index}
                 derived={derived}
                 dialogs={dialogs}
-                meetings={meetings}
+                asks={asks}
                 loading={detailLoading}
                 open={focus}
                 onNavigate={navigate}
@@ -342,7 +357,7 @@ export default function App() {
             {activeTab === 'asks' && (
               <AsksTab
                 index={index}
-                meetings={meetings}
+                asks={asks}
                 loading={detailLoading}
                 onNavigate={navigate}
               />

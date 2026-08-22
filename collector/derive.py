@@ -78,7 +78,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from config import DATA, INDEX, RECORDS
+from config import DATA, INDEX, MEETINGS, RECORDS
 from depts import BUREAUS, DEPARTMENTS
 
 # 화면에 미리보기로 띄울 길이. 전문은 회차 탭에서 본다.
@@ -241,6 +241,47 @@ def dialogs(doc: dict) -> list[dict]:
     return out
 
 
+def build_asks(docs: list[dict]) -> list[dict]:
+    """사람이 쓴 지적·요구에 **집행부 답변을 붙인다.**
+
+    요구만 한 줄 실어 놓으면 받아 갈 사람이 "그래서 뭐라고 했는데?" 를 알 수 없다.
+    회의록에서 그 발언 **바로 뒤에 이어지는 집행부 발언**을 찾아 함께 싣는다.
+    다음 의원 발언이 나오면 거기서 끊는다 — 그 뒤는 다른 이야기다.
+
+    답변이 없는 경우도 있다(마무리 당부, 처리의견 개진). 그때는 비워 두고
+    화면에서 "이 자리에서 답변 없음" 이라고 밝힌다. 없는 답을 지어내지 않는다.
+    """
+    out: list[dict] = []
+    for doc in docs:
+        path = MEETINGS / f"{doc['id']}.json"
+        if not path.exists():
+            continue
+        summary = json.loads(path.read_text(encoding="utf-8"))
+        turns = doc["turns"]
+        for a in summary.get("asks", []):
+            n = a.get("turn")
+            replies = []
+            if isinstance(n, int) and 0 <= n < len(turns):
+                for t in turns[n + 1:]:
+                    if t["role"] == "의원":
+                        break              # 다음 질의가 시작되면 끊는다
+                    if t["role"] not in ("집행부", "전문위원"):
+                        continue
+                    body = " ".join(t["lines"]).strip()
+                    if not body:
+                        continue
+                    replies.append({
+                        "i": t["i"],
+                        "speaker": t["speaker"],
+                        "dept": t.get("dept"),
+                        "text": snip(body, 400),
+                    })
+                    if len(replies) >= 3:
+                        break
+            out.append({**a, "meeting": doc["id"], "date": doc["date"], "replies": replies})
+    return out
+
+
 def main() -> int:
     docs = load_records()
     if not docs:
@@ -336,6 +377,10 @@ def main() -> int:
     ex_path = DATA / "dialogs.json"
     ex_path.write_text(json.dumps(all_ex, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
+    asks = build_asks(docs)
+    ask_path = DATA / "asks.json"
+    ask_path.write_text(json.dumps(asks, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
     turns_in = sum(e["turnCount"] for e in all_ex)
     only_mention = sum(1 for d in derived["depts"] if d["answerCount"] == 0)
     kb = path.stat().st_size / 1024
@@ -345,6 +390,9 @@ def main() -> int:
     print(f"주고받은 덩어리 {len(all_ex)}개 · 발언 {turns_in}건 "
           f"(덩어리당 평균 {turns_in / max(1, len(all_ex)):.1f}건) "
           f"→ {ex_path.name} ({ex_kb:.0f}KB)")
+    answered = sum(1 for a in asks if a["replies"])
+    print(f"지적·요구 {len(asks)}건 (집행부 답변이 붙은 것 {answered}건) "
+          f"→ {ask_path.name} ({ask_path.stat().st_size / 1024:.0f}KB)")
     print("추천 검색어: " + ", ".join(f"{t['word']}({t['count']})" for t in topics))
     return 0
 
