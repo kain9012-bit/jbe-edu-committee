@@ -83,9 +83,27 @@ export const MeetingTab: React.FC<Props> = ({
 
       {meeting && (
         <>
-          <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-2">
-            <SectionTitle>한 줄 요약</SectionTitle>
-            <p className="text-slate-800 leading-relaxed">{meeting.summary}</p>
+          {meeting.glance?.length > 0 && (
+            <section className="rounded-lg border border-blue-100 bg-blue-50/70 p-5 space-y-2.5">
+              <h3 className="font-bold text-slate-900">한눈에 보기</h3>
+              <ul className="space-y-1.5">
+                {meeting.glance.map((line, i) => (
+                  <li key={i} className="flex gap-2.5 text-slate-800 leading-relaxed">
+                    <span aria-hidden="true" className="text-blue-500 select-none shrink-0 mt-[0.35rem]">
+                      <span className="block w-1.5 h-1.5 rounded-full bg-current" />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section className="space-y-2">
+            <SectionTitle>회의 요약</SectionTitle>
+            <div className="bg-white rounded-lg border border-slate-200 p-5">
+              <p className="text-slate-800 leading-relaxed">{meeting.summary}</p>
+            </div>
           </section>
 
           {meeting.agenda?.length > 0 && (

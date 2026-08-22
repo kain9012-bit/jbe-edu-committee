@@ -116,6 +116,13 @@ export interface Ask {
 /** 사람이 쓴 요약. 없을 수 있다. */
 export interface MeetingDoc {
   id: string;
+  /**
+   * 한눈에 보기 — 이 회의에서 건질 것만 개조식으로 6~8줄.
+   *
+   * 요약 문단을 먼저 두면 아무도 안 읽는다. 목록을 훑다가 걸리는 게 있을 때
+   * 문단으로 내려간다. `핵심 사실 — 부연` 꼴로 쓴다.
+   */
+  glance: string[];
   summary: string;
   /** 이 회의에서 가장 중요한 것들 */
   highlights: {

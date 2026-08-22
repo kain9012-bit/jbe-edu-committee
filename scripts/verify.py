@@ -58,6 +58,17 @@ def main() -> int:
         if not norm(m.get("summary", "")):
             problems.append(f"{mid}: summary 가 비어 있습니다")
 
+        # 한눈에 보기 — 목록을 훑는 자리다. 서술형으로 쓰면 훑기 나쁘다.
+        glance = m.get("glance") or []
+        if not isinstance(glance, list) or not glance:
+            problems.append(f"{mid}: glance 가 비어 있습니다 (개조식 6~8줄)")
+        else:
+            for line in glance:
+                checked += 1
+                t = norm(line)
+                if re.search(r"(있었다|하였다|했다|한다|였다|이다)\s*\.?$", t):
+                    problems.append(f"{mid} glance: 개조식으로 끝내세요 → '{t[-16:]}'")
+
         items = [("highlights", h) for h in m.get("highlights", [])] + \
                 [("asks", a) for a in m.get("asks", [])]
 
