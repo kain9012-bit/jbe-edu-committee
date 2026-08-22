@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FileText, Paperclip, Users, Clock } from 'lucide-react';
+import { FileText, Paperclip, Users, Clock, ListTree } from 'lucide-react';
 import type { IndexDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, SectionTitle, SourceLink } from './Ui';
 import { MeetingPicker } from './MeetingPicker';
-import { korDate, highlight } from '../lib/util';
+import { korDate, highlight, looseTest, IMSI_NOTE } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -22,11 +22,12 @@ export const RecordTab: React.FC<Props> = ({
 }) => {
   const entry = index.meetings.find((m) => m.id === currentId);
   const [who, setWho] = useState('전체');
+  const [agenda, setAgenda] = useState('전체');
   const [q, setQ] = useState('');
   const boxRef = useRef<HTMLUListElement>(null);
 
   // 회차를 바꾸면 필터를 되돌린다. 앞 회차의 부서가 남아 있으면 빈 목록이 뜬다.
-  useEffect(() => { setWho('전체'); setQ(''); }, [currentId]);
+  useEffect(() => { setWho('전체'); setAgenda('전체'); setQ(''); }, [currentId]);
 
   const speakers = useMemo(() => {
     const seen = new Map<string, number>();
@@ -37,17 +38,34 @@ export const RecordTab: React.FC<Props> = ({
     return [...seen.entries()].sort((a, b) => b[1] - a[1]);
   }, [record]);
 
+  /**
+   * 안건별 목차.
+   * 830건짜리 회의록을 위에서부터 훑는 것 말고 길이 없었다. 안건 정보는 이미
+   * 발언마다 붙어 있는데 화면에서 쓰지 않고 있었다.
+   */
+  const chapters = useMemo(() => {
+    const seen = new Map<string, number>();
+    (record?.turns ?? []).forEach((t) => {
+      const key = t.agendaTitle || '(안건 지정 없음)';
+      seen.set(key, (seen.get(key) ?? 0) + 1);
+    });
+    return [...seen.entries()];
+  }, [record]);
+
   const turns = useMemo(() => {
     let list = record?.turns ?? [];
+    if (agenda !== '전체') {
+      list = list.filter((t) => (t.agendaTitle || '(안건 지정 없음)') === agenda);
+    }
     if (who !== '전체') {
       list = list.filter(
         (t) => (t.dept ?? (t.role === '의원' ? `${t.name} 위원` : t.speaker)) === who,
       );
     }
     const needle = q.trim();
-    if (needle) list = list.filter((t) => t.lines.some((l) => l.includes(needle)));
+    if (needle) list = list.filter((t) => t.lines.some((l) => looseTest(l, needle)));
     return list;
-  }, [record, who, q]);
+  }, [record, who, agenda, q]);
 
   // 넘어온 발언 자리로 데려간다.
   useEffect(() => {
@@ -100,6 +118,11 @@ export const RecordTab: React.FC<Props> = ({
                 <span className="text-sm text-slate-400">발간 {korDate(record.publishedAt)}</span>
               )}
             </div>
+            {record.recordStatus === '임시' && (
+              <p className="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-md p-3">
+                {IMSI_NOTE}
+              </p>
+            )}
             <h2 className="text-xl font-bold text-slate-900">{record.title}</h2>
             <p className="text-sm text-slate-600">
               {record.meta.count} · {record.meta.sort}
@@ -156,6 +179,49 @@ export const RecordTab: React.FC<Props> = ({
                     <span className="text-xs text-slate-400 ml-1.5">
                       {Math.round(a.kbyte)}KB
                     </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* 안건 목차 */}
+          {chapters.length > 1 && (
+            <section className="bg-white rounded-lg border border-slate-200 p-5 space-y-2">
+              <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <ListTree className="w-4 h-4" aria-hidden="true" />안건별로 건너뛰기
+              </div>
+              <ul className="flex flex-wrap gap-1.5">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setAgenda('전체')}
+                    aria-pressed={agenda === '전체'}
+                    className={`px-3 py-1.5 rounded-full border text-sm font-bold transition-colors ${
+                      agenda === '전체'
+                        ? 'bg-blue-600 border-blue-600 text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:border-blue-600'
+                    }`}
+                  >
+                    전체 <span className="tabular-nums opacity-70">{record.turns.length}</span>
+                  </button>
+                </li>
+                {chapters.map(([title, n]) => (
+                  <li key={title}>
+                    <button
+                      type="button"
+                      onClick={() => setAgenda(title)}
+                      aria-pressed={agenda === title}
+                      title={title}
+                      className={`px-3 py-1.5 rounded-full border text-sm font-bold transition-colors
+                                  max-w-full sm:max-w-md truncate ${
+                        agenda === title
+                          ? 'bg-blue-600 border-blue-600 text-white'
+                          : 'bg-white border-slate-200 text-slate-600 hover:border-blue-600'
+                      }`}
+                    >
+                      {title} <span className="tabular-nums opacity-70">{n}</span>
+                    </button>
                   </li>
                 ))}
               </ul>

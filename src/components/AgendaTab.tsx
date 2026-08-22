@@ -35,6 +35,8 @@ const ASK_TONE = { 자료요구: 'blue', 지적사항: 'red', 요청: 'amber' } 
 
 export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, onNavigate }) => {
   const [view, setView] = useState('안건');
+  const [askDept, setAskDept] = useState('전체');
+  const [askType, setAskType] = useState('전체');
 
   const groups = useMemo(() => {
     const map = new Map<string, { title: string; items: { meeting: string; date: string; raw: string }[] }>();
@@ -55,6 +57,18 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
     () => Object.values(meetings).flatMap((m) => (m.asks ?? []).map((a) => ({ ...a, meeting: m.id }))),
     [meetings],
   );
+
+  // 63건을 통째로 훑게 두면 부서 담당자는 자기 것을 못 찾는다.
+  const askDepts = useMemo(
+    () => [...new Set(asks.map((a) => a.dept).filter(Boolean) as string[])].sort((x, y) => x.localeCompare(y, 'ko')),
+    [asks],
+  );
+  const shownAsks = useMemo(() => {
+    let list = asks;
+    if (askType !== '전체') list = list.filter((a) => a.type === askType);
+    if (askDept !== '전체') list = list.filter((a) => a.dept === askDept);
+    return list;
+  }, [asks, askType, askDept]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
   const resultOf = (meetingId: string, title: string) => {
@@ -131,20 +145,51 @@ export const AgendaTab: React.FC<Props> = ({ index, derived, meetings, loading, 
 
       {view === '요구' && (
         <>
-          <SectionTitle count={asks.length}
-            desc="회의록을 읽고 사람이 뽑은 항목입니다. 요약이 끝난 회차만 나옵니다">
+          <SectionTitle count={shownAsks.length}
+            desc={`전체 ${asks.length}건 · 회의록을 읽고 사람이 뽑은 항목입니다`}>
             자료요구 · 지적사항
           </SectionTitle>
 
-          {asks.length === 0 ? (
+          {asks.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <ChipRow
+                label="종류"
+                value={askType}
+                onChange={setAskType}
+                options={['전체', '자료요구', '지적사항', '요청'].map((t) => ({
+                  value: t,
+                  label: t,
+                  count: t === '전체' ? asks.length : asks.filter((a) => a.type === t).length,
+                }))}
+              />
+              <select
+                value={askDept}
+                onChange={(e) => setAskDept(e.target.value)}
+                aria-label="부서로 좁히기"
+                className="sm:ml-auto h-11 px-3 rounded-md border border-slate-300 bg-white
+                           font-medium outline-none focus:border-blue-600"
+              >
+                <option value="전체">부서 전체</option>
+                {askDepts.map((d) => (
+                  <option key={d} value={d}>
+                    {d} ({asks.filter((a) => a.dept === d).length})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {shownAsks.length === 0 ? (
             <EmptyState
               icon={<ClipboardList className="w-6 h-6" aria-hidden="true" />}
-              title="아직 정리된 항목이 없습니다"
-              desc="회의록 전문은 이미 있습니다. 회차 요약을 쓰면 자료요구와 지적사항이 여기 모입니다."
+              title={asks.length === 0 ? '아직 정리된 항목이 없습니다' : '해당하는 항목이 없습니다'}
+              desc={asks.length === 0
+                ? '회의록 전문은 이미 있습니다. 회차 요약을 쓰면 자료요구와 지적사항이 여기 모입니다.'
+                : '종류나 부서를 바꿔 보세요.'}
             />
           ) : (
             <ul className="space-y-3">
-              {asks.map((a, i) => (
+              {shownAsks.map((a, i) => (
                 <li key={i} className="bg-white rounded-lg border border-slate-200 p-5 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge tone={ASK_TONE[a.type] ?? 'slate'}>{a.type}</Badge>

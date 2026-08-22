@@ -1,7 +1,7 @@
 import React from 'react';
 import { Landmark } from 'lucide-react';
 import { korDate } from '../lib/util';
-import type { ActiveTab } from '../types';
+import type { ActiveTab, Navigate } from '../types';
 
 const TABS: { id: ActiveTab; label: string }[] = [
   { id: 'home', label: '홈' },
@@ -15,12 +15,12 @@ const TABS: { id: ActiveTab; label: string }[] = [
 
 interface Props {
   activeTab: ActiveTab;
-  setActiveTab: (t: ActiveTab) => void;
+  onNavigate: Navigate;
   /** 가장 최근 회의 날짜 (ISO). 자료가 어디까지 와 있는지 보여준다. */
   latestDate?: string | null;
 }
 
-export const Header: React.FC<Props> = ({ activeTab, setActiveTab, latestDate }) => (
+export const Header: React.FC<Props> = ({ activeTab, onNavigate, latestDate }) => (
   <header className="bg-white sticky top-0 z-30 border-b border-slate-200">
     {/* 안내 띠 — 도의회가 만든 자료가 아님을 먼저 밝힌다 (KRDS 마스트헤드 관례) */}
     <div className="bg-slate-50 text-slate-600 border-b border-slate-200">
@@ -37,7 +37,7 @@ export const Header: React.FC<Props> = ({ activeTab, setActiveTab, latestDate })
       <div className="flex flex-wrap items-center justify-between gap-x-6">
         <button
           type="button"
-          onClick={() => setActiveTab('home')}
+          onClick={() => onNavigate('home')}
           className="flex items-center gap-2.5 py-3.5 text-left group shrink-0"
         >
           <span className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shrink-0 group-hover:bg-blue-700 transition-colors">
@@ -53,7 +53,17 @@ export const Header: React.FC<Props> = ({ activeTab, setActiveTab, latestDate })
           </span>
         </button>
 
-        <nav aria-label="주 메뉴" className="-mb-px w-full sm:w-auto">
+        {/*
+          탭이 7개라 좁은 화면에서는 오른쪽이 잘린다. 옆으로 밀린다는 표시가 없으면
+          `회의록 전문`·`통합검색` 탭이 아예 없는 줄 안다.
+          오른쪽 끝에 흰색에서 투명으로 가는 띠를 덮어 "더 있다"를 보이게 한다.
+        */}
+        <nav aria-label="주 메뉴" className="-mb-px w-full sm:w-auto relative">
+          <div
+            aria-hidden="true"
+            className="sm:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-10
+                       bg-gradient-to-l from-white to-transparent z-10"
+          />
           <ul className="flex overflow-x-auto overflow-y-hidden no-scrollbar" role="tablist">
             {TABS.map(({ id, label }) => {
               const on = activeTab === id;
@@ -63,7 +73,7 @@ export const Header: React.FC<Props> = ({ activeTab, setActiveTab, latestDate })
                     type="button"
                     role="tab"
                     aria-selected={on}
-                    onClick={() => setActiveTab(id)}
+                    onClick={() => onNavigate(id)}
                     className={`px-3 sm:px-3.5 py-4 text-base font-bold whitespace-nowrap
                                 border-b-[3px] transition-colors ${
                                   on

@@ -12,6 +12,7 @@ import { DeptTab } from './components/DeptTab';
 import { MemberTab } from './components/MemberTab';
 import { AgendaTab } from './components/AgendaTab';
 import { SearchTab } from './components/SearchTab';
+import { fromHash, toHash } from './lib/route';
 
 /**
  * 그 회의의 회의록 파일 경로.
@@ -39,10 +40,14 @@ async function loadJson<T>(path: string): Promise<T | null> {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('home');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [focus, setFocus] = useState<string | null>(null);
-  const [jumpTo, setJumpTo] = useState<number | null>(null);
+  // 주소에 담긴 상태로 시작한다. 링크를 받고 들어온 사람이 홈이 아니라
+  // 그 사람이 보라고 준 화면을 봐야 한다.
+  const first = typeof window !== 'undefined' ? fromHash(window.location.hash) : null;
+
+  const [activeTab, setActiveTab] = useState<ActiveTab>(first?.tab ?? 'home');
+  const [searchQuery, setSearchQuery] = useState(first?.query ?? '');
+  const [focus, setFocus] = useState<string | null>(first?.focus ?? null);
+  const [jumpTo, setJumpTo] = useState<number | null>(first?.turn ?? null);
 
   // 자료가 도착하기 전에는 빈 껍데기를 쓴다.
   // 그럴듯한 표본을 채워두면 못 받았을 때 가짜가 진짜처럼 보인다.
@@ -51,7 +56,7 @@ export default function App() {
   const [records, setRecords] = useState<Record<string, RecordDoc>>({});
   const [meetings, setMeetings] = useState<Record<string, MeetingDoc>>({});
 
-  const [currentId, setCurrentId] = useState('');
+  const [currentId, setCurrentId] = useState(first?.meetingId ?? '');
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
   const [retryToken, setRetryToken] = useState(0);
@@ -66,7 +71,15 @@ export default function App() {
       if (!alive) return;
       if (idx) {
         setIndex(idx);
-        setCurrentId((cur) => cur || idx.meetings.find((m) => m.hasRecord)?.id || idx.meetings[0]?.id || '');
+        setCurrentId((cur) => {
+          if (cur && idx.meetings.some((m) => m.id === cur)) return cur;
+          // 기본은 **가장 알찬 회차**다. 가장 최근 회차를 기본으로 뒀더니
+          // 하필 발언 6건짜리가 걸려서 첫인상이 "내용이 이것뿐인가" 였다.
+          const rich = [...idx.meetings]
+            .filter((m) => m.hasRecord)
+            .sort((a, b) => b.turnCount - a.turnCount)[0];
+          return rich?.id || idx.meetings[0]?.id || '';
+        });
       }
       setLoadFailed(!idx);
       setLoading(false);
@@ -163,7 +176,44 @@ export default function App() {
     setFocus(opts?.focus ?? null);
     setJumpTo(opts?.turn ?? null);
     setActiveTab(tab);
+    // 주소를 새로 쌓는다. 뒤로가기가 사이트를 나가는 게 아니라 앞 화면으로 간다.
+    const next = toHash({
+      tab,
+      meetingId: opts?.meetingId ?? currentId,
+      focus: opts?.focus,
+      query: opts?.query ?? searchQuery,
+      turn: opts?.turn,
+    });
+    if (window.location.hash !== next) window.history.pushState(null, '', next);
   };
+
+  // 회차를 고르개로 바꾸는 등 navigate 를 안 거치는 변화도 주소에 반영한다.
+  useEffect(() => {
+    const next = toHash({
+      tab: activeTab, meetingId: currentId,
+      focus: focus ?? undefined, query: searchQuery,
+    });
+    if (window.location.hash !== next) window.history.replaceState(null, '', next);
+  }, [activeTab, currentId, focus, searchQuery]);
+
+  // 뒤로/앞으로 가기
+  useEffect(() => {
+    const onPop = () => {
+      const r = fromHash(window.location.hash);
+      if (!r) { setActiveTab('home'); return; }
+      setActiveTab(r.tab);
+      if (r.meetingId) setCurrentId(r.meetingId);
+      setFocus(r.focus ?? null);
+      setJumpTo(r.turn ?? null);
+      if (r.query !== undefined) setSearchQuery(r.query);
+    };
+    window.addEventListener('popstate', onPop);
+    window.addEventListener('hashchange', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener('hashchange', onPop);
+    };
+  }, []);
 
   const latest = index.meetings[0]?.date ?? null;
 
@@ -171,7 +221,9 @@ export default function App() {
     <div className="min-h-screen overflow-x-clip bg-white text-slate-800 font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
       <a href="#container" className="krds-skip">본문 바로가기</a>
 
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} latestDate={latest} />
+      {/* 탭 단추도 navigate 를 거친다. setActiveTab 을 직접 부르면 히스토리가
+          쌓이지 않아 뒤로가기가 앞 화면이 아니라 사이트 밖으로 나간다. */}
+      <Header activeTab={activeTab} onNavigate={navigate} latestDate={latest} />
 
       <main id="container" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {loading && (
@@ -235,8 +287,7 @@ export default function App() {
                 index={index}
                 derived={derived}
                 loading={detailLoading}
-                focus={focus}
-                onFocused={() => setFocus(null)}
+                open={focus}
                 onNavigate={navigate}
               />
             )}
@@ -246,8 +297,7 @@ export default function App() {
                 index={index}
                 derived={derived}
                 loading={detailLoading}
-                focus={focus}
-                onFocused={() => setFocus(null)}
+                open={focus}
                 onNavigate={navigate}
               />
             )}

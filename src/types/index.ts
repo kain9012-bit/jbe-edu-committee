@@ -123,20 +123,30 @@ export interface Exchange {
   meeting: string;
   date: string;
   agenda: string;
+  /** 답변한 사람의 소속 */
   dept: string;
   deptKind: string;
+  /** 질의·답변 본문에 이름이 나온 다른 부서 — 답변한 것과 구분해서 다룬다 */
+  mentions: string[];
   answerer: string;
   answer: string;
   answerTurn: number;
   member: string | null;
   question: string | null;
   questionTurn: number | null;
+  /** 질의 바로 다음 발언이 이 답변인가. 아니면 짝을 나란히 두지 않는다. */
+  direct: boolean;
 }
 
 export interface DeptStat {
   name: string;
   kind: string;
-  turnCount: number;
+  /** 상위 국. 회의록의 안건 제목에서 읽어낸 값이라 없을 수 있다. */
+  bureau: string | null;
+  /** 이 부서 사람이 직접 답한 발언 수 */
+  answerCount: number;
+  /** 이 부서 이름이 질의·답변 본문에 나온 질의응답 수 */
+  mentionCount: number;
   meetings: { id: string; count: number }[];
   members: { name: string; count: number }[];
 }
@@ -150,13 +160,17 @@ export interface MemberStat {
 }
 
 export interface DerivedDoc {
+  /** 홈 추천 검색어 — 실제 회의록에서 세어 만든 것이라 0건이 나올 수 없다 */
+  topics: { word: string; count: number }[];
   depts: DeptStat[];
   members: MemberStat[];
   agendas: { meeting: string; date: string; title: string }[];
   exchanges: Exchange[];
 }
 
-export const emptyDerived: DerivedDoc = { depts: [], members: [], agendas: [], exchanges: [] };
+export const emptyDerived: DerivedDoc = {
+  topics: [], depts: [], members: [], agendas: [], exchanges: [],
+};
 
 /** 탭 이동. `focus` 는 부서명·의원명처럼 그 탭에서 바로 펼쳐 볼 대상. */
 export type Navigate = (

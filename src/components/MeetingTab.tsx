@@ -3,7 +3,7 @@ import { FileText, Clock, ExternalLink } from 'lucide-react';
 import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, Quote, SectionTitle, SourceLink } from './Ui';
 import { MeetingPicker } from './MeetingPicker';
-import { daysBetween, korDate, sourceNote } from '../lib/util';
+import { daysBetween, korDate, sourceNote, IMSI_NOTE } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -40,6 +40,11 @@ export const MeetingTab: React.FC<Props> = ({
             {sourceNote(entry)}
             {lag !== null && <> · 회의 후 {lag}일 만에 발간</>}
           </p>
+          {entry.recordStatus === '임시' && (
+            <p className="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-md p-3">
+              {IMSI_NOTE}
+            </p>
+          )}
           <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
             {entry.viewerUrl && <SourceLink href={entry.viewerUrl}>도의회 회의록 원문</SourceLink>}
             {entry.vod.map((v) => (

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Search, FileSearch } from 'lucide-react';
 import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, ChipRow, EmptyState, SectionTitle } from './Ui';
-import { highlight, korDate } from '../lib/util';
+import { highlight, korDate, looseTest } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
@@ -47,7 +47,7 @@ export const SearchTab: React.FC<Props> = ({
     const out: Hit[] = [];
     Object.values(records).forEach((doc) => {
       doc.turns.forEach((t) => {
-        const text = t.lines.find((l) => l.includes(needle));
+        const text = t.lines.find((l) => looseTest(l, needle));
         if (!text) return;
         out.push({
           meeting: doc.id, date: doc.date, turn: t.i,
@@ -73,12 +73,12 @@ export const SearchTab: React.FC<Props> = ({
     if (needle.length < 2) return [];
     return Object.values(meetings).flatMap((m) =>
       [
-        ...(m.summary?.includes(needle) ? [{ id: m.id, kind: '요약', text: m.summary }] : []),
+        ...(looseTest(m.summary ?? '', needle) ? [{ id: m.id, kind: '요약', text: m.summary }] : []),
         ...(m.highlights ?? [])
-          .filter((h) => h.title.includes(needle) || h.body.includes(needle))
+          .filter((h) => looseTest(h.title, needle) || looseTest(h.body, needle))
           .map((h) => ({ id: m.id, kind: '주요 질의응답', text: `${h.title} — ${h.body}` })),
         ...(m.asks ?? [])
-          .filter((a) => a.text.includes(needle))
+          .filter((a) => looseTest(a.text, needle))
           .map((a) => ({ id: m.id, kind: a.type, text: a.text })),
       ],
     );
@@ -100,7 +100,7 @@ export const SearchTab: React.FC<Props> = ({
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="회의록 전문에서 찾습니다 — 두 글자 이상"
+          placeholder="회의록 전문에서 찾습니다 — 두 글자 이상, 띄어쓰기는 무시합니다"
           className="w-full h-14 pl-12 pr-4 text-lg bg-white border-2 border-slate-300 rounded-lg
                      outline-none focus:border-blue-600"
         />
@@ -112,7 +112,7 @@ export const SearchTab: React.FC<Props> = ({
         <EmptyState
           icon={<FileSearch className="w-6 h-6" aria-hidden="true" />}
           title="찾을 말을 넣어 주세요"
-          desc="발언 전문에서 그대로 찾습니다. 발언자와 안건도 함께 보여줍니다."
+          desc="발언 전문에서 찾습니다. 띄어쓰기는 무시하므로 '학교폭력'과 '학교 폭력'이 같은 결과를 냅니다."
         />
       )}
 

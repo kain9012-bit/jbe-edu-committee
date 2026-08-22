@@ -12,14 +12,17 @@ interface Props {
   onNavigate: Navigate;
 }
 
-const QUICK = ['정원 조례', '늘봄', '학생맞춤통합지원', '행정절차', '인권센터', '급식', '학교 신설'];
-
 export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
   const [q, setQ] = useState('');
   const meetings = index.meetings;
   const withRecord = meetings.filter((m) => m.hasRecord);
   const waiting = meetings.filter((m) => !m.hasRecord && m.source !== 'asr');
-  const bocheong = derived.depts.filter((d) => d.kind === '본청').slice(0, 8);
+  // 답변이 없어도 언급이 많은 과가 있다(총무과 23건). 둘을 합쳐 고른다 —
+  // 담당자가 홈에서 자기 과를 못 찾으면 그 다음은 없다.
+  const bocheong = derived.depts
+    .filter((d) => d.kind === '본청')
+    .sort((a, b) => (b.answerCount + b.mentionCount) - (a.answerCount + a.mentionCount))
+    .slice(0, 8);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +62,7 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="예: 정원 조례, 늘봄학교, 학교 신설"
+                  placeholder="예: 늘봄, 교육장 공모, 학교 신설 — 띄어쓰기는 무시합니다"
                   className="w-full h-16 pl-12 pr-4 text-lg text-slate-900 placeholder-slate-400
                              bg-white border-2 border-blue-600 rounded-lg outline-none focus:border-blue-700"
                 />
@@ -76,15 +79,18 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
           </form>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
-            {QUICK.map((k) => (
+            {/* 추천 검색어는 회의록에서 세어 만든다. 그럴듯해 보인다고 손으로 적으면
+                결과가 0건인 칩이 첫 화면에 뜬다. 실제로 `#급식` 이 그랬다. */}
+            {derived.topics.map((t) => (
               <button
-                key={k}
+                key={t.word}
                 type="button"
-                onClick={() => onNavigate('search', { query: k })}
+                onClick={() => onNavigate('search', { query: t.word })}
                 className="px-3 py-1.5 rounded-full bg-white border border-blue-200 text-sm
                            font-semibold text-blue-700 hover:bg-blue-100 transition-colors"
               >
-                #{k}
+                #{t.word}
+                <span className="ml-1 text-xs font-medium text-blue-400 tabular-nums">{t.count}</span>
               </button>
             ))}
           </div>
@@ -127,7 +133,7 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
       {/* ── 부서 바로가기 ── */}
       {bocheong.length > 0 && (
         <section className="space-y-3">
-          <SectionTitle desc="답변 발언이 많은 순">우리 과 찾기</SectionTitle>
+          <SectionTitle desc="직접 답변 + 이름이 언급된 건을 합친 순">우리 과 찾기</SectionTitle>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {bocheong.map((d) => (
               <button
@@ -139,8 +145,8 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
               >
                 <p className="font-bold text-slate-900">{d.name}</p>
                 <p className="text-xs text-slate-500">
-                  답변 <span className="tabular-nums font-bold text-blue-700">{d.turnCount}</span>건 ·
-                  {' '}회의 {d.meetings.length}회
+                  답변 <span className="tabular-nums font-bold text-blue-700">{d.answerCount}</span>건
+                  {d.mentionCount > 0 && <> · 언급 {d.mentionCount}건</>}
                 </p>
               </button>
             ))}

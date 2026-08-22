@@ -18,11 +18,32 @@ export function daysBetween(a: string, b: string): number | null {
   return Math.round((pb - pa) / 86400000);
 }
 
+/**
+ * 띄어쓰기를 무시하는 검색.
+ *
+ * 회의록은 `학교폭력` 인데 사람은 `학교 폭력` 이라고 친다. 반대도 마찬가지다.
+ * 글자 그대로만 맞추면 0건이 나오고, 쓰는 사람은 "검색이 안 되네" 로 받아들인다.
+ * 글자 사이에 공백이 얼마든 들어갈 수 있게 정규식을 만든다.
+ */
+export function looseRegex(query: string, flags = 'gi'): RegExp | null {
+  const chars = query.replace(/\s+/g, '').split('');
+  if (chars.length === 0) return null;
+  const body = chars.map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*');
+  return new RegExp(body, flags);
+}
+
+/** 이 글에 검색어가 들어 있는가 (띄어쓰기 무시) */
+export function looseTest(text: string, query: string): boolean {
+  const re = looseRegex(query, 'i');
+  return re ? re.test(text) : false;
+}
+
 /** 검색어를 <mark>로 감싸 React 노드로 돌려준다 (dangerouslySetInnerHTML 없이) */
 export function highlight(text: string, query: string): ReactNode[] {
   const q = query.trim();
   if (!q) return [text];
-  const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  const re = looseRegex(q);
+  if (!re) return [text];
   const out: ReactNode[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
@@ -68,6 +89,19 @@ export const STAGE_TONE: Record<Stage, 'blue' | 'green' | 'amber' | 'slate'> = {
   asr: 'amber',
   waiting: 'slate',
 };
+
+/**
+ * '속기 미확정' 이 무슨 뜻인지 풀어 준다.
+ *
+ * 노란 배지만 달아 놓으면 읽는 사람은 "그럼 이걸 믿어도 되나" 로 받아들인다.
+ * 실제로는 도의회가 발간한 공식 회의록이고, 확정본에서 바뀌는 것은 표현을
+ * 다듬는 수준이지 내용이 뒤집히지 않는다. 그 사실을 말해 주지 않으면
+ * 배지가 불신만 남긴다.
+ */
+export const IMSI_NOTE =
+  '도의회가 발간한 공식 회의록입니다. 속기사 검토가 끝나면 확정본으로 바뀌는데, '
+  + '대개 표현을 다듬는 수준이고 발언 내용이 뒤집히지는 않습니다. '
+  + '확정본이 나오면 이 화면의 전문도 자동으로 교체됩니다.';
 
 /** 자료의 출처를 한 줄로. 읽는 사람이 무엇을 믿어도 되는지 판단하는 근거다. */
 export function sourceNote(m: IndexEntry): string {

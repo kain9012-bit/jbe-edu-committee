@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { UserRound } from 'lucide-react';
 import type { DerivedDoc, IndexDoc, Navigate } from '../types';
 import { EmptyState, SectionTitle } from './Ui';
-import { korDate } from '../lib/util';
+import { ExchangeItem } from './Exchange';
 
 interface Props {
   index: IndexDoc;
   derived: DerivedDoc;
   loading: boolean;
-  focus: string | null;
-  onFocused: () => void;
+  /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
+  open: string | null;
   onNavigate: Navigate;
 }
 
@@ -19,14 +19,10 @@ interface Props {
  * 답변한 기관을 함께 보여준다. "이 위원이 우리 과에 몇 번 물었나" 가
  * 부서 담당자에게는 가장 실용적인 정보다.
  */
-export const MemberTab: React.FC<Props> = ({ index, derived, loading, focus, onFocused, onNavigate }) => {
-  const [open, setOpen] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!focus) return;
-    setOpen(focus);
-    onFocused();
-  }, [focus, onFocused]);
+export const MemberTab: React.FC<Props> = ({ index, derived, loading, open, onNavigate }) => {
+  // 펼친 위원도 주소에 담는다. 링크를 받은 사람이 같은 화면을 본다.
+  const toggle = (name: string) =>
+    onNavigate('member', { focus: open === name ? undefined : name });
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
 
@@ -48,6 +44,11 @@ export const MemberTab: React.FC<Props> = ({ index, derived, loading, focus, onF
         위원별 질의
       </SectionTitle>
 
+      <p className="text-sm text-slate-600">
+        아래 부서 목록은 <strong className="font-bold text-slate-900">질의 바로 다음에 그 부서가
+        답한 건</strong>만 셉니다. 답변이 여러 사람을 거친 경우는 세지 않습니다.
+      </p>
+
       <ul className="space-y-3">
         {derived.members.map((m) => {
           const on = open === m.name;
@@ -57,7 +58,7 @@ export const MemberTab: React.FC<Props> = ({ index, derived, loading, focus, onF
               <button
                 type="button"
                 aria-expanded={on}
-                onClick={() => setOpen(on ? null : m.name)}
+                onClick={() => toggle(m.name)}
                 className="w-full text-left p-5 hover:bg-slate-50 transition-colors"
               >
                 <div className="flex flex-wrap items-baseline gap-2 mb-1">
@@ -92,30 +93,8 @@ export const MemberTab: React.FC<Props> = ({ index, derived, loading, focus, onF
                     </p>
                   )}
                   {ex.map((e, i) => (
-                    <article key={i} className="p-5 space-y-2">
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="text-slate-500">{korDate(e.date)}</span>
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('record', { meetingId: e.meeting, turn: e.questionTurn ?? e.answerTurn })}
-                          className="font-bold text-blue-700 hover:underline"
-                        >
-                          {titleOf(e.meeting)}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('dept', { focus: e.dept })}
-                          className="font-bold text-blue-700 hover:underline"
-                        >
-                          {e.dept}
-                        </button>
-                      </div>
-                      {e.question && <p className="text-slate-700 leading-relaxed">{e.question}</p>}
-                      <div className="pl-3 border-l-[3px] border-blue-200">
-                        <p className="text-xs font-bold text-slate-500 mb-0.5">답변 · {e.answerer}</p>
-                        <p className="text-slate-700 leading-relaxed">{e.answer}</p>
-                      </div>
-                    </article>
+                    <ExchangeItem key={i} ex={e} meetingTitle={titleOf(e.meeting)}
+                      onNavigate={onNavigate} />
                   ))}
                 </div>
               )}
