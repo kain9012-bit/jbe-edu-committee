@@ -145,10 +145,11 @@ export default function App() {
     void ensureDetail(currentId);
   }, [activeTab, currentId, ensureDetail]);
 
-  // ── 지적·요구(61KB). 요약의 asks 에 집행부 답변을 붙여 둔 파일이다. ──
+  // ── 지적·요구(61KB). 요약의 asks 에 집행부 답변을 붙여 둔 파일이다.
+  //    회의 요약 화면의 자료요구·지적사항도 이 답변을 펼쳐 보여준다. ──
   const asksRequested = React.useRef(false);
   useEffect(() => {
-    if (!['asks', 'member'].includes(activeTab)) return;
+    if (!['asks', 'member', 'meeting'].includes(activeTab)) return;
     if (asksRequested.current) return;
     asksRequested.current = true;
     (async () => {
@@ -325,6 +326,7 @@ export default function App() {
                 setCurrentId={setCurrentId}
                 meeting={meetings[currentId] ?? null}
                 record={records[currentId] ?? null}
+                asks={asks}
                 loading={detailLoading}
                 onNavigate={navigate}
               />

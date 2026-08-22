@@ -92,6 +92,14 @@ export interface RecordDoc {
   attachments: { name: string; kbyte: number; url: string }[];
 }
 
+/** 위원의 요구 바로 뒤에 이어진 집행부 답변 한 건. */
+export interface AskReply {
+  i: number;
+  speaker: string;
+  dept: string | null;
+  text: string;
+}
+
 /**
  * 지적·자료요구 한 건. `data/asks.json` 에서 온다.
  * 사람이 쓴 요약(meetings/*.json)의 asks 에 **집행부 답변을 붙여** 만든다.
@@ -110,7 +118,7 @@ export interface Ask {
   meeting: string;
   date: string;
   /** 그 발언 바로 뒤에 이어진 집행부 답변. 없을 수 있다. */
-  replies: { i: number; speaker: string; dept: string | null; text: string }[];
+  replies: AskReply[];
 }
 
 /** 사람이 쓴 요약. 없을 수 있다. */

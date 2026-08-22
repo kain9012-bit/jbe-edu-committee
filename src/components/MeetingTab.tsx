@@ -1,8 +1,9 @@
 import React from 'react';
 import { FileText, Clock, ExternalLink } from 'lucide-react';
-import type { IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
+import type { Ask, IndexDoc, MeetingDoc, Navigate, RecordDoc } from '../types';
 import { Badge, EmptyState, Quote, SectionTitle, SourceLink } from './Ui';
 import { MeetingPicker } from './MeetingPicker';
+import { AskDetail } from './AskDetail';
 import { korDate, sourceNote } from '../lib/util';
 
 interface Props {
@@ -11,14 +12,20 @@ interface Props {
   setCurrentId: (id: string) => void;
   meeting: MeetingDoc | null;
   record: RecordDoc | null;
+  /** 집행부 답변이 붙은 판(asks.json). 요약의 asks 에는 답변이 없다. */
+  asks: Ask[];
   loading: boolean;
   onNavigate: Navigate;
 }
 
 export const MeetingTab: React.FC<Props> = ({
-  index, currentId, setCurrentId, meeting, record, loading, onNavigate,
+  index, currentId, setCurrentId, meeting, record, asks, loading, onNavigate,
 }) => {
   const entry = index.meetings.find((m) => m.id === currentId);
+
+  // 요약의 asks 와 asks.json 을 회차·제목으로 맞춘다. 답변은 asks.json 에만 있다.
+  const repliesOf = (title: string) =>
+    asks.find((a) => a.meeting === currentId && a.title === title)?.replies ?? [];
 
   return (
     <div className="space-y-6 pb-12">
@@ -165,7 +172,7 @@ export const MeetingTab: React.FC<Props> = ({
                 desc="집행부가 받아 가야 할 것">자료요구 · 지적사항</SectionTitle>
               <ul className="space-y-2">
                 {meeting.asks.map((a, i) => (
-                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-4 space-y-1.5">
+                  <li key={i} className="bg-white rounded-lg border border-slate-200 p-4 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge tone={a.type === '지적사항' ? 'red' : a.type === '자료요구' ? 'blue' : 'amber'}>
                         {a.type}
@@ -177,18 +184,22 @@ export const MeetingTab: React.FC<Props> = ({
                         onClick={() => onNavigate('asks')}
                         className="text-xs font-bold text-slate-500 hover:text-blue-700 hover:underline ml-auto"
                       >
-                        답변까지 보기
+                        지적·요구 모아 보기
                       </button>
                     </div>
-                    <p className="font-bold text-slate-900 leading-snug">{a.title}</p>
-                    <ul className="space-y-1">
-                      {(a.body ?? []).map((line, k) => (
-                        <li key={k} className="flex gap-2 text-slate-700 leading-relaxed">
-                          <span aria-hidden="true" className="text-slate-300 shrink-0">·</span>
-                          <span>{line}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-1.5">
+                      <p className="font-bold text-slate-900 leading-snug">{a.title}</p>
+                      <ul className="space-y-1">
+                        {(a.body ?? []).map((line, k) => (
+                          <li key={k} className="flex gap-2 text-slate-700 leading-relaxed">
+                            <span aria-hidden="true" className="text-slate-300 shrink-0">·</span>
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {/* 오간 말은 접어 둔다. 여기서는 받아 갈 것만 훑는다. */}
+                    <AskDetail quote={a.quote} speaker={a.speaker} replies={repliesOf(a.title)} />
                   </li>
                 ))}
               </ul>
