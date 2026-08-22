@@ -3,13 +3,16 @@ import { Landmark } from 'lucide-react';
 import { korDate } from '../lib/util';
 import type { ActiveTab, Navigate } from '../types';
 
+/*
+ * 여덟 개였다. 그중 넷이 같은 자료를 다르게 자른 것이라, 무엇을 눌러야 할지
+ * 매번 판단해야 했다. 집행부가 받아 갈 **지적·요구**를 두 번째 자리에 두고,
+ * 의원별은 부서별의 필터로, 안건은 회의 요약에서 여는 화면으로 내렸다.
+ */
 const TABS: { id: ActiveTab; label: string }[] = [
   { id: 'home', label: '홈' },
+  { id: 'asks', label: '지적·요구' },
   { id: 'meeting', label: '회의 요약' },
   { id: 'dept', label: '부서별' },
-  { id: 'member', label: '의원별' },
-  { id: 'asks', label: '지적·요구' },
-  { id: 'agenda', label: '안건' },
   { id: 'record', label: '회의록 전문' },
   { id: 'search', label: '통합검색' },
 ];

@@ -51,7 +51,7 @@ export const DialogItem: React.FC<{
         {!hideMember && dialog.member && (
           <button
             type="button"
-            onClick={() => onNavigate('member', { focus: dialog.member! })}
+            onClick={() => onNavigate('dept', { member: dialog.member! })}
             className="font-bold text-slate-900 hover:text-blue-700 hover:underline"
           >
             {dialog.member} 위원

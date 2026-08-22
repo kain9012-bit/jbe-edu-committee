@@ -43,7 +43,7 @@ export const RecordTab: React.FC<Props> = ({
     };
     (record?.turns ?? []).forEach((t) => {
       if (t.role === '의원') put('도의원', `${t.name} 위원`);
-      else if (t.dept && t.deptKind === '본청') put('도교육청 본청', t.dept);
+      else if (t.dept && (t.deptKind === '본청' || t.deptKind === '기관장')) put('도교육청 본청', t.dept);
       else if (t.dept && t.deptKind === '직속기관') put('직속기관', t.dept);
       else if (t.dept && t.deptKind === '교육지원청') put('교육지원청', t.dept);
       else put('그 밖', t.dept ?? t.speaker);
@@ -328,10 +328,10 @@ export const RecordTab: React.FC<Props> = ({
                       {t.role === '의원' && (
                         <button
                           type="button"
-                          onClick={() => onNavigate('member', { focus: t.name })}
+                          onClick={() => onNavigate('dept', { member: t.name })}
                           className="text-xs font-bold text-blue-700 hover:underline"
                         >
-                          의원별 보기
+                          이 위원 질의 모아 보기
                         </button>
                       )}
                       {t.agendaTitle && (

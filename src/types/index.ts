@@ -1,5 +1,16 @@
+/*
+ * 탭.
+ *
+ * 예전에는 여덟 개였다. 그중 `부서별·의원별·지적요구·안건` 넷은 **같은 133개
+ * 질의응답을 네 가지로 자른 것**이라, 내용을 보기 전에 자르는 방식부터 골라야 했다.
+ * 고를 것이 많으면 우선순위가 없는 것과 같다.
+ *
+ * 이 서비스에 오는 이유는 하나다 — **우리 과가 받아 가야 할 숙제**. 그것을
+ * 두 번째 자리에 두고, 의원별은 부서별의 필터로, 안건은 회의 요약에서 여는 화면으로
+ * 내렸다(주소는 그대로 살아 있어 예전 링크도 열린다).
+ */
 export type ActiveTab =
-  | 'home' | 'meeting' | 'record' | 'dept' | 'member' | 'asks' | 'agenda' | 'search';
+  | 'home' | 'meeting' | 'record' | 'dept' | 'asks' | 'agenda' | 'search';
 
 /** 회의록이 어디서 왔는가. 화면에 반드시 밝힌다. */
 export type Source = 'record' | 'asr' | null;
@@ -235,8 +246,10 @@ export const emptyDerived: DerivedDoc = {
   topics: [], depts: [], members: [], agendas: [], dialogCount: 0,
 };
 
-/** 탭 이동. `focus` 는 부서명·의원명처럼 그 탭에서 바로 펼쳐 볼 대상. */
+/** 탭 이동. `focus` 는 부서명처럼 그 탭에서 바로 펼쳐 볼 대상, `member` 는 위원 필터. */
 export type Navigate = (
   tab: ActiveTab,
-  opts?: { query?: string; meetingId?: string; focus?: string; turn?: number },
+  opts?: {
+    query?: string; meetingId?: string; focus?: string; member?: string; turn?: number;
+  },
 ) => void;

@@ -18,17 +18,19 @@ export interface Route {
   tab: ActiveTab;
   meetingId?: string;
   focus?: string;
+  /** 부서별 화면의 위원 필터. 예전 `#/member/한정수` 링크도 여기로 들어온다. */
+  member?: string;
   query?: string;
   turn?: number;
 }
 
 const TABS: ActiveTab[] = [
-  'home', 'meeting', 'record', 'dept', 'member', 'asks', 'agenda', 'search',
+  'home', 'meeting', 'record', 'dept', 'asks', 'agenda', 'search',
 ];
 
 /** 탭마다 경로 두 번째 칸에 무엇이 오는가 */
 function segmentOf(r: Route): string {
-  if (r.tab === 'dept' || r.tab === 'member') return r.focus ?? '';
+  if (r.tab === 'dept') return r.focus ?? '';
   if (r.tab === 'meeting' || r.tab === 'record') return r.meetingId ?? '';
   return '';
 }
@@ -40,6 +42,7 @@ export function toHash(r: Route): string {
 
   const qs = new URLSearchParams();
   if (r.tab === 'search' && r.query) qs.set('q', r.query);
+  if (r.tab === 'dept' && r.member) qs.set('member', r.member);
   if (r.turn !== undefined && r.turn !== null) qs.set('turn', String(r.turn));
   const s = qs.toString();
   return s ? `${out}?${s}` : out;
@@ -53,17 +56,27 @@ export function fromHash(hash: string): Route | null {
   const parts = path.split('/').filter(Boolean).map((p) => {
     try { return decodeURIComponent(p); } catch { return p; }
   });
+  const qs = new URLSearchParams(search ?? '');
+  const turn = qs.get('turn');
+
+  // 의원별은 부서별의 필터가 됐다. 예전에 나눠 준 `#/member/한정수` 링크가
+  // 죽으면 안 되므로, 여기서 부서별 화면의 위원 필터로 옮겨 준다.
+  if (parts[0] === 'member') {
+    const r: Route = { tab: 'dept' };
+    if (parts[1]) r.member = parts[1];
+    return r;
+  }
+
   const tab = parts[0] as ActiveTab;
   if (!TABS.includes(tab)) return null;
 
-  const qs = new URLSearchParams(search ?? '');
-  const turn = qs.get('turn');
   const r: Route = { tab };
 
   if (parts[1]) {
-    if (tab === 'dept' || tab === 'member') r.focus = parts[1];
+    if (tab === 'dept') r.focus = parts[1];
     else if (tab === 'meeting' || tab === 'record') r.meetingId = parts[1];
   }
+  if (tab === 'dept' && qs.get('member')) r.member = qs.get('member')!;
   if (tab === 'search' && qs.get('q')) r.query = qs.get('q')!;
   if (turn !== null && /^\d+$/.test(turn)) r.turn = Number(turn);
   return r;

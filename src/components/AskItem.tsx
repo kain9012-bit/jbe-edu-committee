@@ -39,7 +39,7 @@ export const AskItem: React.FC<{
       {!hideMember && ask.member && (
         <button
           type="button"
-          onClick={() => onNavigate('member', { focus: ask.member! })}
+          onClick={() => onNavigate('dept', { member: ask.member! })}
           className="text-sm text-slate-600 hover:text-blue-700 hover:underline"
         >
           {ask.member} 위원

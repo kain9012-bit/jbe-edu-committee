@@ -9,7 +9,6 @@ import { HomeTab } from './components/HomeTab';
 import { MeetingTab } from './components/MeetingTab';
 import { RecordTab } from './components/RecordTab';
 import { DeptTab } from './components/DeptTab';
-import { MemberTab } from './components/MemberTab';
 import { AgendaTab } from './components/AgendaTab';
 import { AsksTab } from './components/AsksTab';
 import { SearchTab } from './components/SearchTab';
@@ -48,6 +47,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>(first?.tab ?? 'home');
   const [searchQuery, setSearchQuery] = useState(first?.query ?? '');
   const [focus, setFocus] = useState<string | null>(first?.focus ?? null);
+  const [member, setMember] = useState<string | null>(first?.member ?? null);
   const [jumpTo, setJumpTo] = useState<number | null>(first?.turn ?? null);
 
   // 자료가 도착하기 전에는 빈 껍데기를 쓴다.
@@ -90,12 +90,10 @@ export default function App() {
     return () => { alive = false; };
   }, [retryToken]);
 
-  // ── 집계(34KB). 홈·부서별·의원별·안건·지적요구가 쓴다. 가벼워서 일찍 받아 둔다.
-  //    지적요구 탭은 목록에 쓰지 않고 **부서 고르개를 본청·직속기관·교육지원청으로
-  //    묶는 데**만 쓴다. 못 받아도 화면은 그대로 뜨고, 묶음만 풀린다. ──
+  // ── 집계(34KB). 홈·부서별·의원별·안건이 쓴다. 가벼워서 일찍 받아 둔다. ──
   const derivedRequested = React.useRef(false);
   useEffect(() => {
-    if (!['home', 'dept', 'member', 'agenda', 'asks'].includes(activeTab)) return;
+    if (!['home', 'dept', 'agenda'].includes(activeTab)) return;
     if (derivedRequested.current) return;
     derivedRequested.current = true;
     (async () => {
@@ -108,7 +106,7 @@ export default function App() {
   // ── 주고받은 덩어리(694KB). 부서별·의원별에서만 필요하다. ──
   const dialogsRequested = React.useRef(false);
   useEffect(() => {
-    if (!['dept', 'member'].includes(activeTab)) return;
+    if (activeTab !== 'dept') return;
     if (dialogsRequested.current) return;
     dialogsRequested.current = true;
     setDetailLoading(true);
@@ -147,11 +145,29 @@ export default function App() {
     void ensureDetail(currentId);
   }, [activeTab, currentId, ensureDetail]);
 
+  /*
+   * 홈에 가장 최근 회의의 **요약 본문**을 싣는다(회차당 몇 KB).
+   *
+   * 예전 홈은 숫자 넷과 단추 여덟이 전부였다. 들어와서 글 한 줄을 읽으려면
+   * 두 번을 눌러야 했고, 그래서 "정보는 많은데 볼 게 없다" 는 화면이 됐다.
+   */
+  const latestSummary = React.useMemo(
+    () => index.meetings.find((m) => m.hasSummary) ?? null,
+    [index],
+  );
+  useEffect(() => {
+    if (activeTab !== 'home' || !latestSummary || meetings[latestSummary.id]) return;
+    (async () => {
+      const m = await loadJson<MeetingDoc>(`meetings/${latestSummary.id}.json`);
+      if (m) setMeetings((prev) => ({ ...prev, [latestSummary.id]: m }));
+    })();
+  }, [activeTab, latestSummary, meetings]);
+
   // ── 지적·요구(61KB). 요약의 asks 에 집행부 답변을 붙여 둔 파일이다.
   //    회의 요약 화면의 자료요구·지적사항도 이 답변을 펼쳐 보여준다. ──
   const asksRequested = React.useRef(false);
   useEffect(() => {
-    if (!['asks', 'member', 'meeting'].includes(activeTab)) return;
+    if (!['home', 'asks', 'meeting'].includes(activeTab)) return;
     if (asksRequested.current) return;
     asksRequested.current = true;
     (async () => {
@@ -232,6 +248,7 @@ export default function App() {
     if (opts?.query !== undefined) setSearchQuery(opts.query);
     if (opts?.meetingId) setCurrentId(opts.meetingId);
     setFocus(opts?.focus ?? null);
+    setMember(opts?.member ?? null);
     setJumpTo(opts?.turn ?? null);
     setActiveTab(tab);
     // 주소를 새로 쌓는다. 뒤로가기가 사이트를 나가는 게 아니라 앞 화면으로 간다.
@@ -239,6 +256,7 @@ export default function App() {
       tab,
       meetingId: opts?.meetingId ?? currentId,
       focus: opts?.focus,
+      member: opts?.member,
       query: opts?.query ?? searchQuery,
       turn: opts?.turn,
     });
@@ -251,11 +269,11 @@ export default function App() {
   useEffect(() => {
     const next = toHash({
       tab: activeTab, meetingId: currentId,
-      focus: focus ?? undefined, query: searchQuery,
+      focus: focus ?? undefined, member: member ?? undefined, query: searchQuery,
       turn: jumpTo ?? undefined,
     });
     if (window.location.hash !== next) window.history.replaceState(null, '', next);
-  }, [activeTab, currentId, focus, searchQuery, jumpTo]);
+  }, [activeTab, currentId, focus, member, searchQuery, jumpTo]);
 
   // 뒤로/앞으로 가기
   useEffect(() => {
@@ -265,6 +283,7 @@ export default function App() {
       setActiveTab(r.tab);
       if (r.meetingId) setCurrentId(r.meetingId);
       setFocus(r.focus ?? null);
+      setMember(r.member ?? null);
       setJumpTo(r.turn ?? null);
       if (r.query !== undefined) setSearchQuery(r.query);
     };
@@ -318,7 +337,14 @@ export default function App() {
         {!loading && !loadFailed && (
           <>
             {activeTab === 'home' && (
-              <HomeTab index={index} derived={derived} onNavigate={navigate} />
+              <HomeTab
+                index={index}
+                derived={derived}
+                asks={asks}
+                latest={latestSummary}
+                latestDoc={latestSummary ? meetings[latestSummary.id] ?? null : null}
+                onNavigate={navigate}
+              />
             )}
 
             {activeTab === 'meeting' && (
@@ -353,18 +379,8 @@ export default function App() {
                 dialogs={dialogs}
                 loading={detailLoading}
                 open={focus}
-                onNavigate={navigate}
-              />
-            )}
-
-            {activeTab === 'member' && (
-              <MemberTab
-                index={index}
-                derived={derived}
-                dialogs={dialogs}
-                asks={asks}
-                loading={detailLoading}
-                open={focus}
+                member={member}
+                onMember={setMember}
                 onNavigate={navigate}
               />
             )}
@@ -372,7 +388,6 @@ export default function App() {
             {activeTab === 'asks' && (
               <AsksTab
                 index={index}
-                derived={derived}
                 asks={asks}
                 loading={detailLoading}
                 onNavigate={navigate}

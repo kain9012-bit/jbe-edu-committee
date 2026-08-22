@@ -15,6 +15,9 @@ interface Props {
   loading: boolean;
   /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
   open: string | null;
+  /** 위원 필터. 예전 의원별 탭이 여기로 들어왔다. */
+  member: string | null;
+  onMember: (name: string | null) => void;
   onNavigate: Navigate;
 }
 
@@ -30,7 +33,9 @@ interface Props {
  * 정작 담당 과는 비어 있다. **답변한 것**과 **이름이 언급된 것**을 따로 세고,
  * 화면에서도 따로 보여준다. 섞으면 언급된 것을 답변한 것으로 오해한다.
  */
-export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, open, onNavigate }) => {
+export const DeptTab: React.FC<Props> = ({
+  index, derived, dialogs, loading, open, member, onMember, onNavigate,
+}) => {
   const [group, setGroup] = useState('전체');
   const [q, setQ] = useState('');
   const [meetingId, setMeetingId] = useState('전체');
@@ -49,21 +54,38 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
   // 회차를 좁히면 목록·숫자·펼친 내용이 **한꺼번에** 그 회차 것만 남아야 한다.
   // 목록만 걸러 놓고 카드 숫자는 전체 합계로 두면 어느 쪽을 믿을지 알 수 없다.
   const ex = useMemo(
-    () => (meetingId === '전체'
-      ? dialogs
-      : dialogs.filter((e) => e.meeting === meetingId)),
-    [dialogs, meetingId],
+    () => dialogs.filter(
+      (e) => (meetingId === '전체' || e.meeting === meetingId)
+        && (!member || e.member === member),
+    ),
+    [dialogs, meetingId, member],
   );
 
+  // 고르개끼리 서로 좁힌다. 회차를 골랐는데 그 회차에 발언도 안 한 위원이
+  // 목록에 남아 있으면, 눌러 봐야 빈 화면이다.
   const perMeeting = useMemo(() => {
     const c = new Map<string, number>();
-    dialogs.forEach((e) => c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1));
+    dialogs.filter((e) => !member || e.member === member)
+      .forEach((e) => c.set(e.meeting, (c.get(e.meeting) ?? 0) + 1));
     return c;
-  }, [dialogs]);
+  }, [dialogs, member]);
 
+  const memberList = useMemo(() => {
+    const c = new Map<string, number>();
+    dialogs.filter((e) => meetingId === '전체' || e.meeting === meetingId)
+      .forEach((e) => { if (e.member) c.set(e.member, (c.get(e.member) ?? 0) + 1); });
+    return [...c.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko'));
+  }, [dialogs, meetingId]);
+
+  useEffect(() => {
+    if (member && dialogs.length && !memberList.some(([n]) => n === member)) onMember(null);
+  }, [memberList, member, dialogs, onMember]);
+
+  // 회차든 위원이든 좁혔으면 숫자를 다시 센다. 목록만 걸러 놓고 카드 숫자를
+  // 전체 합계로 두면 어느 쪽을 믿을지 알 수 없다.
   const base = useMemo(
-    () => (meetingId === '전체' ? derived.depts : deptStatsFor(derived.depts, ex)),
-    [derived, ex, meetingId],
+    () => (meetingId === '전체' && !member ? derived.depts : deptStatsFor(derived.depts, ex)),
+    [derived, ex, meetingId, member],
   );
 
   const depts = useMemo(() => {
@@ -107,7 +129,9 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
   return (
     <div className="space-y-5 pb-12">
       <SectionTitle count={depts.length} unit="곳"
-        desc={meetingId === '전체' ? '답변이 많은 순' : '고른 회차 기준'}>
+        desc={member
+          ? `${member} 위원이 질의한 부서`
+          : meetingId === '전체' ? '답변이 많은 순' : '고른 회차 기준'}>
         부서별 질의응답
       </SectionTitle>
 
@@ -123,8 +147,26 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 sm:items-start">
-        <MeetingFilter index={index} value={meetingId} onChange={setMeetingId} counts={perMeeting} />
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:items-start">
+        <MeetingFilter index={index} value={meetingId} onChange={setMeetingId}
+          counts={perMeeting} hideEmpty />
+
+        {/* 의원별 탭을 없애고 여기로 들였다. "한정수 위원이 우리 과에 뭘 물었나" 는
+            부서 화면 안에서 좁히는 일이지, 따로 떼어 놓을 화면이 아니다. */}
+        <select
+          value={member ?? '전체'}
+          onChange={(e) => onMember(e.target.value === '전체' ? null : e.target.value)}
+          aria-label="위원으로 좁히기"
+          className="h-11 px-3 rounded-md border border-slate-300 bg-white font-medium
+                     outline-none focus:border-blue-600"
+        >
+          <option value="전체">
+            위원 전체 ({memberList.reduce((n, [, c]) => n + c, 0)})
+          </option>
+          {memberList.map(([name, count]) => (
+            <option key={name} value={name}>{name} 위원 ({count})</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -214,7 +256,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
                         <div className="divide-y divide-slate-100">
                           {answered.map((e, i) => (
                             <DialogItem key={`a${i}`} dialog={e} meetingTitle={titleOf(e.meeting)}
-                              onNavigate={onNavigate} highlightDept={d.name} />
+                              onNavigate={onNavigate} highlightDept={d.name} hideMember={!!member} />
                           ))}
                         </div>
                       </section>
@@ -232,7 +274,7 @@ export const DeptTab: React.FC<Props> = ({ index, derived, dialogs, loading, ope
                         <div className="divide-y divide-slate-100">
                           {mentioned.map((e, i) => (
                             <DialogItem key={`m${i}`} dialog={e} meetingTitle={titleOf(e.meeting)}
-                              onNavigate={onNavigate} highlightDept={d.name} />
+                              onNavigate={onNavigate} highlightDept={d.name} hideMember={!!member} />
                           ))}
                         </div>
                       </section>

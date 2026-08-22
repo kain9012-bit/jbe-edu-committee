@@ -115,7 +115,17 @@ export const MeetingTab: React.FC<Props> = ({
 
           {meeting.agenda?.length > 0 && (
             <section className="space-y-3">
-              <SectionTitle count={meeting.agenda.length}>안건 처리 결과</SectionTitle>
+              <div className="flex flex-wrap items-baseline gap-x-3">
+                <SectionTitle count={meeting.agenda.length}>안건 처리 결과</SectionTitle>
+                {/* 안건 탭을 없앴다. 전 회차 안건 이력은 여기서 연다. */}
+                <button
+                  type="button"
+                  onClick={() => onNavigate('agenda')}
+                  className="text-sm font-bold text-slate-500 hover:text-blue-700 hover:underline"
+                >
+                  전 회차 안건 이력 보기
+                </button>
+              </div>
               <ul className="space-y-2">
                 {meeting.agenda.map((a, i) => (
                   <li key={i} className="bg-white rounded-lg border border-slate-200 p-4 space-y-1">

@@ -1,18 +1,42 @@
 import React, { useState } from 'react';
 import {
   Search, ArrowRight, FileText, MessageSquareQuote, Building2, Gavel, Clock,
+  CircleCheck, CircleAlert,
 } from 'lucide-react';
-import type { DerivedDoc, IndexDoc, Navigate } from '../types';
+import type { Ask, DerivedDoc, IndexDoc, IndexEntry, MeetingDoc, Navigate } from '../types';
 import { Badge, SectionTitle } from './Ui';
 import { korDate, stageOf, STAGE_LABEL, STAGE_TONE } from '../lib/util';
 
 interface Props {
   index: IndexDoc;
   derived: DerivedDoc;
+  /** 집행부가 받아 가야 할 것. 이 화면의 주인공이다. */
+  asks: Ask[];
+  /** 요약을 쓴 가장 최근 회차 */
+  latest: IndexEntry | null;
+  latestDoc: MeetingDoc | null;
   onNavigate: Navigate;
 }
 
-export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
+const TONE = { 자료요구: 'blue', 지적사항: 'red', 요청: 'amber' } as const;
+
+/**
+ * 홈.
+ *
+ * 예전 홈은 **숫자 넷과 단추 여덟**이 전부였다. 들어와서 글 한 줄을 읽으려면
+ * 두 번을 눌러야 했고, 그래서 "정보는 많은데 볼 게 없다" 는 화면이 됐다.
+ *
+ * 순서를 바꿨다. 읽을 것을 먼저 놓고, 세어 놓은 숫자는 맨 아래로 내린다.
+ *
+ *   1) 가장 최근 회의에서 무엇이 있었나  — 한눈에 보기 본문 그대로
+ *   2) 집행부가 받아 가야 할 것          — 이 서비스에 오는 이유
+ *   3) 우리 과 찾기
+ *   4) 회의 목록                        — 카드 여섯 장이 아니라 표 한 장
+ *   5) 숫자
+ */
+export const HomeTab: React.FC<Props> = ({
+  index, derived, asks, latest, latestDoc, onNavigate,
+}) => {
   const [q, setQ] = useState('');
   const meetings = index.meetings;
   const withRecord = meetings.filter((m) => m.hasRecord);
@@ -24,6 +48,10 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
     .sort((a, b) => (b.answerCount + b.mentionCount) - (a.answerCount + a.mentionCount))
     .slice(0, 8);
 
+  const recentAsks = [...asks]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 5);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     onNavigate('search', { query: q.trim() });
@@ -34,20 +62,14 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
       {/* ── 검색 띠 ── */}
       <section
         className="relative left-1/2 w-screen -translate-x-1/2 -mt-6
-                   px-4 sm:px-6 lg:px-8 py-10 sm:py-16
+                   px-4 sm:px-6 lg:px-8 py-8 sm:py-12
                    bg-blue-50 border-b border-blue-100"
       >
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="text-3xl sm:text-[2.75rem] font-bold text-slate-900 leading-tight">
+        <div className="max-w-4xl mx-auto text-center space-y-5">
+          <h2 className="text-3xl sm:text-[2.5rem] font-bold text-slate-900 leading-tight">
             <span className="block sm:inline">교육위원회에서</span>{' '}
             <span className="text-blue-700">우리 과에 무엇을 물었나</span>
           </h2>
-          <p className="text-base sm:text-lg text-slate-600">
-            전북특별자치도의회 교육위원회 회의록을{' '}
-            <strong className="font-bold text-slate-900">부서별</strong> ·
-            <strong className="font-bold text-slate-900"> 의원별</strong> ·
-            <strong className="font-bold text-slate-900"> 안건별</strong>로 갈라 봅니다
-          </p>
 
           <form onSubmit={submit} className="max-w-2xl mx-auto">
             <label htmlFor="heroSearch" className="sr-only">회의록 검색</label>
@@ -97,7 +119,190 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
         </div>
       </section>
 
-      {/* ── 지표 ── */}
+      {/* ── 가장 최근 회의 — 목차가 아니라 내용을 먼저 보인다 ── */}
+      {latest && (
+        <section className="space-y-3">
+          <SectionTitle desc={korDate(latest.date)}>가장 최근 회의</SectionTitle>
+          <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {latest.kind === 'K' && <Badge tone="red">행정사무감사</Badge>}
+              <Badge tone="slate">안건 {latest.agendaCount}건</Badge>
+              <Badge tone="slate">발언 {latest.turnCount}건</Badge>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">{latest.title}</h3>
+
+            {latestDoc?.glance?.length ? (
+              <ul className="space-y-1.5">
+                {latestDoc.glance.slice(0, 5).map((line, i) => (
+                  <li key={i} className="flex gap-2.5 text-slate-800 leading-relaxed">
+                    <span aria-hidden="true" className="text-blue-500 shrink-0 mt-[0.45rem]">
+                      <span className="block w-1.5 h-1.5 rounded-full bg-current" />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : latestDoc?.summary ? (
+              <p className="text-slate-800 leading-relaxed">{latestDoc.summary}</p>
+            ) : (
+              <p className="text-sm text-slate-500">요약을 불러오는 중입니다…</p>
+            )}
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => onNavigate('meeting', { meetingId: latest.id })}
+                className="px-4 py-2 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold"
+              >
+                회의 요약 보기
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('record', { meetingId: latest.id })}
+                className="px-4 py-2 rounded-md border border-slate-300 hover:border-blue-600
+                           hover:text-blue-700 text-slate-700 text-sm font-bold"
+              >
+                회의록 전문 보기
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 받아 가야 할 것 — 이 서비스에 오는 이유 ── */}
+      {recentAsks.length > 0 && (
+        <section className="space-y-3">
+          <SectionTitle count={asks.length} desc="위원이 자료를 달라거나 조치를 요구한 것">
+            집행부가 받아 가야 할 것
+          </SectionTitle>
+          <ul className="bg-white rounded-lg border border-slate-200 divide-y divide-slate-100">
+            {recentAsks.map((a, i) => (
+              <li key={i}>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('asks')}
+                  className="w-full text-left p-4 hover:bg-slate-50 transition-colors space-y-1"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge tone={TONE[a.type] ?? 'slate'}>{a.type}</Badge>
+                    {a.dept && <span className="text-sm font-bold text-blue-700">{a.dept}</span>}
+                    {a.member && <span className="text-sm text-slate-500">{a.member} 위원</span>}
+                    <span className="text-xs text-slate-400 ml-auto">{korDate(a.date)}</span>
+                  </div>
+                  <p className="font-bold text-slate-900 leading-snug">{a.title}</p>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => onNavigate('asks')}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 hover:underline"
+          >
+            전체 {asks.length}건 보기
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </button>
+        </section>
+      )}
+
+      {/* ── 부서 바로가기 ── */}
+      {bocheong.length > 0 && (
+        <section className="space-y-3">
+          <SectionTitle desc="직접 답변 + 이름이 언급된 건을 합친 순">우리 과 찾기</SectionTitle>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {bocheong.map((d) => (
+              <button
+                key={d.name}
+                type="button"
+                onClick={() => onNavigate('dept', { focus: d.name })}
+                className="bg-white rounded-lg border border-slate-200 p-4 text-left
+                           hover:border-blue-600 transition-colors space-y-1"
+              >
+                <p className="font-bold text-slate-900">{d.name}</p>
+                <p className="text-xs text-slate-500">
+                  답변 <span className="tabular-nums font-bold text-blue-700">{d.answerCount}</span>건
+                  {d.mentionCount > 0 && <> · 언급 {d.mentionCount}건</>}
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/*
+        회의 목록 — 카드 여섯 장이었다. 배지·날짜·발언수·부서칩까지 붙어서
+        여섯 회차를 훑는 데 스크롤이 세 번 필요했다. 표로 바꾸면 한 화면이다.
+      */}
+      <section className="space-y-3">
+        <SectionTitle count={meetings.length} desc="최근 회의부터">회의 목록</SectionTitle>
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500">
+                  <th className="text-left font-bold px-4 py-3 whitespace-nowrap">일자</th>
+                  <th className="text-left font-bold px-4 py-3">회의</th>
+                  <th className="text-right font-bold px-4 py-3 whitespace-nowrap">발언</th>
+                  <th className="text-right font-bold px-4 py-3 whitespace-nowrap">안건</th>
+                  <th className="text-left font-bold px-4 py-3 whitespace-nowrap">상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                {meetings.map((m) => {
+                  const st = stageOf(m);
+                  return (
+                    <tr key={m.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                      <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{korDate(m.date)}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onNavigate(m.hasSummary ? 'meeting' : 'record', { meetingId: m.id })
+                          }
+                          className="font-semibold text-slate-800 hover:text-blue-700 text-left"
+                        >
+                          {m.title}
+                        </button>
+                        {m.kind === 'K' && (
+                          <span className="ml-2 align-middle"><Badge tone="red">행감</Badge></span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600 tabular-nums whitespace-nowrap">
+                        {m.hasRecord ? m.turnCount : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600 tabular-nums whitespace-nowrap">
+                        {m.hasRecord ? m.agendaCount : '—'}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5">
+                          {m.hasSummary
+                            ? <CircleCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
+                            : m.hasRecord
+                              ? <FileText className="w-4 h-4 text-slate-500" aria-hidden="true" />
+                              : <Clock className="w-4 h-4 text-amber-600" aria-hidden="true" />}
+                          <span className={`font-semibold ${
+                            STAGE_TONE[st] === 'amber' ? 'text-amber-700' : 'text-slate-700'
+                          }`}>
+                            {STAGE_LABEL[st]}
+                          </span>
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {waiting.length > 0 && (
+          <p className="text-xs text-slate-500 flex items-center gap-1.5">
+            <CircleAlert className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            회의록 대기 {waiting.length}건 — 도의회 회의록은 회의 후 보통 3~4주 걸립니다.
+          </p>
+        )}
+      </section>
+
+      {/* ── 숫자는 맨 아래. 이걸 보러 오는 사람은 없다. ── */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           {
@@ -128,84 +333,6 @@ export const HomeTab: React.FC<Props> = ({ index, derived, onNavigate }) => {
             <p className="text-xs text-slate-500">{sub}</p>
           </div>
         ))}
-      </section>
-
-      {/* ── 부서 바로가기 ── */}
-      {bocheong.length > 0 && (
-        <section className="space-y-3">
-          <SectionTitle desc="직접 답변 + 이름이 언급된 건을 합친 순">우리 과 찾기</SectionTitle>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {bocheong.map((d) => (
-              <button
-                key={d.name}
-                type="button"
-                onClick={() => onNavigate('dept', { focus: d.name })}
-                className="bg-white rounded-lg border border-slate-200 p-4 text-left
-                           hover:border-blue-600 transition-colors space-y-1"
-              >
-                <p className="font-bold text-slate-900">{d.name}</p>
-                <p className="text-xs text-slate-500">
-                  답변 <span className="tabular-nums font-bold text-blue-700">{d.answerCount}</span>건
-                  {d.mentionCount > 0 && <> · 언급 {d.mentionCount}건</>}
-                </p>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── 회의 목록 ── */}
-      <section className="space-y-3">
-        <SectionTitle count={meetings.length} desc="최근 회의부터">회의 목록</SectionTitle>
-        <ul className="space-y-3">
-          {meetings.map((m) => {
-            const st = stageOf(m);
-            return (
-              <li key={m.id}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onNavigate(m.hasSummary ? 'meeting' : 'record', { meetingId: m.id })
-                  }
-                  className="w-full text-left bg-white rounded-lg border border-slate-200 p-5
-                             hover:border-blue-600 transition-colors"
-                >
-                  <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                    <Badge tone={STAGE_TONE[st]}>{STAGE_LABEL[st]}</Badge>
-                    {m.kind === 'K' && <Badge tone="red">행정사무감사</Badge>}
-                    <span className="text-sm text-slate-500">{korDate(m.date)}</span>
-                  </div>
-                  <p className="font-bold text-slate-900 text-lg">{m.title}</p>
-                  {m.hasRecord ? (
-                    <p className="text-sm text-slate-600 mt-1">
-                      발언 <span className="tabular-nums font-bold">{m.turnCount}</span>건 ·
-                      {' '}안건 {m.agendaCount}건 ·
-                      {' '}위원 {m.members.length}명
-                      {m.depts.length > 0 && <> · 답변 기관 {m.depts.length}곳</>}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-slate-500 mt-1 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      회의록이 아직 올라오지 않았습니다. 영상은 아래에서 볼 수 있습니다.
-                    </p>
-                  )}
-                  {m.depts.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-2.5">
-                      {m.depts.slice(0, 6).map((d) => (
-                        <span key={d} className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5">
-                          {d}
-                        </span>
-                      ))}
-                      {m.depts.length > 6 && (
-                        <span className="text-xs text-slate-400">외 {m.depts.length - 6}곳</span>
-                      )}
-                    </div>
-                  )}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
       </section>
     </div>
   );
