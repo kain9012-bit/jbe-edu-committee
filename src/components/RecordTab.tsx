@@ -13,12 +13,11 @@ interface Props {
   loading: boolean;
   /** 다른 탭에서 "이 발언을 회의록에서 보고 싶다" 며 넘어온 자리 */
   jumpTo: number | null;
-  onJumped: () => void;
   onNavigate: Navigate;
 }
 
 export const RecordTab: React.FC<Props> = ({
-  index, currentId, setCurrentId, record, loading, jumpTo, onJumped, onNavigate,
+  index, currentId, setCurrentId, record, loading, jumpTo, onNavigate,
 }) => {
   const entry = index.meetings.find((m) => m.id === currentId);
   const [who, setWho] = useState('전체');
@@ -88,17 +87,36 @@ export const RecordTab: React.FC<Props> = ({
     return list;
   }, [record, who, agenda, q]);
 
-  // 넘어온 발언 자리로 데려간다.
+  /**
+   * 넘어온 발언 자리로 데려간다.
+   *
+   * 못 찾으면 **그냥 넘어가지 않는다.** 예전에는 못 찾아도 목적지를 지워 버려서,
+   * 회의록이 늦게 도착하면 영영 못 갔다. 한 번 데려간 자리는 ref 에 적어 두고
+   * 같은 자리로 두 번 끌고 가지 않는다.
+   */
+  const jumped = useRef<string | null>(null);
   useEffect(() => {
     if (jumpTo === null || !record) return;
+    const key = `${currentId}#${jumpTo}`;
+    if (jumped.current === key) return;
+
+    // 필터에 가려 그 발언이 화면에 없으면 필터를 푼다.
+    // 링크를 받고 들어온 사람이 앞 회차의 필터 때문에 빈 화면을 보면 안 된다.
     const el = boxRef.current?.querySelector(`[data-turn="${jumpTo}"]`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      (el as HTMLElement).classList.add('ring-2', 'ring-blue-500');
-      window.setTimeout(() => (el as HTMLElement).classList.remove('ring-2', 'ring-blue-500'), 2400);
+    if (!el) {
+      if (who !== '전체' || agenda !== '전체' || q) {
+        setWho('전체'); setAgenda('전체'); setQ('');
+      }
+      return;                       // 다음 그림에서 다시 찾는다
     }
-    onJumped();
-  }, [jumpTo, record, turns, onJumped]);
+
+    jumped.current = key;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    (el as HTMLElement).classList.add('ring-2', 'ring-blue-500');
+    window.setTimeout(
+      () => (el as HTMLElement).classList.remove('ring-2', 'ring-blue-500'), 2400,
+    );
+  }, [jumpTo, record, turns, currentId, who, agenda, q]);
 
   return (
     <div className="space-y-6 pb-12">

@@ -213,8 +213,17 @@ export default function App() {
     })();
   }, [activeTab, index]);
 
-  // 탭을 바꾸면 화면 맨 위부터 보여준다.
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'auto' }); }, [activeTab]);
+  /*
+   * 탭을 바꾸면 화면 맨 위부터 보여준다.
+   *
+   * 단, **가리킨 발언으로 데려가는 중일 때는 건드리지 않는다.** 자식(회의록 화면)의
+   * 스크롤이 부모보다 먼저 실행되기 때문에, 여기서 무조건 0으로 올리면 기껏 찾아간
+   * 자리를 되돌린다. 실제로 "회의록에서 보기" 가 맨 위로만 가던 원인이 이것이었다.
+   */
+  useEffect(() => {
+    if (jumpTo !== null) return;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [activeTab, jumpTo]);
 
   const navigate: Navigate = (tab, opts) => {
     if (opts?.query !== undefined) setSearchQuery(opts.query);
@@ -234,13 +243,16 @@ export default function App() {
   };
 
   // 회차를 고르개로 바꾸는 등 navigate 를 안 거치는 변화도 주소에 반영한다.
+  // `turn` 도 함께 실어야 한다 — 빼면 특정 발언을 가리키는 링크를 줄 수 없고,
+  // 새로고침하면 그 자리를 잃는다.
   useEffect(() => {
     const next = toHash({
       tab: activeTab, meetingId: currentId,
       focus: focus ?? undefined, query: searchQuery,
+      turn: jumpTo ?? undefined,
     });
     if (window.location.hash !== next) window.history.replaceState(null, '', next);
-  }, [activeTab, currentId, focus, searchQuery]);
+  }, [activeTab, currentId, focus, searchQuery, jumpTo]);
 
   // 뒤로/앞으로 가기
   useEffect(() => {
@@ -322,11 +334,10 @@ export default function App() {
               <RecordTab
                 index={index}
                 currentId={currentId}
-                setCurrentId={setCurrentId}
+                setCurrentId={(id) => { setJumpTo(null); setCurrentId(id); }}
                 record={records[currentId] ?? null}
                 loading={detailLoading}
                 jumpTo={jumpTo}
-                onJumped={() => setJumpTo(null)}
                 onNavigate={navigate}
               />
             )}
