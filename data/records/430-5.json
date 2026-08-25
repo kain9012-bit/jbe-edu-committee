@@ -3,12 +3,12 @@
   "title": "제430회 임시회 제5차 교육위원회",
   "date": "2026-07-30",
   "source": "record",
-  "recordStatus": "임시",
-  "publishedAt": "2026-08-14",
-  "cdUid": 8620,
+  "recordStatus": "확정",
+  "publishedAt": "2026-08-25",
+  "cdUid": 8631,
   "cdCode": "S031H04301H00005",
-  "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8620",
-  "hwpUrl": null,
+  "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8631",
+  "hwpUrl": "https://r.jbstatecouncil.jeonbuk.kr/common/FileDown.do?cdCode=S031H04301H00005",
   "meta": {
     "count": "제430회 전북특별자치도의회 임시회",
     "title": "교육위원회회의록",
@@ -101,7 +101,7 @@
       "cmUid": null,
       "role": "집행부",
       "dept": "부교육감",
-      "deptKind": "본청",
+      "deptKind": "기관장",
       "line": 31,
       "lines": [
         "부교육감 유정기입니다.",
@@ -187,5 +187,16 @@
       "서인숙"
     ]
   },
-  "attachments": []
+  "attachments": [
+    {
+      "name": "1. 전북특별자치도교육감 소속 지방공무원 정원 조례 일부개정조례안.hwp",
+      "kbyte": 65.5,
+      "url": "https://r.jbstatecouncil.jeonbuk.kr/common/FileDown.do?csuUid=27001"
+    },
+    {
+      "name": "2. 전북특별자치도교육감 소속 지방공무원 정원 조례 일부개정조례안 검토보고서.hwp",
+      "kbyte": 93.5,
+      "url": "https://r.jbstatecouncil.jeonbuk.kr/common/FileDown.do?csuUid=27002"
+    }
+  ]
 }

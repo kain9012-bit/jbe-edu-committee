@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-24T21:35:37+00:00",
+  "updatedAt": "2026-08-25T21:35:07+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -25,9 +25,9 @@
       "hasRecord": true,
       "hasSummary": true,
       "source": "record",
-      "recordStatus": "임시",
-      "publishedAt": "2026-08-14",
-      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8620",
+      "recordStatus": "확정",
+      "publishedAt": "2026-08-25",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8631",
       "turnCount": 6,
       "sentenceCount": 38,
       "members": [
@@ -38,7 +38,7 @@
         "부교육감"
       ],
       "agendaCount": 1,
-      "attachmentCount": 0
+      "attachmentCount": 2
     },
     {
       "id": "430-4",
@@ -63,9 +63,9 @@
       "hasRecord": true,
       "hasSummary": true,
       "source": "record",
-      "recordStatus": "임시",
-      "publishedAt": "2026-08-14",
-      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8619",
+      "recordStatus": "확정",
+      "publishedAt": "2026-08-25",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8630",
       "turnCount": 246,
       "sentenceCount": 504,
       "members": [
@@ -91,7 +91,7 @@
         "고창교육지원청"
       ],
       "agendaCount": 3,
-      "attachmentCount": 0
+      "attachmentCount": 17
     },
     {
       "id": "430-3",
@@ -125,11 +125,11 @@
       "hasRecord": true,
       "hasSummary": true,
       "source": "record",
-      "recordStatus": "임시",
-      "publishedAt": "2026-08-14",
-      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8624",
+      "recordStatus": "확정",
+      "publishedAt": "2026-08-25",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8646",
       "turnCount": 448,
-      "sentenceCount": 665,
+      "sentenceCount": 671,
       "members": [
         "전용태",
         "최종오",
@@ -156,7 +156,7 @@
         "부안학생교육문화관"
       ],
       "agendaCount": 2,
-      "attachmentCount": 0
+      "attachmentCount": 13
     },
     {
       "id": "430-2",
@@ -190,11 +190,11 @@
       "hasRecord": true,
       "hasSummary": true,
       "source": "record",
-      "recordStatus": "임시",
-      "publishedAt": "2026-08-14",
-      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8637",
-      "turnCount": 830,
-      "sentenceCount": 1572,
+      "recordStatus": "확정",
+      "publishedAt": "2026-08-25",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8629",
+      "turnCount": 828,
+      "sentenceCount": 1570,
       "members": [
         "전용태",
         "김남규",
@@ -222,7 +222,7 @@
         "시설과"
       ],
       "agendaCount": 6,
-      "attachmentCount": 0
+      "attachmentCount": 3
     },
     {
       "id": "430-1",
@@ -256,11 +256,11 @@
       "hasRecord": true,
       "hasSummary": true,
       "source": "record",
-      "recordStatus": "임시",
-      "publishedAt": "2026-08-14",
-      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8608",
-      "turnCount": 649,
-      "sentenceCount": 1224,
+      "recordStatus": "확정",
+      "publishedAt": "2026-08-25",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8642",
+      "turnCount": 650,
+      "sentenceCount": 1199,
       "members": [
         "전용태",
         "이병도",
