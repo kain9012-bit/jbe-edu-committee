@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-22T06:29:52+00:00",
+  "updatedAt": "2026-08-24T21:35:37+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -16,7 +16,10 @@
           "vodNo": "7060",
           "label": "제5차 교육위원회",
           "date": "2026-07-30",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7060"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7060",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260730112656469.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7054/20260730112656469_0000000001_00_00_01.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
@@ -51,7 +54,10 @@
           "vodNo": "7047",
           "label": "제4차 교육위원회",
           "date": "2026-07-23",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7047"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7047",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260723121344616.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7041/20260723121344616_0000000003_00_00_03.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
@@ -101,13 +107,19 @@
           "vodNo": "7039",
           "label": "제3차 교육위원회 #2",
           "date": "2026-07-22",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7039"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7039",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260722153500767.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7033/20260722153500767_0000000005_00_00_05.png",
+          "chapters": []
         },
         {
           "vodNo": "7037",
           "label": "제3차 교육위원회",
           "date": "2026-07-22",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7037"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7037",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260722130513014.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7031/20260722130513014_0000000001_00_00_11.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
@@ -160,13 +172,19 @@
           "vodNo": "7030",
           "label": "제2차 교육위원회 #2",
           "date": "2026-07-21",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7030"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7030",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260721185131178.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7024/20260721185131178_0000000001_00_00_01.png",
+          "chapters": []
         },
         {
           "vodNo": "7028",
           "label": "제2차 교육위원회",
           "date": "2026-07-21",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7028"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7028",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260721121058850.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7022/20260721121058850_0000000001_00_00_01.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
@@ -220,13 +238,19 @@
           "vodNo": "7021",
           "label": "제1차 교육위원회 #2",
           "date": "2026-07-20",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7021"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7021",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260720162630393.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7015/20260720162630393_0000000001_00_00_01.png",
+          "chapters": []
         },
         {
           "vodNo": "7019",
           "label": "제1차 교육위원회",
           "date": "2026-07-20",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7019"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7019",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260720123930683.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7013/20260720123930683_0000000006_00_00_06.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
@@ -274,7 +298,10 @@
           "vodNo": "7004",
           "label": "제1차 교육위원회",
           "date": "2026-07-02",
-          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7004"
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7004",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260702155548285.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/6998/20260702155548285_0000000001_00_00_01.png",
+          "chapters": []
         }
       ],
       "hasRecord": true,
