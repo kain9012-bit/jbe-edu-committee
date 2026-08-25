@@ -62,14 +62,19 @@ export const HomeTab: React.FC<Props> = ({
       {/* ── 검색 띠 ── */}
       <section
         className="relative left-1/2 w-screen -translate-x-1/2 -mt-6
-                   px-4 sm:px-6 lg:px-8 py-8 sm:py-12
+                   px-4 sm:px-6 lg:px-8 py-10 sm:py-16
                    bg-blue-50 border-b border-blue-100"
       >
-        <div className="max-w-4xl mx-auto text-center space-y-5">
-          <h2 className="text-3xl sm:text-[2.5rem] font-bold text-slate-900 leading-tight">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl sm:text-[2.75rem] font-bold text-slate-900 leading-tight">
             <span className="block sm:inline">교육위원회에서</span>{' '}
             <span className="text-blue-700">우리 과에 무엇을 물었나</span>
           </h2>
+          <p className="text-base sm:text-lg text-slate-600">
+            도의회 교육위원회 회의의 <strong className="font-bold text-slate-900">회의록 전문</strong> ·
+            <strong className="font-bold text-slate-900"> 자료요구·지적사항</strong> ·
+            <strong className="font-bold text-slate-900"> 부서별 질의응답</strong>을 한곳에서 찾습니다
+          </p>
 
           <form onSubmit={submit} className="max-w-2xl mx-auto">
             <label htmlFor="heroSearch" className="sr-only">회의록 검색</label>
@@ -112,7 +117,6 @@ export const HomeTab: React.FC<Props> = ({
                            font-semibold text-blue-700 hover:bg-blue-100 transition-colors"
               >
                 #{t.word}
-                <span className="ml-1 text-xs font-medium text-blue-400 tabular-nums">{t.count}</span>
               </button>
             ))}
           </div>
