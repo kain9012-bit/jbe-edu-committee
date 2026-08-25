@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import type {
-  ActiveTab, Ask, DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate, RecordDoc,
+  ActiveTab, Ask, DeptNote, DerivedDoc, Dialog, IndexDoc, MeetingDoc, Navigate, RecordDoc,
 } from './types';
 import { emptyDerived, emptyIndex } from './types';
 import { Header } from './components/Header';
@@ -56,6 +56,7 @@ export default function App() {
   const [derived, setDerived] = useState<DerivedDoc>(emptyDerived);
   const [dialogs, setDialogs] = useState<Dialog[]>([]);
   const [asks, setAsks] = useState<Ask[]>([]);
+  const [dossier, setDossier] = useState<Record<string, DeptNote>>({});
   const [records, setRecords] = useState<Record<string, RecordDoc>>({});
   const [meetings, setMeetings] = useState<Record<string, MeetingDoc>>({});
 
@@ -118,6 +119,18 @@ export default function App() {
     })();
   }, [activeTab]);
 
+  // ── 부서별로 사람이 쓴 정리(몇 KB). 부서 화면에서만 쓴다. ──
+  const dossierRequested = React.useRef(false);
+  useEffect(() => {
+    if (activeTab !== 'dept' || dossierRequested.current) return;
+    dossierRequested.current = true;
+    (async () => {
+      const x = await loadJson<Record<string, DeptNote>>('depts.json');
+      if (x) setDossier(x);
+      else dossierRequested.current = false;
+    })();
+  }, [activeTab]);
+
   // ── 회차 상세: 지금 보는 회차만 먼저 받는다 ──
   const ensureDetail = useCallback(async (id: string) => {
     if (!id) return;
@@ -167,7 +180,7 @@ export default function App() {
   //    회의 요약 화면의 자료요구·지적사항도 이 답변을 펼쳐 보여준다. ──
   const asksRequested = React.useRef(false);
   useEffect(() => {
-    if (!['home', 'asks', 'meeting'].includes(activeTab)) return;
+    if (!['home', 'asks', 'meeting', 'dept'].includes(activeTab)) return;
     if (asksRequested.current) return;
     asksRequested.current = true;
     (async () => {
@@ -377,6 +390,8 @@ export default function App() {
                 index={index}
                 derived={derived}
                 dialogs={dialogs}
+                asks={asks}
+                dossier={dossier}
                 loading={detailLoading}
                 open={focus}
                 member={member}

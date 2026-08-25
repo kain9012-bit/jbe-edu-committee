@@ -33,7 +33,23 @@
   "turnCount": 3,
   "startTurn": 2,
   "endTurn": 4,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   },
+   {
+    "dept": "창의인재교육과",
+    "terms": [
+     "수학체험센터"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -64,7 +80,8 @@
   "endTurn": 3,
   "mentions": [
    "교원인사과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -93,7 +110,8 @@
   "turnCount": 2,
   "startTurn": 4,
   "endTurn": 5,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -157,7 +175,16 @@
   "turnCount": 7,
   "startTurn": 16,
   "endTurn": 25,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -193,7 +220,8 @@
   "turnCount": 3,
   "startTurn": 26,
   "endTurn": 28,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -250,7 +278,17 @@
   "turnCount": 6,
   "startTurn": 31,
   "endTurn": 37,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "재무과",
+    "terms": [
+     "공유재산",
+     "교육비특별회계"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -272,7 +310,8 @@
   "turnCount": 1,
   "startTurn": 41,
   "endTurn": 41,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -420,7 +459,16 @@
   "turnCount": 19,
   "startTurn": 43,
   "endTurn": 61,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "주요업무보고"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -582,7 +630,8 @@
   "turnCount": 21,
   "startTurn": 63,
   "endTurn": 83,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -653,7 +702,8 @@
   "turnCount": 8,
   "startTurn": 85,
   "endTurn": 92,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -759,7 +809,26 @@
   "turnCount": 13,
   "startTurn": 94,
   "endTurn": 106,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "교육지원",
+     "서비스",
+     "지원사업"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "교육복지",
+     "자유수강권"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -851,7 +920,27 @@
   "turnCount": 11,
   "startTurn": 108,
   "endTurn": 118,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "누리과정",
+     "유치원",
+     "지원사업",
+     "지원인력"
+    ],
+    "score": 4
+   },
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "다양성",
+     "현장체험학습"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -971,7 +1060,16 @@
   "turnCount": 15,
   "startTurn": 120,
   "endTurn": 134,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "중등교육과",
+    "terms": [
+     "고교학점제"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -1475,6 +1573,15 @@
    "창의인재교육과",
    "노사협력과",
    "총무과"
+  ],
+  "owners": [
+   {
+    "dept": "창의인재교육과",
+    "terms": [
+     "교육문화회관"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -1534,7 +1641,8 @@
   "endTurn": 212,
   "mentions": [
    "창의인재교육과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-4",
@@ -1739,7 +1847,36 @@
   "turnCount": 27,
   "startTurn": 214,
   "endTurn": 240,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "교육지원",
+     "사립유치원",
+     "유치원"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "문예체건강과",
+    "terms": [
+     "미래형",
+     "예술교육",
+     "현대화"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "창의인재교육과",
+    "terms": [
+     "과학고",
+     "기초학력",
+     "도서관"
+    ],
+    "score": 3
+   }
+  ]
  },
  {
   "meeting": "430-4",
@@ -1782,7 +1919,8 @@
   "turnCount": 4,
   "startTurn": 241,
   "endTurn": 244,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -1804,7 +1942,16 @@
   "turnCount": 1,
   "startTurn": 2,
   "endTurn": 2,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "전북특별자치도교육청교육연수원"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2142,7 +2289,17 @@
   "turnCount": 46,
   "startTurn": 4,
   "endTurn": 50,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "유아교육",
+     "협의회"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2213,7 +2370,8 @@
   "turnCount": 8,
   "startTurn": 51,
   "endTurn": 58,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -2333,7 +2491,18 @@
   "turnCount": 15,
   "startTurn": 60,
   "endTurn": 74,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "나이스",
+     "서비스",
+     "에듀파인"
+    ],
+    "score": 3
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2390,7 +2559,16 @@
   "turnCount": 6,
   "startTurn": 76,
   "endTurn": 81,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "소프트웨어"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2447,7 +2625,16 @@
   "turnCount": 6,
   "startTurn": 82,
   "endTurn": 87,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "소프트웨어"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2533,7 +2720,16 @@
   "turnCount": 10,
   "startTurn": 88,
   "endTurn": 98,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "노사협력과",
+    "terms": [
+     "교육공무직"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -2590,7 +2786,8 @@
   "turnCount": 6,
   "startTurn": 99,
   "endTurn": 104,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -2647,7 +2844,8 @@
   "turnCount": 6,
   "startTurn": 106,
   "endTurn": 111,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -2970,7 +3168,8 @@
   "turnCount": 44,
   "startTurn": 112,
   "endTurn": 155,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -3057,7 +3256,8 @@
   "endTurn": 165,
   "mentions": [
    "시설과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -3226,7 +3426,8 @@
   "turnCount": 22,
   "startTurn": 166,
   "endTurn": 187,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -3388,7 +3589,19 @@
   "turnCount": 21,
   "startTurn": 188,
   "endTurn": 208,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "사립유치원",
+     "어린이집",
+     "유아교육",
+     "유치원"
+    ],
+    "score": 4
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -3573,6 +3786,24 @@
   "endTurn": 233,
   "mentions": [
    "총무과"
+  ],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "교육정책",
+     "해외연수"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "예산과",
+    "terms": [
+     "사립학교",
+     "효율화"
+    ],
+    "score": 2
+   }
   ]
  },
  {
@@ -3714,7 +3945,8 @@
   "turnCount": 18,
   "startTurn": 234,
   "endTurn": 252,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -3889,7 +4121,24 @@
   "turnCount": 22,
   "startTurn": 254,
   "endTurn": 275,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "유아교육",
+     "유치원"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "소프트웨어"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4030,7 +4279,17 @@
   "turnCount": 18,
   "startTurn": 277,
   "endTurn": 294,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "창의인재교육과",
+    "terms": [
+     "과학고",
+     "교육문화회관"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4115,7 +4374,16 @@
   "turnCount": 10,
   "startTurn": 295,
   "endTurn": 305,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "소프트웨어"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4252,6 +4520,15 @@
   "mentions": [
    "창의인재교육과",
    "예산과"
+  ],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "주요업무보고"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -4274,7 +4551,16 @@
   "turnCount": 1,
   "startTurn": 327,
   "endTurn": 327,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "감사관실",
+    "terms": [
+     "전북특별자치도의회"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4478,7 +4764,17 @@
   "turnCount": 27,
   "startTurn": 329,
   "endTurn": 355,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "어린이집",
+     "유치원"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4752,7 +5048,24 @@
   "turnCount": 37,
   "startTurn": 357,
   "endTurn": 393,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "교육지원",
+     "서비스"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "문예체건강과",
+    "terms": [
+     "학교도서관"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4809,7 +5122,8 @@
   "turnCount": 6,
   "startTurn": 395,
   "endTurn": 401,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -4915,7 +5229,16 @@
   "turnCount": 13,
   "startTurn": 402,
   "endTurn": 414,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "주요업무보고"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-3",
@@ -4993,7 +5316,8 @@
   "turnCount": 9,
   "startTurn": 417,
   "endTurn": 425,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-3",
@@ -5153,7 +5477,34 @@
   "turnCount": 20,
   "startTurn": 427,
   "endTurn": 446,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "창의인재교육과",
+    "terms": [
+     "기초학력",
+     "도서관",
+     "평생교육"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "교육지원",
+     "어린이집"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "생태교육",
+     "프로젝트"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -5183,7 +5534,8 @@
    "문예체건강과",
    "중등교육과",
    "교원인사과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -5320,7 +5672,8 @@
   "endTurn": 21,
   "mentions": [
    "민주시민교육과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -5349,7 +5702,8 @@
   "turnCount": 2,
   "startTurn": 27,
   "endTurn": 28,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -5458,7 +5812,8 @@
   "endTurn": 41,
   "mentions": [
    "중등교육과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -5558,7 +5913,8 @@
   "turnCount": 12,
   "startTurn": 43,
   "endTurn": 54,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -5797,7 +6153,16 @@
   "turnCount": 32,
   "startTurn": 56,
   "endTurn": 87,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교육협력과",
+    "terms": [
+     "학교운영위원회"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -6064,7 +6429,8 @@
   "turnCount": 36,
   "startTurn": 88,
   "endTurn": 123,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6093,7 +6459,8 @@
   "turnCount": 2,
   "startTurn": 125,
   "endTurn": 126,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6122,7 +6489,16 @@
   "turnCount": 2,
   "startTurn": 127,
   "endTurn": 128,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -6153,7 +6529,8 @@
   "endTurn": 130,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6198,7 +6575,8 @@
   "endTurn": 134,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6241,7 +6619,8 @@
   "turnCount": 4,
   "startTurn": 135,
   "endTurn": 138,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6270,7 +6649,8 @@
   "turnCount": 2,
   "startTurn": 139,
   "endTurn": 140,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6299,7 +6679,8 @@
   "turnCount": 2,
   "startTurn": 141,
   "endTurn": 142,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6335,7 +6716,8 @@
   "turnCount": 3,
   "startTurn": 143,
   "endTurn": 145,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6774,6 +7156,15 @@
   "mentions": [
    "노사협력과",
    "총무과"
+  ],
+  "owners": [
+   {
+    "dept": "노사협력과",
+    "terms": [
+     "교육공무직"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -6805,7 +7196,8 @@
   "endTurn": 209,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6836,7 +7228,8 @@
   "endTurn": 211,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -6923,7 +7316,8 @@
   "endTurn": 221,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7024,7 +7418,8 @@
   "endTurn": 233,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7055,7 +7450,8 @@
   "endTurn": 235,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7156,7 +7552,8 @@
   "endTurn": 248,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7178,7 +7575,8 @@
   "turnCount": 1,
   "startTurn": 251,
   "endTurn": 251,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7207,7 +7605,8 @@
   "turnCount": 2,
   "startTurn": 252,
   "endTurn": 253,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7280,7 +7679,8 @@
   "endTurn": 261,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7367,7 +7767,8 @@
   "endTurn": 271,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7398,7 +7799,8 @@
   "endTurn": 273,
   "mentions": [
    "교원인사과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7430,7 +7832,8 @@
   "mentions": [
    "교원인사과",
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7462,7 +7865,8 @@
   "mentions": [
    "교원인사과",
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7521,7 +7925,8 @@
   "endTurn": 283,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7678,7 +8083,8 @@
   "endTurn": 303,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7737,7 +8143,8 @@
   "endTurn": 310,
   "mentions": [
    "전북교육인권센터"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -7901,7 +8308,8 @@
   "endTurn": 331,
   "mentions": [
    "전북교육인권센터"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -8354,6 +8762,26 @@
   "endTurn": 396,
   "mentions": [
    "민주시민교육과"
+  ],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "사립유치원",
+     "유아교육",
+     "유치원",
+     "추진계획"
+    ],
+    "score": 4
+   },
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "교육부",
+     "민주시민"
+    ],
+    "score": 2
+   }
   ]
  },
  {
@@ -8439,7 +8867,16 @@
   "turnCount": 10,
   "startTurn": 398,
   "endTurn": 407,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -8482,7 +8919,16 @@
   "turnCount": 4,
   "startTurn": 408,
   "endTurn": 411,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -8609,7 +9055,8 @@
   "turnCount": 16,
   "startTurn": 414,
   "endTurn": 429,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -8652,7 +9099,8 @@
   "turnCount": 4,
   "startTurn": 430,
   "endTurn": 434,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -8695,7 +9143,8 @@
   "turnCount": 4,
   "startTurn": 435,
   "endTurn": 438,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -8737,7 +9186,8 @@
    "행정과",
    "재무과",
    "시설과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -8927,7 +9377,16 @@
   "turnCount": 25,
   "startTurn": 448,
   "endTurn": 472,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "행정과",
+    "terms": [
+     "시설관리원"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -8984,7 +9443,16 @@
   "turnCount": 6,
   "startTurn": 474,
   "endTurn": 479,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "행정과",
+    "terms": [
+     "적정규모학교"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -9057,7 +9525,8 @@
   "endTurn": 487,
   "mentions": [
    "학교안전과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -9332,7 +9801,17 @@
   "turnCount": 37,
   "startTurn": 488,
   "endTurn": 524,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "대통령",
+     "지역교육"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -9487,7 +9966,8 @@
   "turnCount": 20,
   "startTurn": 526,
   "endTurn": 545,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -9778,6 +10258,15 @@
   "endTurn": 585,
   "mentions": [
    "총무과"
+  ],
+  "owners": [
+   {
+    "dept": "교육협력과",
+    "terms": [
+     "농어촌학교"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -9837,7 +10326,8 @@
   "endTurn": 592,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -9882,7 +10372,8 @@
   "endTurn": 596,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -10299,6 +10790,23 @@
   "endTurn": 653,
   "mentions": [
    "총무과"
+  ],
+  "owners": [
+   {
+    "dept": "유초등특수교육과",
+    "terms": [
+     "관리체계",
+     "유치원"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "노사협력과",
+    "terms": [
+     "교육공무직"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -10407,7 +10915,8 @@
   "endTurn": 667,
   "mentions": [
    "교육협력과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -10499,7 +11008,8 @@
   "turnCount": 11,
   "startTurn": 669,
   "endTurn": 681,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -10530,7 +11040,8 @@
   "endTurn": 683,
   "mentions": [
    "행정과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -10575,7 +11086,8 @@
   "endTurn": 687,
   "mentions": [
    "시설과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -10619,7 +11131,31 @@
   "turnCount": 4,
   "startTurn": 690,
   "endTurn": 696,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "재무과",
+    "terms": [
+     "공유재산",
+     "교육비특별회계"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "교원인사과",
+    "terms": [
+     "교육전문직"
+    ],
+    "score": 1
+   },
+   {
+    "dept": "문예체건강과",
+    "terms": [
+     "학교도서관"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -10795,7 +11331,16 @@
   "turnCount": 23,
   "startTurn": 697,
   "endTurn": 719,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "문예체건강과",
+    "terms": [
+     "학교도서관"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-2",
@@ -11007,7 +11552,8 @@
   "turnCount": 28,
   "startTurn": 727,
   "endTurn": 754,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -11162,7 +11708,8 @@
   "turnCount": 20,
   "startTurn": 756,
   "endTurn": 776,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -11324,7 +11871,8 @@
   "turnCount": 21,
   "startTurn": 778,
   "endTurn": 799,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -11360,7 +11908,8 @@
   "turnCount": 3,
   "startTurn": 800,
   "endTurn": 802,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-2",
@@ -11536,7 +12085,8 @@
   "turnCount": 23,
   "startTurn": 803,
   "endTurn": 825,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -11565,7 +12115,17 @@
   "turnCount": 2,
   "startTurn": 1,
   "endTurn": 2,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "정책기획과",
+    "terms": [
+     "교육정책",
+     "주요업무보고"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -11805,7 +12365,17 @@
   "turnCount": 32,
   "startTurn": 4,
   "endTurn": 35,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "교육복지",
+     "지자체"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -11848,7 +12418,8 @@
   "turnCount": 4,
   "startTurn": 36,
   "endTurn": 39,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -11891,7 +12462,8 @@
   "turnCount": 4,
   "startTurn": 40,
   "endTurn": 44,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -11948,7 +12520,8 @@
   "turnCount": 6,
   "startTurn": 45,
   "endTurn": 50,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -12187,7 +12760,17 @@
   "turnCount": 32,
   "startTurn": 52,
   "endTurn": 83,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "생활교육",
+     "학교폭력"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -12482,7 +13065,8 @@
   "turnCount": 40,
   "startTurn": 85,
   "endTurn": 125,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -12553,7 +13137,8 @@
   "turnCount": 8,
   "startTurn": 126,
   "endTurn": 133,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -12757,7 +13342,33 @@
   "turnCount": 27,
   "startTurn": 135,
   "endTurn": 161,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "교육협력과",
+    "terms": [
+     "도의회",
+     "의정활동",
+     "지방의회"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "개인정보보호",
+     "교육복지"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "감사관실",
+    "terms": [
+     "전북특별자치도의회"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -12905,7 +13516,8 @@
   "turnCount": 19,
   "startTurn": 163,
   "endTurn": 181,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -13139,7 +13751,8 @@
   "endTurn": 213,
   "mentions": [
    "예산과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -13217,7 +13830,8 @@
   "turnCount": 9,
   "startTurn": 215,
   "endTurn": 224,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -13366,7 +13980,8 @@
   "turnCount": 19,
   "startTurn": 225,
   "endTurn": 243,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -13906,7 +14521,8 @@
   "turnCount": 75,
   "startTurn": 244,
   "endTurn": 318,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -13935,7 +14551,8 @@
    "교육협력과",
    "대변인실",
    "예산과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -14050,7 +14667,8 @@
   "endTurn": 337,
   "mentions": [
    "총무과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -14079,7 +14697,8 @@
   "turnCount": 2,
   "startTurn": 338,
   "endTurn": 339,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -14108,7 +14727,16 @@
   "turnCount": 2,
   "startTurn": 340,
   "endTurn": 341,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "스마트기기"
+    ],
+    "score": 1
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -14194,7 +14822,8 @@
   "turnCount": 10,
   "startTurn": 342,
   "endTurn": 351,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -14302,6 +14931,15 @@
   "endTurn": 364,
   "mentions": [
    "학교안전과"
+  ],
+  "owners": [
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "학교안전지킴"
+    ],
+    "score": 1
+   }
   ]
  },
  {
@@ -14802,7 +15440,25 @@
   "turnCount": 69,
   "startTurn": 366,
   "endTurn": 436,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "문예체건강과",
+    "terms": [
+     "소규모",
+     "시행계획"
+    ],
+    "score": 2
+   },
+   {
+    "dept": "민주시민교육과",
+    "terms": [
+     "교육부",
+     "민주시민"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -14930,7 +15586,8 @@
   "turnCount": 16,
   "startTurn": 438,
   "endTurn": 453,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -14987,7 +15644,8 @@
   "turnCount": 6,
   "startTurn": 455,
   "endTurn": 460,
-  "mentions": []
+  "mentions": [],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -15403,6 +16061,25 @@
   "endTurn": 517,
   "mentions": [
    "대변인실"
+  ],
+  "owners": [
+   {
+    "dept": "행정과",
+    "terms": [
+     "기록물",
+     "데이터",
+     "의무교육"
+    ],
+    "score": 3
+   },
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "스마트기기",
+     "스마트폰"
+    ],
+    "score": 2
+   }
   ]
  },
  {
@@ -15448,7 +16125,8 @@
   "endTurn": 522,
   "mentions": [
    "정책기획과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -15508,7 +16186,8 @@
   "mentions": [
    "정책기획과",
    "미래교육과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -15610,7 +16289,8 @@
   "mentions": [
    "미래교육과",
    "학교안전과"
-  ]
+  ],
+  "owners": []
  },
  {
   "meeting": "430-1",
@@ -15871,7 +16551,18 @@
   "turnCount": 35,
   "startTurn": 542,
   "endTurn": 576,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "시설과",
+    "terms": [
+     "시설공사",
+     "시설물",
+     "시설사업"
+    ],
+    "score": 3
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -16285,7 +16976,28 @@
   "turnCount": 57,
   "startTurn": 578,
   "endTurn": 635,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "교육복지",
+     "늘봄지원센터",
+     "디지털",
+     "미래교육캠퍼스",
+     "지자체"
+    ],
+    "score": 5
+   },
+   {
+    "dept": "교육협력과",
+    "terms": [
+     "교육협력",
+     "농촌유학"
+    ],
+    "score": 2
+   }
+  ]
  },
  {
   "meeting": "430-1",
@@ -16384,6 +17096,16 @@
   "turnCount": 12,
   "startTurn": 636,
   "endTurn": 647,
-  "mentions": []
+  "mentions": [],
+  "owners": [
+   {
+    "dept": "미래교육과",
+    "terms": [
+     "교육복지",
+     "교육복지우선지원"
+    ],
+    "score": 2
+   }
+  ]
  }
 ]

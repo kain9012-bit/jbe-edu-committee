@@ -49,6 +49,7 @@
       "group": "교육감·부교육감 직속",
       "answerCount": 185,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-1",
@@ -105,6 +106,7 @@
       "group": "행정국",
       "answerCount": 139,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-2",
@@ -157,6 +159,7 @@
       "group": "정책국",
       "answerCount": 118,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-1",
@@ -205,6 +208,7 @@
       "group": "교육국",
       "answerCount": 73,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-2",
@@ -253,6 +257,7 @@
       "group": "직속기관",
       "answerCount": 56,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -285,6 +290,7 @@
       "group": "교육지원청",
       "answerCount": 41,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -325,6 +331,7 @@
       "group": "교육국",
       "answerCount": 40,
       "mentionCount": 5,
+      "ownedCount": 7,
       "meetings": [
         {
           "id": "430-2",
@@ -333,6 +340,14 @@
         {
           "id": "430-4",
           "count": 7
+        },
+        {
+          "id": "430-5",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
         }
       ],
       "members": [
@@ -361,6 +376,7 @@
       "group": "교육감·부교육감 직속",
       "answerCount": 37,
       "mentionCount": 3,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-2",
@@ -381,6 +397,7 @@
       "group": "직속기관",
       "answerCount": 36,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -425,6 +442,7 @@
       "group": "교육지원청",
       "answerCount": 31,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -449,6 +467,7 @@
       "group": "교육감·부교육감 직속",
       "answerCount": 23,
       "mentionCount": 0,
+      "ownedCount": 2,
       "meetings": [
         {
           "id": "430-2",
@@ -457,6 +476,10 @@
         {
           "id": "430-1",
           "count": 3
+        },
+        {
+          "id": "430-3",
+          "count": 0
         }
       ],
       "members": [
@@ -481,6 +504,7 @@
       "group": "직속기관",
       "answerCount": 23,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -509,10 +533,23 @@
       "group": "교육국",
       "answerCount": 18,
       "mentionCount": 1,
+      "ownedCount": 5,
       "meetings": [
         {
           "id": "430-2",
           "count": 18
+        },
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
+        },
+        {
+          "id": "430-1",
+          "count": 0
         }
       ],
       "members": [
@@ -529,6 +566,7 @@
       "group": "직속기관",
       "answerCount": 17,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -561,6 +599,7 @@
       "group": "교육감·부교육감 직속",
       "answerCount": 16,
       "mentionCount": 2,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-1",
@@ -589,6 +628,7 @@
       "group": "직속기관",
       "answerCount": 15,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -617,10 +657,19 @@
       "group": "정책국",
       "answerCount": 14,
       "mentionCount": 3,
+      "ownedCount": 11,
       "meetings": [
         {
           "id": "430-1",
           "count": 14
+        },
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
         }
       ],
       "members": [
@@ -641,6 +690,7 @@
       "group": "행정국",
       "answerCount": 14,
       "mentionCount": 2,
+      "ownedCount": 3,
       "meetings": [
         {
           "id": "430-2",
@@ -669,6 +719,7 @@
       "group": "직속기관",
       "answerCount": 14,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -693,6 +744,7 @@
       "group": "정책국",
       "answerCount": 13,
       "mentionCount": 4,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-1",
@@ -717,6 +769,7 @@
       "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -741,6 +794,7 @@
       "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -769,6 +823,7 @@
       "group": "직속기관",
       "answerCount": 11,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -793,6 +848,7 @@
       "group": "교육지원청",
       "answerCount": 9,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -813,10 +869,15 @@
       "group": "교육국",
       "answerCount": 7,
       "mentionCount": 2,
+      "ownedCount": 1,
       "meetings": [
         {
           "id": "430-2",
           "count": 7
+        },
+        {
+          "id": "430-4",
+          "count": 0
         }
       ],
       "members": [
@@ -837,6 +898,7 @@
       "group": "직속기관",
       "answerCount": 7,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -861,10 +923,19 @@
       "group": "교육국",
       "answerCount": 5,
       "mentionCount": 1,
+      "ownedCount": 12,
       "meetings": [
         {
           "id": "430-2",
           "count": 5
+        },
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
         }
       ],
       "members": [
@@ -881,6 +952,7 @@
       "group": "교육지원청",
       "answerCount": 5,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -901,6 +973,7 @@
       "group": "직속기관",
       "answerCount": 4,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -921,6 +994,7 @@
       "group": "교육지원청",
       "answerCount": 4,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -941,6 +1015,7 @@
       "group": "교육국",
       "answerCount": 3,
       "mentionCount": 4,
+      "ownedCount": 5,
       "meetings": [
         {
           "id": "430-2",
@@ -952,6 +1027,10 @@
         },
         {
           "id": "430-3",
+          "count": 0
+        },
+        {
+          "id": "430-5",
           "count": 0
         }
       ],
@@ -969,10 +1048,23 @@
       "group": "교육국",
       "answerCount": 3,
       "mentionCount": 3,
+      "ownedCount": 6,
       "meetings": [
         {
           "id": "430-2",
           "count": 3
+        },
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
+        },
+        {
+          "id": "430-1",
+          "count": 0
         }
       ],
       "members": [
@@ -989,6 +1081,7 @@
       "group": "교육지원청",
       "answerCount": 3,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -1009,6 +1102,7 @@
       "group": "교육지원청",
       "answerCount": 2,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -1029,6 +1123,7 @@
       "group": "직속기관",
       "answerCount": 2,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -1049,6 +1144,7 @@
       "group": "행정국",
       "answerCount": 1,
       "mentionCount": 3,
+      "ownedCount": 1,
       "meetings": [
         {
           "id": "430-2",
@@ -1056,6 +1152,10 @@
         },
         {
           "id": "430-3",
+          "count": 0
+        },
+        {
+          "id": "430-1",
           "count": 0
         }
       ],
@@ -1073,6 +1173,7 @@
       "group": "직속기관",
       "answerCount": 1,
       "mentionCount": 0,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-3",
@@ -1093,6 +1194,7 @@
       "group": "행정국",
       "answerCount": 0,
       "mentionCount": 23,
+      "ownedCount": 0,
       "meetings": [
         {
           "id": "430-4",
@@ -1104,44 +1206,6 @@
         },
         {
           "id": "430-2",
-          "count": 0
-        },
-        {
-          "id": "430-1",
-          "count": 0
-        }
-      ],
-      "members": []
-    },
-    {
-      "name": "노사협력과",
-      "kind": "본청",
-      "bureau": "행정국",
-      "group": "행정국",
-      "answerCount": 0,
-      "mentionCount": 3,
-      "meetings": [
-        {
-          "id": "430-4",
-          "count": 0
-        },
-        {
-          "id": "430-2",
-          "count": 0
-        }
-      ],
-      "members": []
-    },
-    {
-      "name": "예산과",
-      "kind": "본청",
-      "bureau": "정책국",
-      "group": "정책국",
-      "answerCount": 0,
-      "mentionCount": 3,
-      "meetings": [
-        {
-          "id": "430-3",
           "count": 0
         },
         {
@@ -1158,7 +1222,64 @@
       "group": "정책국",
       "answerCount": 0,
       "mentionCount": 3,
+      "ownedCount": 6,
       "meetings": [
+        {
+          "id": "430-1",
+          "count": 0
+        },
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
+        },
+        {
+          "id": "430-2",
+          "count": 0
+        }
+      ],
+      "members": []
+    },
+    {
+      "name": "노사협력과",
+      "kind": "본청",
+      "bureau": "행정국",
+      "group": "행정국",
+      "answerCount": 0,
+      "mentionCount": 3,
+      "ownedCount": 3,
+      "meetings": [
+        {
+          "id": "430-4",
+          "count": 0
+        },
+        {
+          "id": "430-2",
+          "count": 0
+        },
+        {
+          "id": "430-3",
+          "count": 0
+        }
+      ],
+      "members": []
+    },
+    {
+      "name": "예산과",
+      "kind": "본청",
+      "bureau": "정책국",
+      "group": "정책국",
+      "answerCount": 0,
+      "mentionCount": 3,
+      "ownedCount": 1,
+      "meetings": [
+        {
+          "id": "430-3",
+          "count": 0
+        },
         {
           "id": "430-1",
           "count": 0
@@ -1173,6 +1294,7 @@
       "group": "정책국",
       "answerCount": 0,
       "mentionCount": 2,
+      "ownedCount": 4,
       "meetings": [
         {
           "id": "430-2",
@@ -1192,9 +1314,14 @@
       "group": "행정국",
       "answerCount": 0,
       "mentionCount": 1,
+      "ownedCount": 2,
       "meetings": [
         {
           "id": "430-2",
+          "count": 0
+        },
+        {
+          "id": "430-4",
           "count": 0
         }
       ],

@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Building2, Search } from 'lucide-react';
-import type { DerivedDoc, Dialog, IndexDoc, Navigate } from '../types';
+import type { Ask, DeptNote, DerivedDoc, Dialog, IndexDoc, Navigate } from '../types';
 import { Badge, ChipRow, EmptyState, SectionTitle } from './Ui';
 import { DialogItem } from './Dialog';
+import { AskItem } from './AskItem';
 import { MeetingFilter } from './MeetingFilter';
-import { groupRank, kindRank } from '../lib/util';
+import { groupRank, kindRank, korDate } from '../lib/util';
 import { deptStatsFor } from '../lib/stats';
 
 interface Props {
@@ -12,6 +13,10 @@ interface Props {
   derived: DerivedDoc;
   /** 주고받은 덩어리. 따로 받아 온다(694KB). */
   dialogs: Dialog[];
+  /** 그 부서가 **받아 가야 할 것**. 이게 없으면 이 화면은 질의응답 모음일 뿐이다. */
+  asks: Ask[];
+  /** 부서별로 사람이 쓴 정리. 없는 부서가 더 많다 — 없으면 안 보여준다. */
+  dossier: Record<string, DeptNote>;
   loading: boolean;
   /** 지금 펼쳐 볼 항목. 주소에서 온다 — 그래야 링크로 그 화면을 줄 수 있다. */
   open: string | null;
@@ -32,9 +37,20 @@ interface Props {
  * 위원회에서는 국장이 과 대신 답하는 일이 많다. 그래서 답변한 사람의 소속만 보면
  * 정작 담당 과는 비어 있다. **답변한 것**과 **이름이 언급된 것**을 따로 세고,
  * 화면에서도 따로 보여준다. 섞으면 언급된 것을 답변한 것으로 오해한다.
+ *
+ * ## 질의응답만 모아 놓으면 이 화면은 회의록 전문에 필터를 씌운 것과 같다
+ *
+ * 담당자가 자기 과를 눌러서 알고 싶은 건 순서가 있다.
+ *
+ *   1) **우리가 뭘 해야 하나** — 자료요구·지적사항. 마감이 걸린 것.
+ *   2) **어떤 안건에서 걸렸나** — 업무보고인지 조례인지에 따라 대응이 다르다.
+ *   3) **무슨 말이 오갔나** — 근거를 확인할 때.
+ *
+ * 예전에는 3번만 세 갈래로 늘어놓았다. 1번은 자료(asks.json)에 부서까지 붙어
+ * 있는데도 다른 탭에 있었고, 2번은 덩어리 카드 안에 흩어져 있었다.
  */
 export const DeptTab: React.FC<Props> = ({
-  index, derived, dialogs, loading, open, member, onMember, onNavigate,
+  index, derived, dialogs, asks, dossier, loading, open, member, onMember, onNavigate,
 }) => {
   const [group, setGroup] = useState('전체');
   const [q, setQ] = useState('');
@@ -50,6 +66,40 @@ export const DeptTab: React.FC<Props> = ({
   }, [open]);
 
   const titleOf = (id: string) => index.meetings.find((m) => m.id === id)?.title ?? id;
+  /** 제430회 임시회 제4차 교육위원회 → 430회 4차 */
+  const shortTitle = (id: string) => {
+    const m = /^(\d+)K?-(\d+)$/.exec(id);
+    return m ? `${m[1]}회 ${m[2]}차` : id;
+  };
+
+  /**
+   * 그 부서가 받아 갈 것.
+   * 국이면 소속 과에 붙은 것도 함께 본다 — 국장이 대신 답한 건과 과에 직접
+   * 떨어진 건이 갈려 있어서, 국 단위로 봐야 전체가 보인다.
+   */
+  const asksOf = (name: string) => {
+    const children = derived.depts.filter((x) => x.bureau === name).map((x) => x.name);
+    return asks.filter(
+      (a) => (a.dept === name || (children.length > 0 && a.dept && children.includes(a.dept)))
+        && (meetingId === '전체' || a.meeting === meetingId)
+        && (!member || a.member === member),
+    );
+  };
+
+  /** 그 부서가 마지막으로 질의받은 날 */
+  const lastDateOf = (name: string) => {
+    const hit = ex.filter((e) => e.depts.includes(name) || e.mentions.includes(name));
+    return hit.length ? hit.map((e) => e.date).sort().slice(-1)[0] : null;
+  };
+
+  /** 그 부서가 걸린 안건 — 많이 걸린 순 */
+  const agendasOf = (_name: string, a: Dialog[], m: Dialog[]) => {
+    const c = new Map<string, number>();
+    [...a, ...m].forEach((e) => {
+      if (e.agenda) c.set(e.agenda, (c.get(e.agenda) ?? 0) + 1);
+    });
+    return [...c.entries()].sort((x, y) => y[1] - x[1]);
+  };
 
   // 회차를 좁히면 목록·숫자·펼친 내용이 **한꺼번에** 그 회차 것만 남아야 한다.
   // 목록만 걸러 놓고 카드 숫자는 전체 합계로 두면 어느 쪽을 믿을지 알 수 없다.
@@ -96,7 +146,8 @@ export const DeptTab: React.FC<Props> = ({
     return [...list].sort(
       (a, b) => kindRank(a.kind) - kindRank(b.kind)
         || b.answerCount - a.answerCount
-        || b.mentionCount - a.mentionCount,
+        || b.mentionCount - a.mentionCount
+        || b.ownedCount - a.ownedCount,
     );
   }, [base, group, q]);
 
@@ -139,11 +190,16 @@ export const DeptTab: React.FC<Props> = ({
         <p>
           <strong className="font-bold text-slate-900">답변</strong> 은 그 부서 사람이 직접 답한 것,{' '}
           <strong className="font-bold text-slate-900">언급</strong> 은 질의나 답변 본문에 그 부서
-          이름이 나온 것입니다.
+          이름이 나온 것,{' '}
+          <strong className="font-bold text-slate-900">소관</strong> 은 이름이 안 나왔지만{' '}
+          <strong className="font-bold text-slate-900">사무분장표(별표 4)</strong>상 그 과 일인 것입니다.
         </p>
         <p className="text-slate-600">
-          위원회에서는 국장이 과 대신 답하는 일이 많아, 답변한 사람만 따지면 담당 과가 비어
-          보입니다. 그래서 두 갈래로 나눠 세되 섞지 않습니다.
+          본청은 국 단위로 의회에 보고합니다. 그래서 답한 사람은 거의 다 국장이고, 과 이름은
+          어쩌다 과장이 답할 때만 붙습니다(본청 답변의 21%). 답변한 사람만 따지면 정작 그 일을
+          하는 과가 비어 보이기 때문에, 국장 답변도 무슨 사무에 관한 말인지 보고 과를 찾아
+          붙이되 <strong className="font-bold text-slate-900">붙인 근거를 함께 보여줍니다.</strong>{' '}
+          세 갈래를 섞지 않는 이유도 같습니다 — 추정을 답변으로 오해하면 안 됩니다.
         </p>
       </div>
 
@@ -195,9 +251,17 @@ export const DeptTab: React.FC<Props> = ({
         <ul className="space-y-3">
           {depts.map((d) => {
             const on = open === d.name;
+            const mine = asksOf(d.name);
+            const note = dossier[d.name];
             const answered = on ? ex.filter((e) => e.depts.includes(d.name)) : [];
             const mentioned = on
               ? ex.filter((e) => !e.depts.includes(d.name) && e.mentions.includes(d.name))
+              : [];
+            // 사무분장상 소관. 국장이 답해서 과 이름이 아예 안 나온 대목이 여기 잡힌다.
+            const ownedList = on
+              ? ex.filter((e) => !e.depts.includes(d.name)
+                  && !e.mentions.includes(d.name)
+                  && (e.owners ?? []).some((o) => o.dept === d.name))
               : [];
             // 국을 열면 소속 과가 답한 것도 함께 본다. 국장이 대신 답한 건과
             // 과가 직접 답한 건이 갈려 있어서, 국 단위로 봐야 전체가 보인다.
@@ -223,7 +287,18 @@ export const DeptTab: React.FC<Props> = ({
                       <span className="text-xs text-slate-500">{d.bureau ?? d.group} 소속</span>
                     )}
                   </div>
+                  {/* 목록에서 **무슨 일이 있었는지** 가 먼저 보여야 한다.
+                      숫자만 늘어놓으면 부서를 하나하나 열어 봐야 안다. */}
+                  {note?.line && (
+                    <p className="text-slate-800 leading-relaxed mb-1.5">{note.line}</p>
+                  )}
+
                   <p className="text-sm text-slate-600 flex flex-wrap gap-x-3 gap-y-1">
+                    {mine.length > 0 && (
+                      <span className="font-bold text-red-700">
+                        받아 갈 것 <span className="tabular-nums">{mine.length}</span>건
+                      </span>
+                    )}
                     <span>
                       답변 <span className="font-bold tabular-nums text-blue-700">{d.answerCount}</span>건
                     </span>
@@ -232,7 +307,16 @@ export const DeptTab: React.FC<Props> = ({
                         언급 <span className="font-bold tabular-nums text-slate-700">{d.mentionCount}</span>건
                       </span>
                     )}
-                    <span className="text-slate-500">회의 {d.meetings.length}회</span>
+                    {d.ownedCount > 0 && (
+                      <span>
+                        소관 <span className="font-bold tabular-nums text-slate-700">{d.ownedCount}</span>건
+                      </span>
+                    )}
+                    {lastDateOf(d.name) && (
+                      <span className="text-slate-500">
+                        마지막 질의 {korDate(lastDateOf(d.name)!)}
+                      </span>
+                    )}
                   </p>
                   {d.members.length > 0 && (
                     <p className="text-sm text-slate-500 mt-1">
@@ -248,6 +332,79 @@ export const DeptTab: React.FC<Props> = ({
 
                 {on && (
                   <div className="border-t border-slate-200">
+                    {/* ① 위원회가 이 부서에 대해 무엇을 문제 삼았나.
+                        회의록을 읽고 사람이 쓴다 — 규칙으로는 못 뽑는다. */}
+                    {note?.issues?.length > 0 && (
+                      <section className="p-5 bg-blue-50/70 border-b border-blue-100 space-y-3">
+                        <h5 className="text-sm font-bold text-slate-900">
+                          위원회가 짚은 것 <span className="text-blue-700 tabular-nums">{note.issues.length}건</span>
+                        </h5>
+                        <ul className="space-y-3">
+                          {note.issues.map((it, i) => (
+                            <li key={i} className="space-y-1">
+                              <div className="flex flex-wrap items-baseline gap-2">
+                                <p className="font-bold text-slate-900 leading-snug">{it.title}</p>
+                                {it.meetings?.map((mid) => (
+                                  <button
+                                    key={mid}
+                                    type="button"
+                                    onClick={() => onNavigate('meeting', { meetingId: mid })}
+                                    className="text-xs font-bold text-blue-700 hover:underline"
+                                  >
+                                    {shortTitle(mid)}
+                                  </button>
+                                ))}
+                              </div>
+                              <ul className="space-y-0.5">
+                                {(it.body ?? []).map((line, k) => (
+                                  <li key={k} className="flex gap-2 text-slate-700 leading-relaxed">
+                                    <span aria-hidden="true" className="text-slate-300 shrink-0">·</span>
+                                    <span>{line}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
+                    {/* ② 마감이 걸린 것. 담당자가 가장 먼저 볼 것이다. */}
+                    {mine.length > 0 && (
+                      <section className="border-b border-slate-200">
+                        <h5 className="px-5 pt-4 pb-1 text-sm font-bold text-slate-900">
+                          받아 가야 할 것 <span className="text-red-700 tabular-nums">{mine.length}건</span>
+                          <span className="ml-2 font-medium text-xs text-slate-500">
+                            자료요구 · 지적사항 · 요청
+                          </span>
+                        </h5>
+                        <ul className="divide-y divide-slate-100">
+                          {mine.map((a, i) => (
+                            <li key={i} className="p-5">
+                              <AskItem ask={a} meetingTitle={titleOf(a.meeting)}
+                                onNavigate={onNavigate} hideMember={!!member} />
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
+                    {/* ③ 어떤 안건에서 걸렸나. 업무보고인지 조례인지에 따라 대응이 다르다. */}
+                    {agendasOf(d.name, answered, mentioned).length > 0 && (
+                      <section className="px-5 py-4 border-b border-slate-200 space-y-1.5">
+                        <h5 className="text-sm font-bold text-slate-900">걸린 안건</h5>
+                        <ul className="space-y-1">
+                          {agendasOf(d.name, answered, mentioned).map(([title, n]) => (
+                            <li key={title} className="flex gap-2 text-sm text-slate-700">
+                              <span aria-hidden="true" className="text-slate-300 shrink-0">·</span>
+                              <span className="flex-1 min-w-0">{title}</span>
+                              <span className="text-slate-400 tabular-nums shrink-0">{n}건</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
                     {answered.length > 0 && (
                       <section>
                         <h5 className="px-5 pt-4 pb-1 text-sm font-bold text-slate-900">
@@ -280,6 +437,42 @@ export const DeptTab: React.FC<Props> = ({
                       </section>
                     )}
 
+                    {ownedList.length > 0 && (
+                      <section className="border-t border-slate-200 bg-amber-50/50">
+                        <h5 className="px-5 pt-4 pb-1 text-sm font-bold text-slate-900">
+                          사무분장상 우리 과 소관{' '}
+                          <span className="text-slate-700 tabular-nums">{ownedList.length}건</span>
+                          <span className="ml-2 font-medium text-xs text-slate-500">
+                            국장이 답해 과 이름은 안 나왔지만, 사무분장표상 이 과 일입니다
+                          </span>
+                        </h5>
+                        <div className="divide-y divide-slate-100">
+                          {ownedList.map((e, i) => {
+                            const why = (e.owners ?? []).find((o) => o.dept === d.name);
+                            return (
+                              <div key={`o${i}`}>
+                                {why && (
+                                  <p className="px-5 pt-3 text-xs text-slate-500">
+                                    근거 —{' '}
+                                    {why.terms.map((t) => (
+                                      <span key={t}
+                                        className="inline-block px-1.5 py-0.5 mr-1 rounded bg-white
+                                                   border border-slate-200 font-bold text-slate-700">
+                                        {t}
+                                      </span>
+                                    ))}
+                                    <span className="ml-1">사무분장표(별표 4)</span>
+                                  </p>
+                                )}
+                                <DialogItem dialog={e} meetingTitle={titleOf(e.meeting)}
+                                  onNavigate={onNavigate} hideMember={!!member} />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    )}
+
                     {children.length > 0 && (
                       <section className="border-t border-slate-200">
                         <h5 className="px-5 pt-4 pb-1 text-sm font-bold text-slate-900">
@@ -298,7 +491,8 @@ export const DeptTab: React.FC<Props> = ({
                       </section>
                     )}
 
-                    {answered.length + mentioned.length + children.length === 0 && (
+                    {answered.length + mentioned.length + ownedList.length
+                      + children.length + mine.length === 0 && (
                       <p className="p-5 text-sm text-slate-500">
                         표시할 질의응답이 없습니다. 회의록 전문에서 확인해 주세요.
                       </p>

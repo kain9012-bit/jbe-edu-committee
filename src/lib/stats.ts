@@ -23,6 +23,7 @@ const nest = (m: Map<string, Map<string, number>>, k: string) =>
 export function deptStatsFor(base: DeptStat[], dialogs: Dialog[]): DeptStat[] {
   const answer = new Map<string, number>();
   const mention = new Map<string, number>();
+  const owned = new Map<string, number>();
   const members = new Map<string, Map<string, number>>();
   const meetings = new Map<string, Map<string, number>>();
 
@@ -39,6 +40,10 @@ export function deptStatsFor(base: DeptStat[], dialogs: Dialog[]): DeptStat[] {
       bump(mention, name);
       bump(nest(meetings, name), d.meeting);
     });
+    (d.owners ?? []).forEach((o) => {
+      bump(owned, o.dept);
+      bump(nest(meetings, o.dept), d.meeting);
+    });
     // 누가 물었나 — 덩어리 단위. 답변 수로 세면 말을 많이 받아낸 위원이
     // 더 집요해 보인다.
     if (d.member) d.depts.forEach((name) => bump(nest(members, name), d.member!));
@@ -49,11 +54,12 @@ export function deptStatsFor(base: DeptStat[], dialogs: Dialog[]): DeptStat[] {
       ...d,
       answerCount: answer.get(d.name) ?? 0,
       mentionCount: mention.get(d.name) ?? 0,
+      ownedCount: owned.get(d.name) ?? 0,
       meetings: toPairs(meetings.get(d.name) ?? new Map())
         .map((p) => ({ id: p.name, count: p.count })),
       members: toPairs(members.get(d.name) ?? new Map()),
     }))
-    .filter((d) => d.answerCount + d.mentionCount > 0);
+    .filter((d) => d.answerCount + d.mentionCount + d.ownedCount > 0);
 }
 
 export function memberStatsFor(base: MemberStat[], dialogs: Dialog[]): MemberStat[] {

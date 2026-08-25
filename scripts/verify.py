@@ -128,6 +128,35 @@ def main() -> int:
                     f"{mid} agenda: '{norm(a.get('title'))[:40]}' 가 회의록의 안건 목록에 없습니다"
                 )
 
+    # ── 부서별 정리(data/depts.json) ──
+    dpath = ROOT / "data" / "depts.json"
+    if dpath.exists():
+        derived = json.loads((ROOT / "data" / "derived.json").read_text(encoding="utf-8"))
+        known = {d["name"] for d in derived["depts"]}
+        ids = {p.stem for p in RECORDS.glob("*.json")}
+        for name, note in json.loads(dpath.read_text(encoding="utf-8")).items():
+            checked += 1
+            label = f"depts.json '{name}'"
+            if name not in known:
+                problems.append(f"{label}: 회의록에 나온 적 없는 부서입니다")
+            line = norm(note.get("line"))
+            if not line:
+                problems.append(f"{label}: line 이 비어 있습니다")
+            elif re.search(r"(있었다|하였다|했다|한다|였다|이다)\s*\.?$", line):
+                problems.append(f"{label}: line 을 개조식으로 끝내세요 → '{line[-14:]}'")
+            for it in note.get("issues") or []:
+                checked += 1
+                t = norm(it.get("title"))
+                if not t:
+                    problems.append(f"{label}: issues 에 title 이 빈 항목이 있습니다")
+                elif re.search(r"(있었다|하였다|했다|당부했다|요구했다|지적했다)\s*\.?$", t):
+                    problems.append(f"{label} '{t[:20]}': title 을 개조식으로 끝내세요")
+                if not (it.get("body") or []):
+                    problems.append(f"{label} '{t[:20]}': body 가 비어 있습니다")
+                for mid in it.get("meetings") or []:
+                    if mid not in ids:
+                        problems.append(f"{label} '{t[:20]}': 없는 회차 '{mid}' 를 가리킵니다")
+
     if problems:
         print(f"검증 실패 — {len(problems)}건\n")
         for p in problems:

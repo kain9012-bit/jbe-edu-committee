@@ -85,7 +85,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from config import DATA, INDEX, MEETINGS, RECORDS
+from config import DATA, INDEX, MEETINGS, RECORDS, ROOT
 from depts import BUREAU_OF, BUREAUS, DEPARTMENTS, DIRECT, group_of
 
 # 화면에 미리보기로 띄울 길이. 전문은 회차 탭에서 본다.
@@ -130,6 +130,78 @@ def load_records() -> list[dict]:
                 out.append(json.loads(p.read_text(encoding="utf-8")))
                 break
     return out
+
+
+SAMU = ROOT / "collector" / "refs" / "samubunjang.json"
+
+
+def load_samu() -> dict[str, list[str]]:
+    """과별 **고유 사무 용어**. `collector/samu.py` 가 사무분장표에서 뽑아 둔다."""
+    if not SAMU.exists():
+        return {}
+    raw = json.loads(SAMU.read_text(encoding="utf-8"))
+    # 두 글자 말은 버린다. `결과`·`관계`·`검사` 처럼 사무분장표 안에서만 고유할 뿐
+    # 회의록에서는 아무 데나 나오는 말이라, 그걸로 붙이면 엉뚱한 과에 걸린다.
+    return {k: [t for t in v["terms"] if len(t) >= 3] for k, v in raw.items()}
+
+
+def attach_owners(dias: list[dict], samu: dict[str, list[str]]) -> None:
+    """각 덩어리가 **어느 과 소관인가** 를 사무분장표로 찾아 붙인다.
+
+    본청은 국 단위로 의회에 보고한다. 그래서 답한 사람은 거의 다 국장이고,
+    과 이름은 어쩌다 과장이 답할 때만 붙는다(본청 답변의 21%). 나머지는 국에만
+    쌓여서, 정작 그 일을 하는 과 담당자가 자기 과를 눌러도 화면이 비어 있었다.
+
+    ## 흔한 말로 붙이면 아무 데나 붙는다
+
+    사무분장표 안에서 한 과에만 나오는 말이라고 회의록에서도 드문 건 아니다.
+    첫 판에서 `주요업무보고` 하나 때문에 정책기획과가 133개 중 100개를 가져갔고,
+    `교육감` 때문에 총무과가 22개를 가져갔다. 사무분장표에서 고유하다는 것과
+    **이 회의록에서 변별력이 있다**는 것은 다른 문제다.
+
+    그래서 회의록에서 자주 나오는 말은 뺀다. 열 덩어리 넘게 나오는 말은 그
+    회의의 배경어이지 특정 과를 가리키는 말이 아니다. 부서 이름도 뺀다 —
+    그건 `언급` 이 이미 하는 일이다.
+
+    붙인 근거는 남긴다. 담당자가 "왜 우리 과로 왔지" 를 직접 확인할 수 있어야
+    틀린 배분을 걸러낼 수 있다.
+    """
+    if not dias or not samu:
+        for d in dias:
+            d["owners"] = []
+        return
+
+    # 안건 제목은 넣지 않는다. `공유재산관리계획` 안건 아래에서 정원 조례를
+    # 따지는 대목까지 재무과로 끌려갔다.
+    blobs = [" ".join(t["text"] for t in d["turns"]) for d in dias]
+
+    names = set(DEPARTMENTS) | set(BUREAUS) | DIRECT
+    cap = max(3, len(dias) // 12)      # 133덩어리면 11덩어리까지
+
+    keep: dict[str, list[str]] = {}
+    for dept, ts in samu.items():
+        good = []
+        for t in ts:
+            if t in names:
+                continue
+            df = sum(1 for b in blobs if t in b)
+            if 0 < df <= cap:
+                good.append(t)
+        keep[dept] = good
+
+    for d, blob in zip(dias, blobs):
+        found = []
+        for dept, ts in keep.items():
+            hit = sorted({t for t in ts if t in blob})
+            # 네 글자 넘는 말이 하나는 걸려야 한다. `서비스`·`교육부` 두 개로
+            # 붙이면 아무 대목에나 붙는다. 그 위에 둘 이상이거나, 다섯 글자
+            # 넘는 말(고교학점제·교육공무직원)이 걸리면 확실하다고 본다.
+            if not any(len(t) >= 4 for t in hit):
+                continue
+            if len(hit) >= 2 or any(len(t) >= 5 for t in hit):
+                found.append({"dept": dept, "terms": hit[:6], "score": len(hit)})
+        found.sort(key=lambda x: -x["score"])
+        d["owners"] = [o for o in found[:3] if o["dept"] not in d["depts"]]
 
 
 def bureau_map(docs: list[dict]) -> dict[str, str]:
@@ -318,6 +390,7 @@ def main() -> int:
         print("회의록이 없습니다. 먼저 collector/collect.py 를 돌리세요.")
         return 1
 
+    samu = load_samu()
     bureaus = bureau_map(docs)
 
     all_ex: list[dict] = []
@@ -334,6 +407,7 @@ def main() -> int:
             "group": group_of(name, kind),
             "answerCount": 0,
             "mentionCount": 0,
+            "ownedCount": 0,
             "meetings": {},
             "members": {},
         })
@@ -363,6 +437,7 @@ def main() -> int:
                 d["mentionCount"] += 1
                 d["meetings"].setdefault(e["meeting"], 0)
 
+
             # 누가 누구에게 물었나 — 덩어리 단위로 센다.
             # 답변 하나하나를 세면 말을 많이 받아낸 위원이 더 집요해 보인다.
             if e["member"]:
@@ -374,6 +449,17 @@ def main() -> int:
 
         for a in doc.get("matters") or []:
             agendas.append({"meeting": doc["id"], "date": doc["date"], "title": a})
+
+    # 사무분장상 소관 과를 붙인다. 전 회차를 다 모은 뒤에 해야 한다 —
+    # 회의록에서 흔한 말인지 아닌지는 전체를 봐야 알 수 있다.
+    attach_owners(all_ex, samu)
+
+    # 소관 추정은 전체를 본 뒤에 나오므로 여기서 센다.
+    for e in all_ex:
+        for o in e["owners"]:
+            d = slot(o["dept"], "본청")
+            d["ownedCount"] += 1
+            d["meetings"].setdefault(e["meeting"], 0)
 
     def flat(d: dict[str, dict], key: str, sort_key) -> list[dict]:
         out = []
@@ -399,7 +485,8 @@ def main() -> int:
     derived = {
         "topics": topics,
         "depts": flat(depts, "members",
-                      lambda v: (-v["answerCount"], -v["mentionCount"], v["name"])),
+                      lambda v: (-v["answerCount"], -v["mentionCount"],
+                                 -v["ownedCount"], v["name"])),
         "members": flat(members, "depts", lambda v: -v["turnCount"]),
         "agendas": agendas,
         "dialogCount": len(all_ex),

@@ -202,10 +202,35 @@ export interface Dialog {
   depts: string[];
   /** 오간 말에 이름이 나온 다른 부서 */
   mentions: string[];
+  /**
+   * 사무분장표상 소관으로 보이는 과와 그 근거가 된 말.
+   * 본청은 국 단위로 보고해서 답변자가 거의 다 국장이다. 그래서 국장 답변도
+   * 무슨 사무에 관한 말인지 보고 과를 찾아 준다. **근거를 함께 싣는다** —
+   * "왜 우리 과로 왔지" 를 담당자가 확인할 수 있어야 틀린 배분을 걸러낸다.
+   */
+  owners?: { dept: string; terms: string[]; score: number }[];
   turns: DialogTurn[];
   turnCount: number;
   startTurn: number;
   endTurn: number;
+}
+
+/**
+ * 부서별로 사람이 쓴 정리. `data/depts.json` 에서 온다.
+ *
+ * 질의응답을 부서로 거르기만 하면 회의록 전문에 필터를 씌운 것과 다르지 않다.
+ * "위원회가 이 부서에 대해 무엇을 문제 삼았나" 는 규칙으로 못 뽑는다 —
+ * 여러 회차에 흩어진 질의를 읽고 하나로 묶어야 나온다.
+ */
+export interface DeptNote {
+  /** 목록에서 이것만 보고 판단할 수 있는 한 줄. 개조식. */
+  line: string;
+  issues: {
+    title: string;
+    body: string[];
+    /** 이 쟁점이 나온 회차들 */
+    meetings?: string[];
+  }[];
 }
 
 export interface DeptStat {
@@ -219,6 +244,8 @@ export interface DeptStat {
   answerCount: number;
   /** 이 부서 이름이 질의·답변 본문에 나온 질의응답 수 */
   mentionCount: number;
+  /** 사무분장표상 이 과 소관으로 보이는 질의응답 수 (이름이 안 나와도 잡힌다) */
+  ownedCount: number;
   meetings: { id: string; count: number }[];
   members: { name: string; count: number }[];
 }
