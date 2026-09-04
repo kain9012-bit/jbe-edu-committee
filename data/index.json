@@ -1,7 +1,49 @@
 {
-  "updatedAt": "2026-09-03T23:10:28+00:00",
+  "updatedAt": "2026-09-04T22:56:43+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
+    {
+      "id": "431-1",
+      "kind": "S",
+      "daesu": 13,
+      "session": 431,
+      "sessionName": "제431회 정례회",
+      "chasoo": 1,
+      "date": "2026-09-04",
+      "title": "제431회 정례회 제1차 교육위원회",
+      "vod": [
+        {
+          "vodNo": "7076",
+          "label": "제1차 교육위원회 #2",
+          "date": "2026-09-04",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7076",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260904152031556.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7070/20260904152031556_0000000001_00_00_01.png",
+          "chapters": []
+        },
+        {
+          "vodNo": "7074",
+          "label": "제1차 교육위원회",
+          "date": "2026-09-04",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7074",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20260904122737211.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7068/20260904122737211_0000000001_00_00_01.png",
+          "chapters": []
+        }
+      ],
+      "hasRecord": false,
+      "hasSummary": false,
+      "source": null,
+      "recordStatus": null,
+      "publishedAt": null,
+      "viewerUrl": null,
+      "turnCount": 0,
+      "sentenceCount": 0,
+      "members": [],
+      "depts": [],
+      "agendaCount": 0,
+      "attachmentCount": 0
+    },
     {
       "id": "430-5",
       "kind": "S",
