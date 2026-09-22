@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T23:59:24+00:00",
+  "updatedAt": "2026-09-22T23:33:16+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -31,17 +31,32 @@
           "chapters": []
         }
       ],
-      "hasRecord": false,
+      "hasRecord": true,
       "hasSummary": false,
-      "source": null,
-      "recordStatus": null,
-      "publishedAt": null,
-      "viewerUrl": null,
-      "turnCount": 0,
-      "sentenceCount": 0,
-      "members": [],
-      "depts": [],
-      "agendaCount": 0,
+      "source": "record",
+      "recordStatus": "임시",
+      "publishedAt": "2026-09-22",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8677",
+      "turnCount": 270,
+      "sentenceCount": 671,
+      "members": [
+        "전용태",
+        "최종오",
+        "박수형",
+        "김우민",
+        "한정수",
+        "김남규",
+        "이병도",
+        "장연국"
+      ],
+      "depts": [
+        "감사관실",
+        "정책국",
+        "교육국",
+        "행정국",
+        "민주시민교육과"
+      ],
+      "agendaCount": 17,
       "attachmentCount": 0
     },
     {
@@ -73,17 +88,36 @@
           "chapters": []
         }
       ],
-      "hasRecord": false,
+      "hasRecord": true,
       "hasSummary": false,
-      "source": null,
-      "recordStatus": null,
-      "publishedAt": null,
-      "viewerUrl": null,
-      "turnCount": 0,
-      "sentenceCount": 0,
-      "members": [],
-      "depts": [],
-      "agendaCount": 0,
+      "source": "record",
+      "recordStatus": "임시",
+      "publishedAt": "2026-09-22",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8673",
+      "turnCount": 476,
+      "sentenceCount": 854,
+      "members": [
+        "전용태",
+        "최종오",
+        "한정수",
+        "장연국",
+        "임종명",
+        "박수형"
+      ],
+      "depts": [
+        "행정국",
+        "감사관실",
+        "교육연수원",
+        "군산학생교육문화관",
+        "전주교육지원청",
+        "군산교육지원청",
+        "완주교육지원청",
+        "임실교육지원청",
+        "정읍교육지원청",
+        "익산교육지원청",
+        "무주교육지원청"
+      ],
+      "agendaCount": 6,
       "attachmentCount": 0
     },
     {
@@ -115,17 +149,35 @@
           "chapters": []
         }
       ],
-      "hasRecord": false,
+      "hasRecord": true,
       "hasSummary": false,
-      "source": null,
-      "recordStatus": null,
-      "publishedAt": null,
-      "viewerUrl": null,
-      "turnCount": 0,
-      "sentenceCount": 0,
-      "members": [],
-      "depts": [],
-      "agendaCount": 0,
+      "source": "record",
+      "recordStatus": "임시",
+      "publishedAt": "2026-09-22",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8669",
+      "turnCount": 711,
+      "sentenceCount": 1305,
+      "members": [
+        "전용태",
+        "박수형",
+        "이병도",
+        "장연국",
+        "최종오",
+        "임종명",
+        "한정수",
+        "김우민",
+        "김남규"
+      ],
+      "depts": [
+        "정책국",
+        "미래교육과",
+        "예산과",
+        "교육국",
+        "창의인재교육과",
+        "유초등특수교육과",
+        "전북교육인권센터"
+      ],
+      "agendaCount": 4,
       "attachmentCount": 0
     },
     {
@@ -157,17 +209,33 @@
           "chapters": []
         }
       ],
-      "hasRecord": false,
+      "hasRecord": true,
       "hasSummary": false,
-      "source": null,
-      "recordStatus": null,
-      "publishedAt": null,
-      "viewerUrl": null,
-      "turnCount": 0,
-      "sentenceCount": 0,
-      "members": [],
-      "depts": [],
-      "agendaCount": 0,
+      "source": "record",
+      "recordStatus": "임시",
+      "publishedAt": "2026-09-22",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8672",
+      "turnCount": 387,
+      "sentenceCount": 727,
+      "members": [
+        "전용태",
+        "최종오",
+        "이병도",
+        "한정수",
+        "김우민",
+        "장연국",
+        "김남규",
+        "박수형"
+      ],
+      "depts": [
+        "부교육감",
+        "정책국",
+        "행정국",
+        "예산과",
+        "전문위원",
+        "교육국"
+      ],
+      "agendaCount": 1,
       "attachmentCount": 0
     },
     {
