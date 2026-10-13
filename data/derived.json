@@ -1748,7 +1748,7 @@
     {
       "name": "전용태",
       "cmUid": 599,
-      "turnCount": 428,
+      "turnCount": 429,
       "meetings": [
         {
           "id": "431-3",
@@ -1760,7 +1760,7 @@
         },
         {
           "id": "431-4",
-          "count": 59
+          "count": 60
         },
         {
           "id": "430-2",
@@ -1950,7 +1950,7 @@
     {
       "name": "장연국",
       "cmUid": 571,
-      "turnCount": 372,
+      "turnCount": 371,
       "meetings": [
         {
           "id": "431-2",
@@ -1982,7 +1982,7 @@
         },
         {
           "id": "431-4",
-          "count": 3
+          "count": 2
         }
       ],
       "depts": [
