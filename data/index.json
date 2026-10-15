@@ -1,7 +1,40 @@
 {
-  "updatedAt": "2026-10-14T23:48:49+00:00",
+  "updatedAt": "2026-10-15T23:37:26+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
+    {
+      "id": "432-1",
+      "kind": "S",
+      "daesu": 13,
+      "session": 432,
+      "sessionName": "제432회 임시회",
+      "chasoo": 1,
+      "date": "2026-10-15",
+      "title": "제432회 임시회 제1차 교육위원회",
+      "vod": [
+        {
+          "vodNo": "7120",
+          "label": "제1차 교육위원회",
+          "date": "2026-10-15",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7120",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261015132525423.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7114/20261015132525423_0000000001_00_00_01.png",
+          "chapters": []
+        }
+      ],
+      "hasRecord": false,
+      "hasSummary": false,
+      "source": null,
+      "recordStatus": null,
+      "publishedAt": null,
+      "viewerUrl": null,
+      "turnCount": 0,
+      "sentenceCount": 0,
+      "members": [],
+      "depts": [],
+      "agendaCount": 0,
+      "attachmentCount": 0
+    },
     {
       "id": "431-4",
       "kind": "S",
