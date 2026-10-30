@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T00:43:41+00:00",
+  "updatedAt": "2026-10-30T00:43:24+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -22,17 +22,31 @@
           "chapters": []
         }
       ],
-      "hasRecord": false,
+      "hasRecord": true,
       "hasSummary": false,
-      "source": null,
-      "recordStatus": null,
-      "publishedAt": null,
-      "viewerUrl": null,
-      "turnCount": 0,
-      "sentenceCount": 0,
-      "members": [],
-      "depts": [],
-      "agendaCount": 0,
+      "source": "record",
+      "recordStatus": "임시",
+      "publishedAt": "2026-10-29",
+      "viewerUrl": "https://r.jbstatecouncil.jeonbuk.kr/assem/viewer.do?cdUid=8716",
+      "turnCount": 370,
+      "sentenceCount": 811,
+      "members": [
+        "전용태",
+        "한정수",
+        "최종오",
+        "김우민",
+        "이병도",
+        "박수형",
+        "임종명",
+        "장연국",
+        "김남규"
+      ],
+      "depts": [
+        "교육국",
+        "행정국",
+        "정책국"
+      ],
+      "agendaCount": 14,
       "attachmentCount": 0
     },
     {

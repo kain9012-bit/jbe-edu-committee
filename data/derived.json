@@ -2,11 +2,15 @@
   "topics": [
     {
       "word": "예산",
-      "count": 975
+      "count": 1004
     },
     {
       "word": "교육장",
-      "count": 262
+      "count": 263
+    },
+    {
+      "word": "시설",
+      "count": 206
     },
     {
       "word": "인사",
@@ -14,31 +18,27 @@
     },
     {
       "word": "감사",
-      "count": 187
-    },
-    {
-      "word": "시설",
-      "count": 179
+      "count": 193
     },
     {
       "word": "기금",
-      "count": 117
+      "count": 137
     },
     {
       "word": "교육지원청",
-      "count": 99
+      "count": 100
     },
     {
-      "word": "안전",
-      "count": 72
-    },
-    {
-      "word": "이월",
-      "count": 70
+      "word": "정원",
+      "count": 86
     },
     {
       "word": "학교폭력",
-      "count": 69
+      "count": 77
+    },
+    {
+      "word": "안전",
+      "count": 76
     }
   ],
   "depts": [
@@ -47,13 +47,17 @@
       "kind": "본청",
       "bureau": null,
       "group": "교육국",
-      "answerCount": 355,
+      "answerCount": 450,
       "mentionCount": 0,
       "ownedCount": 0,
       "meetings": [
         {
           "id": "431-2",
           "count": 193
+        },
+        {
+          "id": "432-1",
+          "count": 95
         },
         {
           "id": "431-4",
@@ -70,28 +74,32 @@
       ],
       "members": [
         {
-          "name": "전용태",
-          "count": 14
+          "name": "한정수",
+          "count": 16
         },
         {
-          "name": "한정수",
-          "count": 13
+          "name": "전용태",
+          "count": 16
         },
         {
           "name": "김남규",
           "count": 6
         },
         {
+          "name": "이병도",
+          "count": 5
+        },
+        {
           "name": "박수형",
           "count": 5
         },
         {
-          "name": "김우민",
-          "count": 3
+          "name": "최종오",
+          "count": 4
         },
         {
-          "name": "이병도",
-          "count": 3
+          "name": "김우민",
+          "count": 4
         },
         {
           "name": "임종명",
@@ -100,9 +108,74 @@
         {
           "name": "장연국",
           "count": 3
+        }
+      ]
+    },
+    {
+      "name": "행정국",
+      "kind": "본청",
+      "bureau": null,
+      "group": "행정국",
+      "answerCount": 325,
+      "mentionCount": 0,
+      "ownedCount": 0,
+      "meetings": [
+        {
+          "id": "430-2",
+          "count": 132
+        },
+        {
+          "id": "431-3",
+          "count": 116
+        },
+        {
+          "id": "432-1",
+          "count": 58
+        },
+        {
+          "id": "431-4",
+          "count": 11
+        },
+        {
+          "id": "430-4",
+          "count": 7
+        },
+        {
+          "id": "431-1",
+          "count": 1
+        }
+      ],
+      "members": [
+        {
+          "name": "한정수",
+          "count": 15
+        },
+        {
+          "name": "전용태",
+          "count": 13
+        },
+        {
+          "name": "장연국",
+          "count": 9
+        },
+        {
+          "name": "임종명",
+          "count": 4
+        },
+        {
+          "name": "박수형",
+          "count": 3
+        },
+        {
+          "name": "김남규",
+          "count": 3
         },
         {
           "name": "최종오",
+          "count": 2
+        },
+        {
+          "name": "김우민",
           "count": 2
         }
       ]
@@ -169,76 +242,11 @@
       ]
     },
     {
-      "name": "행정국",
-      "kind": "본청",
-      "bureau": null,
-      "group": "행정국",
-      "answerCount": 267,
-      "mentionCount": 0,
-      "ownedCount": 0,
-      "meetings": [
-        {
-          "id": "430-2",
-          "count": 132
-        },
-        {
-          "id": "431-3",
-          "count": 116
-        },
-        {
-          "id": "431-4",
-          "count": 11
-        },
-        {
-          "id": "430-4",
-          "count": 7
-        },
-        {
-          "id": "431-1",
-          "count": 1
-        }
-      ],
-      "members": [
-        {
-          "name": "한정수",
-          "count": 14
-        },
-        {
-          "name": "전용태",
-          "count": 12
-        },
-        {
-          "name": "장연국",
-          "count": 8
-        },
-        {
-          "name": "임종명",
-          "count": 3
-        },
-        {
-          "name": "김남규",
-          "count": 2
-        },
-        {
-          "name": "최종오",
-          "count": 2
-        },
-        {
-          "name": "박수형",
-          "count": 2
-        },
-        {
-          "name": "김우민",
-          "count": 2
-        }
-      ]
-    },
-    {
       "name": "정책국",
       "kind": "본청",
       "bureau": null,
       "group": "정책국",
-      "answerCount": 231,
+      "answerCount": 234,
       "mentionCount": 0,
       "ownedCount": 0,
       "meetings": [
@@ -253,6 +261,10 @@
         {
           "id": "431-1",
           "count": 26
+        },
+        {
+          "id": "432-1",
+          "count": 3
         },
         {
           "id": "431-4",
@@ -690,7 +702,7 @@
       "group": "정책국",
       "answerCount": 20,
       "mentionCount": 6,
-      "ownedCount": 23,
+      "ownedCount": 25,
       "meetings": [
         {
           "id": "430-1",
@@ -699,6 +711,10 @@
         {
           "id": "431-2",
           "count": 6
+        },
+        {
+          "id": "432-1",
+          "count": 0
         },
         {
           "id": "431-4",
@@ -739,7 +755,7 @@
       "group": "교육국",
       "answerCount": 20,
       "mentionCount": 1,
-      "ownedCount": 15,
+      "ownedCount": 18,
       "meetings": [
         {
           "id": "431-2",
@@ -748,6 +764,10 @@
         {
           "id": "430-2",
           "count": 5
+        },
+        {
+          "id": "432-1",
+          "count": 0
         },
         {
           "id": "431-1",
@@ -820,12 +840,16 @@
       "bureau": "교육국",
       "group": "교육국",
       "answerCount": 18,
-      "mentionCount": 2,
-      "ownedCount": 12,
+      "mentionCount": 3,
+      "ownedCount": 15,
       "meetings": [
         {
           "id": "430-2",
           "count": 18
+        },
+        {
+          "id": "432-1",
+          "count": 0
         },
         {
           "id": "431-2",
@@ -989,7 +1013,7 @@
       "bureau": "행정국",
       "group": "행정국",
       "answerCount": 14,
-      "mentionCount": 2,
+      "mentionCount": 3,
       "ownedCount": 6,
       "meetings": [
         {
@@ -999,6 +1023,10 @@
         {
           "id": "430-1",
           "count": 3
+        },
+        {
+          "id": "432-1",
+          "count": 0
         },
         {
           "id": "431-4",
@@ -1184,8 +1212,8 @@
       "bureau": "교육국",
       "group": "교육국",
       "answerCount": 9,
-      "mentionCount": 5,
-      "ownedCount": 13,
+      "mentionCount": 6,
+      "ownedCount": 16,
       "meetings": [
         {
           "id": "431-4",
@@ -1194,6 +1222,10 @@
         {
           "id": "430-2",
           "count": 3
+        },
+        {
+          "id": "432-1",
+          "count": 0
         },
         {
           "id": "431-2",
@@ -1748,7 +1780,7 @@
     {
       "name": "전용태",
       "cmUid": 599,
-      "turnCount": 429,
+      "turnCount": 485,
       "meetings": [
         {
           "id": "431-3",
@@ -1765,6 +1797,10 @@
         {
           "id": "430-2",
           "count": 59
+        },
+        {
+          "id": "432-1",
+          "count": 56
         },
         {
           "id": "430-1",
@@ -1794,11 +1830,11 @@
       "depts": [
         {
           "name": "교육국",
-          "count": 14
+          "count": 16
         },
         {
           "name": "행정국",
-          "count": 12
+          "count": 13
         },
         {
           "name": "정책국",
@@ -1853,7 +1889,7 @@
     {
       "name": "한정수",
       "cmUid": 588,
-      "turnCount": 405,
+      "turnCount": 447,
       "meetings": [
         {
           "id": "431-2",
@@ -1876,6 +1912,10 @@
           "count": 44
         },
         {
+          "id": "432-1",
+          "count": 42
+        },
+        {
           "id": "431-1",
           "count": 42
         },
@@ -1890,16 +1930,16 @@
       ],
       "depts": [
         {
-          "name": "부교육감",
-          "count": 15
+          "name": "교육국",
+          "count": 16
         },
         {
           "name": "행정국",
-          "count": 14
+          "count": 15
         },
         {
-          "name": "교육국",
-          "count": 13
+          "name": "부교육감",
+          "count": 15
         },
         {
           "name": "정책국",
@@ -1950,7 +1990,7 @@
     {
       "name": "장연국",
       "cmUid": 571,
-      "turnCount": 371,
+      "turnCount": 403,
       "meetings": [
         {
           "id": "431-2",
@@ -1977,6 +2017,10 @@
           "count": 35
         },
         {
+          "id": "432-1",
+          "count": 32
+        },
+        {
           "id": "430-1",
           "count": 16
         },
@@ -1987,12 +2031,12 @@
       ],
       "depts": [
         {
-          "name": "정책국",
+          "name": "행정국",
           "count": 9
         },
         {
-          "name": "행정국",
-          "count": 8
+          "name": "정책국",
+          "count": 9
         },
         {
           "name": "부교육감",
@@ -2059,7 +2103,7 @@
     {
       "name": "이병도",
       "cmUid": 568,
-      "turnCount": 238,
+      "turnCount": 269,
       "meetings": [
         {
           "id": "430-1",
@@ -2068,6 +2112,10 @@
         {
           "id": "430-3",
           "count": 41
+        },
+        {
+          "id": "432-1",
+          "count": 31
         },
         {
           "id": "430-2",
@@ -2092,12 +2140,12 @@
       ],
       "depts": [
         {
-          "name": "부교육감",
-          "count": 4
+          "name": "교육국",
+          "count": 5
         },
         {
-          "name": "교육국",
-          "count": 3
+          "name": "부교육감",
+          "count": 4
         },
         {
           "name": "정책국",
@@ -2148,7 +2196,7 @@
     {
       "name": "최종오",
       "cmUid": 585,
-      "turnCount": 236,
+      "turnCount": 251,
       "meetings": [
         {
           "id": "431-2",
@@ -2171,6 +2219,10 @@
           "count": 33
         },
         {
+          "id": "432-1",
+          "count": 15
+        },
+        {
           "id": "431-1",
           "count": 13
         },
@@ -2185,16 +2237,16 @@
       ],
       "depts": [
         {
+          "name": "교육국",
+          "count": 4
+        },
+        {
           "name": "정책국",
           "count": 3
         },
         {
           "name": "미래교육과",
           "count": 3
-        },
-        {
-          "name": "교육국",
-          "count": 2
         },
         {
           "name": "행정국",
@@ -2253,7 +2305,7 @@
     {
       "name": "김우민",
       "cmUid": 584,
-      "turnCount": 188,
+      "turnCount": 191,
       "meetings": [
         {
           "id": "430-2",
@@ -2284,6 +2336,10 @@
           "count": 10
         },
         {
+          "id": "432-1",
+          "count": 3
+        },
+        {
           "id": "429-1",
           "count": 1
         }
@@ -2299,7 +2355,7 @@
         },
         {
           "name": "교육국",
-          "count": 3
+          "count": 4
         },
         {
           "name": "정책국",
@@ -2378,7 +2434,7 @@
     {
       "name": "김남규",
       "cmUid": 578,
-      "turnCount": 122,
+      "turnCount": 129,
       "meetings": [
         {
           "id": "430-2",
@@ -2405,6 +2461,10 @@
           "count": 9
         },
         {
+          "id": "432-1",
+          "count": 7
+        },
+        {
           "id": "431-1",
           "count": 7
         }
@@ -2416,7 +2476,7 @@
         },
         {
           "name": "행정국",
-          "count": 2
+          "count": 3
         },
         {
           "name": "정책국",
@@ -2451,7 +2511,7 @@
     {
       "name": "박수형",
       "cmUid": 607,
-      "turnCount": 111,
+      "turnCount": 121,
       "meetings": [
         {
           "id": "430-1",
@@ -2464,6 +2524,10 @@
         {
           "id": "430-2",
           "count": 18
+        },
+        {
+          "id": "432-1",
+          "count": 10
         },
         {
           "id": "431-3",
@@ -2496,16 +2560,16 @@
           "count": 5
         },
         {
+          "name": "행정국",
+          "count": 3
+        },
+        {
           "name": "정책국",
           "count": 3
         },
         {
           "name": "부교육감",
           "count": 3
-        },
-        {
-          "name": "행정국",
-          "count": 2
         },
         {
           "name": "전주교육지원청",
@@ -2536,11 +2600,15 @@
     {
       "name": "임종명",
       "cmUid": 594,
-      "turnCount": 81,
+      "turnCount": 99,
       "meetings": [
         {
           "id": "431-2",
           "count": 23
+        },
+        {
+          "id": "432-1",
+          "count": 18
         },
         {
           "id": "430-3",
@@ -2570,7 +2638,7 @@
         },
         {
           "name": "행정국",
-          "count": 3
+          "count": 4
         },
         {
           "name": "교육국",
@@ -2620,6 +2688,76 @@
     }
   ],
   "agendas": [
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "1. 전북특별자치도교육청 유아교육 진흥 조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "2. 전북특별자치도 교육·학예의 시설 이용과 사용료에 관한 조례 일부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "3. 전북특별자치도교육청 농산어촌 교육발전 기본 조례 일부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "4. 전북특별자치도교육청 가족돌봄학생 교육지원 조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "5. 전북특별자치도교육청 학교 실내 공기질 및 미세먼지 관리 조례 전부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "6. 전북특별자치도교육청 기금의 관리 및 통합교육재정 안정화기금 설치·운용 조례 일부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "7. 전북특별자치도교육청 교육시설환경개선기금 설치 및 운용 조례 일부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "8. 전북특별자치도교육청 진로교육 활성화 조례 일부개정조례안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "9. 2027년도 위탁형 전문스포츠클럽 운영 사무의 민간위탁 동의안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "10. 전북특별자치도교육청 협력기관형 미디어교육 민간위탁 동의안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "11. 전북특별자치도교육청 대안교육 위탁교육기관 민간위탁 동의안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "12. 전북특별자치도교육청 도박예방 위탁교육기관 민간위탁 동의안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "13. 전북특별자치도교육청 직장어린이집 운영 사무의 민간위탁 동의안"
+    },
+    {
+      "meeting": "432-1",
+      "date": "2026-10-15",
+      "title": "14. 2027년도 전북특별자치도교육비특별회계 소관 정기분 공유재산관리계획안"
+    },
     {
       "meeting": "431-4",
       "date": "2026-09-09",
@@ -2836,5 +2974,5 @@
       "title": "1. 제13대 전북특별자치도의회 교육위원회 전반기 부위원장 선임의 건"
     }
   ],
-  "dialogCount": 269
+  "dialogCount": 286
 }
