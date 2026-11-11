@@ -1,7 +1,40 @@
 {
-  "updatedAt": "2026-11-10T03:21:44+00:00",
+  "updatedAt": "2026-11-11T01:09:41+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
+    {
+      "id": "433K-1",
+      "kind": "K",
+      "daesu": 13,
+      "session": 433,
+      "sessionName": "제433회 정례회",
+      "chasoo": 1,
+      "date": "2026-11-10",
+      "title": "제433회 정례회 제1차 교육위원회 (행정사무감사)",
+      "vod": [
+        {
+          "vodNo": "7145",
+          "label": "제1차 교육위원회 [ 행정사무감사 ]",
+          "date": "2026-11-10",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7145",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261110180549189.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7139/20261110180549189_0000000006_00_00_06.png",
+          "chapters": []
+        }
+      ],
+      "hasRecord": false,
+      "hasSummary": false,
+      "source": null,
+      "recordStatus": null,
+      "publishedAt": null,
+      "viewerUrl": null,
+      "turnCount": 0,
+      "sentenceCount": 0,
+      "members": [],
+      "depts": [],
+      "agendaCount": 0,
+      "attachmentCount": 0
+    },
     {
       "id": "432-1",
       "kind": "S",
