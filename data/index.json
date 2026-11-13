@@ -1,7 +1,82 @@
 {
-  "updatedAt": "2026-11-12T02:10:39+00:00",
+  "updatedAt": "2026-11-13T01:44:11+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
+    {
+      "id": "433K-3",
+      "kind": "K",
+      "daesu": 13,
+      "session": 433,
+      "sessionName": "제433회 정례회",
+      "chasoo": 3,
+      "date": "2026-11-12",
+      "title": "제433회 정례회 제3차 교육위원회 (행정사무감사)",
+      "vod": [
+        {
+          "vodNo": "7163",
+          "label": "제3차 교육위원회 #2 [ 행정사무감사 ]",
+          "date": "2026-11-12",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7163",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261112163452813.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7157/20261112163452813_0000000001_00_00_01.png",
+          "chapters": []
+        },
+        {
+          "vodNo": "7162",
+          "label": "제3차 교육위원회 [ 행정사무감사 ]",
+          "date": "2026-11-12",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7162",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261112122317166.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7156/20261112122317166_0000000001_00_00_01.png",
+          "chapters": []
+        }
+      ],
+      "hasRecord": false,
+      "hasSummary": false,
+      "source": null,
+      "recordStatus": null,
+      "publishedAt": null,
+      "viewerUrl": null,
+      "turnCount": 0,
+      "sentenceCount": 0,
+      "members": [],
+      "depts": [],
+      "agendaCount": 0,
+      "attachmentCount": 0
+    },
+    {
+      "id": "433-1",
+      "kind": "S",
+      "daesu": 13,
+      "session": 433,
+      "sessionName": "제433회 정례회",
+      "chasoo": 1,
+      "date": "2026-11-12",
+      "title": "제433회 정례회 제1차 교육위원회",
+      "vod": [
+        {
+          "vodNo": "7164",
+          "label": "제1차 교육위원회",
+          "date": "2026-11-12",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7164",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261112172308856.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7158/20261112172308856_0000000001_00_00_01.png",
+          "chapters": []
+        }
+      ],
+      "hasRecord": false,
+      "hasSummary": false,
+      "source": null,
+      "recordStatus": null,
+      "publishedAt": null,
+      "viewerUrl": null,
+      "turnCount": 0,
+      "sentenceCount": 0,
+      "members": [],
+      "depts": [],
+      "agendaCount": 0,
+      "attachmentCount": 0
+    },
     {
       "id": "433K-2",
       "kind": "K",
