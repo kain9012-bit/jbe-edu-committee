@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-26T03:27:15+00:00",
+  "updatedAt": "2026-11-27T03:34:29+00:00",
   "committee": "전북특별자치도의회 교육위원회",
   "meetings": [
     {
@@ -12,6 +12,15 @@
       "date": "2026-11-26",
       "title": "제433회 정례회 제5차 교육위원회",
       "vod": [
+        {
+          "vodNo": "7224",
+          "label": "제5차 교육위원회 #2",
+          "date": "2026-11-26",
+          "playerUrl": "https://live.jbstatecouncil.jeonbuk.kr/vod/pop_council_vod_player.ifn?vod_no=7224",
+          "m3u8": "https://live.jbstatecouncil.jeonbuk.kr:7443/vod/_definst_/mp4:A0007/20261126192909199.mp4/playlist.m3u8",
+          "poster": "/stillcut/A0007/7218/20261126192909199_0000000005_00_00_05.png",
+          "chapters": []
+        },
         {
           "vodNo": "7219",
           "label": "제5차 교육위원회",
